@@ -1,10 +1,9 @@
 package pe.edu.pucp.packetsoft.models;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.SQLDelete;
@@ -16,16 +15,21 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "plan_viaje")
-@SQLDelete(sql = "UPDATE plan_viaje SET activo = 0 WHERE id = ?")
+@Table(name = "vuelo_x_plan")
+@SQLDelete(sql = "UPDATE vuelo_x_plan SET activo = 0 WHERE id = ?")
 @Where(clause = "activo = 1")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class PlanViaje extends BaseEntity{
+public class VueloXPlan extends BaseEntity{
     
-    @Column(name = "estado")
-    private String estado;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "plan_viaje")
+    private PlanViaje planViaje;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "vuelo")
+    private Vuelo vuelo;
 
 }
