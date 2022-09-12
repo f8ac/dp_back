@@ -7,12 +7,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import pe.edu.pucp.packetsoft.utils.AstarNode;
+
 @SpringBootApplication
 @EnableCaching
 public class PacketsoftApplication {
 
 	public static void main(String[] args) {
+        System.out.println(">antes");
+        int numero = 5;
 		SpringApplication.run(PacketsoftApplication.class, args);
+        System.out.println("<despues");
+        System.out.println(numero);
+
+        AstarNode head = new AstarNode(3);
+        
 	}
 
 	@Bean
