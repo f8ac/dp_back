@@ -32,7 +32,7 @@ public class Aeropuerto extends BaseEntity {
     @Column(name = "pais")
     private Double pais;
     @Column(name = "cod_ciudad")
-    private int cod_ciudad;
+    private String cod_ciudad;
 
     @Column(name = "longitud")
     private Double longitud;
