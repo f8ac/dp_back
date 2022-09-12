@@ -7,8 +7,12 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -40,6 +44,7 @@ public class Aeropuerto extends BaseEntity {
     private int capacidad_utilizado;
 
 
-    @Column(name = "continente")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_continente")
     private Continente continente;
 }
