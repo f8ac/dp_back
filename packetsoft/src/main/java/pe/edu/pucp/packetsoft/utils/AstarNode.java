@@ -23,7 +23,7 @@ public class AstarNode implements Comparable<AstarNode> {
     // Hardcoded heuristic
     public double h; 
 
-    AstarNode(double h){
+    public AstarNode(double h){
         this.h = h;
         this.id = idCounter++;
         this.neighbors = new ArrayList<>();
