@@ -43,6 +43,8 @@ public class PacketsoftApplication {
         n3.addBranch(6, n4);
 
         n4.addBranch(3, target);
+        n5.addBranch(1, n4);
+        n5.addBranch(3, target);
 
         AstarNode res = AstarSearch.aStar(head, target);
 
