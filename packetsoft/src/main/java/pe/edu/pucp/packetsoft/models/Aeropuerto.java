@@ -28,20 +28,20 @@ public class Aeropuerto extends BaseEntity {
     @Column(name = "cod_aeropuerto")
     private String cod_aeropuerto;
     @Column(name = "nombre")
-    private double nombre;
+    private Double nombre;
     @Column(name = "pais")
-    private double pais;
+    private Double pais;
     @Column(name = "cod_ciudad")
     private int cod_ciudad;
 
     @Column(name = "longitud")
-    private double longitud;
+    private Double longitud;
     @Column(name = "latitud")
-    private double latitud;
+    private Double latitud;
     @Column(name = "capacidad_total")
-    private int capacidad_total;
+    private Integer capacidad_total;
     @Column(name = "capacidad_utilizado")
-    private int capacidad_utilizado;
+    private Integer capacidad_utilizado;
 
 
     @ManyToOne(fetch = FetchType.EAGER)
