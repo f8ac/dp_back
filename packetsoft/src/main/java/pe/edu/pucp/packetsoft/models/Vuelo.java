@@ -38,9 +38,9 @@ public class Vuelo extends BaseEntity{
     private Date hora_llegada;
 
     @Column(name = "capacidad_total")
-    private int capacidad_total;
+    private Integer capacidad_total;
 
     @Column(name = "capacidad_utilizada")
-    private int capacidad_utilizada;
+    private Integer capacidad_utilizada;
 
 }
