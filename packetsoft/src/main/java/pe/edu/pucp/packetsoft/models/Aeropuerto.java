@@ -16,7 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "Aeropuerto")
+@Table(name = "aeropuerto")
 @SQLDelete(sql = "UPDATE aeropuerto SET activo = 0 WHERE id = ?")
 @Where(clause = "activo = 1")
 @NoArgsConstructor
@@ -28,9 +28,9 @@ public class Aeropuerto extends BaseEntity {
     @Column(name = "cod_aeropuerto")
     private String cod_aeropuerto;
     @Column(name = "nombre")
-    private Double nombre;
+    private String nombre;
     @Column(name = "pais")
-    private Double pais;
+    private String pais;
     @Column(name = "cod_ciudad")
     private String cod_ciudad;
 
