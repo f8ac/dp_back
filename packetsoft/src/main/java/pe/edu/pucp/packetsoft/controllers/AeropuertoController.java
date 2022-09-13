@@ -7,7 +7,7 @@ import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.services.AeropuertoService;
 
 @RestController
-@RequestMapping("/actividad")
+@RequestMapping("/aeropuerto")
 @CrossOrigin
 public class AeropuertoController {
     @Autowired
