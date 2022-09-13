@@ -15,7 +15,8 @@ import lombok.Setter;
 @Where(clause = "activo = 1")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter @Setter
+@Getter 
+@Setter
 
 public class Continente extends BaseEntity{
     

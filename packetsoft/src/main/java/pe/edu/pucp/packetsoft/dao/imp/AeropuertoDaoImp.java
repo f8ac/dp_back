@@ -23,7 +23,7 @@ public class AeropuertoDaoImp implements AeropuertoDao {
     public List<Aeropuerto> getAll() {
         List<Aeropuerto> list = null;
         try{
-            var hql = "from aeropuerto as a";
+            var hql = "from Aeropuerto as a";
             list = entityManager.createQuery(hql).getResultList();
         }
         catch (Exception exception){

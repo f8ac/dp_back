@@ -24,7 +24,7 @@ public class ContinenteDaoImp implements ContinenteDao{
     public List<Continente> getAll() {
         List<Continente> list = null;
         try {
-            var hql = "from continente as c";
+            var hql = "from Continente as c";
             list = entityManager.createQuery(hql).getResultList();
         }
         catch (Exception exception){
