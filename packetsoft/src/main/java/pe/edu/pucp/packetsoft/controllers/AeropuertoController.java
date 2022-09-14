@@ -28,7 +28,7 @@ public class AeropuertoController {
 
 
     @PostMapping(value = "/insertfile")
-    void insertfile() throws IOException{
+    void insertfile() throws IOException, InterruptedException{
         aeropuertoService.insertfile();
     }
 
