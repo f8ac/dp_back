@@ -12,6 +12,7 @@ import pe.edu.pucp.packetsoft.services.ContinenteService;
 @RequestMapping("/continente")
 @CrossOrigin
 public class ContinenteController {
+    
     @Autowired
     private ContinenteService continenteService;
 
@@ -19,4 +20,10 @@ public class ContinenteController {
     List<Continente> getAll(){
         return continenteService.getAll();
     }
+
+    @PostMapping(value = "/insert")
+    Continente insert(Continente continente){
+        return continenteService.insert(continente);
+    }
+
 }

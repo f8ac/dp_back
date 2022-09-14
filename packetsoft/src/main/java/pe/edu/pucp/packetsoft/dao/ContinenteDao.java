@@ -7,4 +7,5 @@ import pe.edu.pucp.packetsoft.models.Continente;
 public interface ContinenteDao {
     List<Continente> getAll();
     //Continente get(int id);
+    Continente insert(Continente continente);
 }

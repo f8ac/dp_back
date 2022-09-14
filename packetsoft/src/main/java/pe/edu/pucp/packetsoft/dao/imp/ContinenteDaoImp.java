@@ -32,4 +32,16 @@ public class ContinenteDaoImp implements ContinenteDao{
         }
         return list;
     }
+
+    @Transactional
+    @Override
+    public Continente insert(Continente continente) {
+        Continente result = null;
+        try{
+            result = entityManager.merge(continente);
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
 }

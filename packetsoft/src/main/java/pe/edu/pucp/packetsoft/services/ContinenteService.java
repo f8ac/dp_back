@@ -16,4 +16,8 @@ public class ContinenteService {
     public List<Continente> getAll(){
         return daoContinente.getAll();
     }
+
+    public Continente insert(Continente continente){
+        return daoContinente.insert(continente);
+    }
 }
