@@ -34,6 +34,12 @@ public class Aeropuerto extends BaseEntity {
     @Column(name = "cod_ciudad")
     private String cod_ciudad;
 
+
+    @Column(name = "zona_horaria")
+    private String zona_horaria;
+    @Column(name = "num_zona_horaria")
+    private Double num_zona_horaria;
+
     @Column(name = "longitud")
     private Double longitud;
     @Column(name = "latitud")
