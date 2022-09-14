@@ -22,7 +22,7 @@ public class ContinenteController {
     }
 
     @PostMapping(value = "/insert")
-    Continente insert(Continente continente){
+    Continente insert(@RequestBody Continente continente){
         return continenteService.insert(continente);
     }
 
