@@ -126,7 +126,9 @@ public class AeropuertoService {
         br.close();
     }
 
-
+    public Aeropuerto getByCodigo(Aeropuerto aeropuerto){
+        return daoAeropuerto.getByCodigo(aeropuerto);
+    }
 
 
 }

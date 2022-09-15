@@ -37,4 +37,9 @@ public class AeropuertoController {
         aeropuertoService.insertfile();
     }
 
+    @PostMapping(value = "/get/codigo")
+    Aeropuerto getByCodigo(@RequestBody Aeropuerto aeropuerto){
+        return aeropuertoService.getByCodigo(aeropuerto);
+    }
+
 }

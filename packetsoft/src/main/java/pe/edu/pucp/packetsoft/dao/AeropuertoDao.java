@@ -7,5 +7,6 @@ public interface AeropuertoDao {
     List<Aeropuerto> getAll();
     Aeropuerto get(int id);
     Aeropuerto insert(Aeropuerto aeropuerto);
+    Aeropuerto getByCodigo(Aeropuerto aeropuerto);
 
 }
