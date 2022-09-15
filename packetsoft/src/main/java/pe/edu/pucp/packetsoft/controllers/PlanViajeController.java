@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import pe.edu.pucp.packetsoft.models.Paquete;
 import pe.edu.pucp.packetsoft.models.PlanViaje;
-import pe.edu.pucp.packetsoft.services.PaqueteService;
 import pe.edu.pucp.packetsoft.services.PlanViajeService;
 
 @RestController
