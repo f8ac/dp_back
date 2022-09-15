@@ -3,20 +3,14 @@ package pe.edu.pucp.packetsoft.controllers;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +20,6 @@ import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Continente;
 import pe.edu.pucp.packetsoft.services.AeropuertoService;
 import pe.edu.pucp.packetsoft.services.ContinenteService;
-import pe.edu.pucp.packetsoft.services.UsuarioService;
 
 @RestController
 @RequestMapping("/test")
@@ -44,7 +37,7 @@ public class TestController {
         List<Continente> listaContinente = null;
         
         try{
-            String fileBuffer = new String(file.getBytes());
+            // String fileBuffer = new String(file.getBytes());
             // FileInputStream inputStream = new FileInputStream(file);
             InputStream targeStream = new ByteArrayInputStream(file.getBytes());
             BufferedInputStream buffer = new BufferedInputStream(targeStream);
@@ -77,16 +70,16 @@ public class TestController {
                         break;
                     }
 
-                    String numAerpuertoStr;
-                    Integer numAeropuerto;
+                    //String numAerpuertoStr;
+                    //Integer numAeropuerto;
                     String codAeropuerto;
-                    String nomCiudad;
+                    //String nomCiudad;
                     String nomPais;
                     String codCiudad;
 
-                    numAerpuertoStr = line.substring(0, 5).trim();
+                    //numAerpuertoStr = line.substring(0, 5).trim();
                     codAeropuerto = line.substring(4, 11).trim();
-                    nomCiudad = line.substring(12, 31).trim();
+                    //nomCiudad = line.substring(12, 31).trim();
                     nomPais = line.substring(32, 47).trim();
                     codCiudad = line.substring(48, 52).trim();
 
