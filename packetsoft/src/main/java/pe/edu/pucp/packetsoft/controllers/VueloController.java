@@ -1,5 +1,6 @@
 package pe.edu.pucp.packetsoft.controllers;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,4 +30,10 @@ public class VueloController {
     Vuelo insert(@RequestBody Vuelo empresa){
         return vueloService.insert(empresa);
     }
+
+    @PostMapping(value = "/insertfile")
+    void insertfile() throws IOException, InterruptedException{
+        vueloService.insertfile();
+    }
+
 }
