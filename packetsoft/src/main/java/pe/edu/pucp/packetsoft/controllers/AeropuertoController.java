@@ -21,6 +21,11 @@ public class AeropuertoController {
         return aeropuertoService.getAll();
     }
 
+    @GetMapping(value = "/get/{id}")
+    Aeropuerto get(@PathVariable int id){
+        return aeropuertoService.get(id);
+    }
+
     @PostMapping(value = "/insert")
     Aeropuerto insert(@RequestBody Aeropuerto aero){
         return aeropuertoService.insert(aero);

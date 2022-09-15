@@ -39,6 +39,14 @@ public class AeropuertoService {
         return daoAeropuerto.getAll();
     }
 
+
+    public Aeropuerto get(int id){
+        return daoAeropuerto.get(id);
+    }
+
+
+
+
     public Aeropuerto insert(Aeropuerto aeropuerto){
         return daoAeropuerto.insert(aeropuerto);
     }

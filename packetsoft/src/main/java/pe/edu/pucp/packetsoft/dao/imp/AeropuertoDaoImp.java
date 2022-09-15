@@ -33,6 +33,22 @@ public class AeropuertoDaoImp implements AeropuertoDao {
     }
 
 
+
+    @Transactional
+    @Override
+    public Aeropuerto get(int id) {
+        Aeropuerto aeropuerto = null;
+        try {
+            aeropuerto = entityManager.find(Aeropuerto.class, id);
+        }
+        catch (Exception exception){
+            System.out.println(exception.getMessage());
+        }
+        return aeropuerto;
+    }
+
+
+
     @Transactional
     @Override
     public Aeropuerto insert(Aeropuerto aeropuerto) {
@@ -45,6 +61,9 @@ public class AeropuertoDaoImp implements AeropuertoDao {
         }
         return result;
     }
+
+
+
 
 
 
