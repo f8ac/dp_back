@@ -46,10 +46,10 @@ public class EnvioService {
                 // aeropuerto de salida y llegada
                 Aeropuerto aeroSalida = new Aeropuerto();
                 Aeropuerto aeroLlegada = new Aeropuerto();
-                System.out.println( nombreArchivo.substring(13,16) );
-                System.out.println( data[3].split(":")[0] );
-                aeroSalida.setCod_aeropuerto(nombreArchivo.substring(13,16));
-                aeroLlegada.setCod_aeropuerto(data[3].split(":")[0]);
+                String nomSalida = nombreArchivo.substring(13,17);
+                String nomLlegada = data[3].split(":")[0];
+                aeroSalida.setCod_aeropuerto(nomSalida);
+                aeroLlegada.setCod_aeropuerto(nomLlegada);
                 Aeropuerto aeroSalidaDefinido = aeropuertoService.getByCodigo(aeroSalida);
                 Aeropuerto aeroLlegadaDefinido = aeropuertoService.getByCodigo(aeroLlegada);
                
@@ -57,20 +57,20 @@ public class EnvioService {
                 Calendar calendarioSalida = Calendar.getInstance(); // tiempos de salida y llegada del vuelo
                 calendarioSalida.set(Calendar.YEAR, Integer.parseInt( data[1].substring(0,3) ));
                 calendarioSalida.set(Calendar.MONTH, Integer.parseInt( data[1].substring(4,5) ));
-                calendarioSalida.set(Calendar.DAY_OF_YEAR, Integer.parseInt( data[1].substring(6,7) ));
+                calendarioSalida.set(Calendar.DAY_OF_MONTH, Integer.parseInt( data[1].substring(6,7) ));
                 calendarioSalida.set(Calendar.HOUR_OF_DAY, Integer.parseInt( data[2].substring(0,1) ));
                 calendarioSalida.set(Calendar.MINUTE, Integer.parseInt( data[2].substring(3,4) ));
 
                 // crea el objeto envio a insertar
                 Envio envio = new Envio();
                 envio.setCodigo_envio(data[0]);
-                envio.setFecha_hora( (java.sql.Date)calendarioSalida.getTime());
+                envio.setFecha_hora( calendarioSalida.getTime() );
                 envio.setAero_origen(aeroSalidaDefinido);
                 envio.setAero_destino(aeroLlegadaDefinido);
-                envio.setCant_paquetes_total(Integer.parseInt(data[3].split(":")[1]));
+                envio.setCant_paquetes_total(Integer.parseInt(data[3].split(":")[1])); //i 7 7700hq
                 
 
-
+                daoEnvio.insert(envio);
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
