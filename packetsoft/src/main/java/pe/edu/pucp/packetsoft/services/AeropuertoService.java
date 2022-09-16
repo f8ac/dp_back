@@ -84,13 +84,10 @@ public class AeropuertoService {
             String [] data=linea.split(" "); // separa las palabras en un array
 
             Aeropuerto aero = new Aeropuerto(); // crea aeropuerto
-            aero.setCod_aeropuerto(data[1]);
-            aero.setNombre(data[2]);
-            aero.setPais(data[3]);
-            aero.setCod_ciudad(data[4]);
+
             
-            //latitud, longitud, zona horaria, horas zona horaria
-            String responseMap = getResultFromMapsApi(data[1] + "+" + data[3] + "+" + data[2]); // COD + PAIS + nombre
+            // set de latitud, longitud, zona horaria, horas zona horaria
+            String responseMap = getResultFromMapsApi(data[1] + "+" + data[3] + "+" + data[2]); // busa por: COD + PAIS + nombre
             ObjectMapper mapper = new ObjectMapper();
             JsonNode responseJsonNode = mapper.readTree(responseMap);
             JsonNode resultsArray = (JsonNode) responseJsonNode.get("results");
@@ -101,7 +98,7 @@ public class AeropuertoService {
                 aero.setLatitud(latitud);
                 aero.setLongitud(longitud);
 
-                String responseZone = getResultFromZoneApi(latitud + "," + longitud); // aeropuerto zona horaria
+                String responseZone = getResultFromZoneApi(latitud + "," + longitud); // busca por: lat y lng de aeropuerto zona horaria
                 ObjectMapper mapperZone = new ObjectMapper();
                 JsonNode responseJsonNodeZone = mapperZone.readTree(responseZone);
                 Double horasZonaHoraria = responseJsonNodeZone.get("rawOffset").asDouble()/60/60;
@@ -110,8 +107,13 @@ public class AeropuertoService {
                 break;
             }
 
+            aero.setCod_aeropuerto(data[1]);
+            aero.setNombre(data[2]);
+            aero.setPais(data[3]);
+            aero.setCod_ciudad(data[4]);            
             aero.setCapacidad_total(100);
             aero.setCapacidad_utilizado(0);
+
             Continente con = new Continente();
             con.setId(1);
             aero.setContinente(con);
