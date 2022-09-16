@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "vuelo")
-@SQLDelete(sql = "UPDATE vuelo SET activo = 0 WHERE id = ?")
+@Table(name = "envio")
+@SQLDelete(sql = "UPDATE envio SET activo = 0 WHERE id = ?")
 @Where(clause = "activo = 1")
 @NoArgsConstructor
 @AllArgsConstructor

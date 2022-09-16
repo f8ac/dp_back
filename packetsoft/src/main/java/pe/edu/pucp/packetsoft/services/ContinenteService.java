@@ -20,4 +20,15 @@ public class ContinenteService {
     public Continente insert(Continente continente){
         return daoContinente.insert(continente);
     }
+
+    public void insertTodos(){
+        Continente con1 = new Continente("America");
+        Continente con2 = new Continente("Europoa");
+        Continente con3 = new Continente("Africa");
+
+
+        daoContinente.insert(con1);
+        daoContinente.insert(con2);
+        daoContinente.insert(con3);
+    }
 }

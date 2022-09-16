@@ -97,7 +97,7 @@ public class AeropuertoService {
 
             for(JsonNode results : resultsArray){ // toma el primer elemento del array resultsArray
                 Double latitud = results.at("/geometry/location/lat").asDouble();
-                Double longitud = results.at("/geometry/location/lat").asDouble();
+                Double longitud = results.at("/geometry/location/lng").asDouble();
                 aero.setLatitud(latitud);
                 aero.setLongitud(longitud);
 

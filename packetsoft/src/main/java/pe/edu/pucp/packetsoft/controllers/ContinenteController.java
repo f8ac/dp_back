@@ -26,4 +26,9 @@ public class ContinenteController {
         return continenteService.insert(continente);
     }
 
+    @PostMapping(value = "/insertTodos")
+    void insertTodos(){
+        continenteService.insertTodos();
+    }
+
 }
