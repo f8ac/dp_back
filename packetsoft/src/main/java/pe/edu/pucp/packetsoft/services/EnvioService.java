@@ -4,7 +4,10 @@ package pe.edu.pucp.packetsoft.services;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import java.io.File;
@@ -35,7 +38,7 @@ public class EnvioService {
     }
 
 
-    public void insertarFileAeroPaquetes(String nombreArchivo, String rutaFolder) throws FileNotFoundException{
+    public void insertarFileAeroPaquetes(String nombreArchivo, String rutaFolder) throws FileNotFoundException, ParseException{
         String line="";
 
         try {
@@ -55,19 +58,19 @@ public class EnvioService {
                
                 // calendario de envio
                 Calendar calendarioSalida = Calendar.getInstance(); // tiempos de salida y llegada del vuelo
-                calendarioSalida.set(Calendar.YEAR, Integer.parseInt( data[1].substring(0,3) ));
-                calendarioSalida.set(Calendar.MONTH, Integer.parseInt( data[1].substring(4,5) ));
-                calendarioSalida.set(Calendar.DAY_OF_MONTH, Integer.parseInt( data[1].substring(6,7) ));
-                calendarioSalida.set(Calendar.HOUR_OF_DAY, Integer.parseInt( data[2].substring(0,1) ));
-                calendarioSalida.set(Calendar.MINUTE, Integer.parseInt( data[2].substring(3,4) ));
+                calendarioSalida.set(Calendar.YEAR, Integer.parseInt( data[1].substring(0,4) ));
+                calendarioSalida.set(Calendar.MONTH, Integer.parseInt( data[1].substring(4,6) )-1);
+                calendarioSalida.set(Calendar.DAY_OF_MONTH, Integer.parseInt( data[1].substring(6,8) ));
+                calendarioSalida.set(Calendar.HOUR_OF_DAY, Integer.parseInt( data[2].substring(0,2) ));
+                calendarioSalida.set(Calendar.MINUTE, Integer.parseInt( data[2].substring(3,5) ));
 
                 // crea el objeto envio a insertar
                 Envio envio = new Envio();
                 envio.setCodigo_envio(data[0]);
-                envio.setFecha_hora( calendarioSalida.getTime() );
+                envio.setFecha_hora(calendarioSalida.getTime());
                 envio.setAero_origen(aeroSalidaDefinido);
                 envio.setAero_destino(aeroLlegadaDefinido);
-                envio.setCant_paquetes_total(Integer.parseInt(data[3].split(":")[1])); //i 7 7700hq
+                envio.setCant_paquetes_total(Integer.parseInt(data[3].split(":")[1]));
                 
 
                 daoEnvio.insert(envio);
@@ -78,7 +81,7 @@ public class EnvioService {
         }
     }
 
-    public void insertfile() throws IOException, InterruptedException {
+    public void insertfile() throws IOException, InterruptedException, ParseException {
         String rutaFolder = "packetsoft/src/main/resources/pack_enviados";
         File folder = new File(rutaFolder);
         File[] listOfFiles = folder.listFiles();

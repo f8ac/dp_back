@@ -7,6 +7,7 @@ import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.services.EnvioService;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -28,7 +29,7 @@ public class EnvioController {
 
 
     @PostMapping(value = "/insertfile")
-    void insertfile() throws IOException, InterruptedException{
+    void insertfile() throws IOException, InterruptedException, ParseException{
         envioService.insertfile();
     }
 
