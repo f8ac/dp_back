@@ -5,8 +5,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
-import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,7 +32,6 @@ public class TestController {
 
     @PostMapping(value = "/")
     String main(@RequestParam("file") MultipartFile file){
-        List<Continente> listaContinente = null;
         
         try{
             // String fileBuffer = new String(file.getBytes());
@@ -47,13 +44,9 @@ public class TestController {
             reader.readLine();
             reader.readLine();
             reader.readLine();
-        
-            Scanner scan;
-            
 
             while(reader.ready()){
                 line = reader.readLine();
-                scan = new Scanner(line);
 
                 String nombreContinente = line.trim();
 
@@ -64,7 +57,6 @@ public class TestController {
                 while(true){
 
                     line = reader.readLine();
-                    scan = new Scanner(line);
                     if(line == null) break;
                     if(line == null || line.isEmpty() ){
                         break;

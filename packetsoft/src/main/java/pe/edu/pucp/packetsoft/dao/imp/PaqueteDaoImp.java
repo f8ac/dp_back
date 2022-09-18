@@ -13,7 +13,7 @@ import pe.edu.pucp.packetsoft.models.Paquete;
 
 @Transactional
 @Repository
-@SuppressWarnings({"unchecked","deprecation"})
+@SuppressWarnings({"unchecked"})
 public class PaqueteDaoImp implements PaqueteDao{
     
     @PersistenceContext
