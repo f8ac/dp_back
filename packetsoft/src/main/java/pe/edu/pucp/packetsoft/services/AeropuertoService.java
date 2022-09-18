@@ -21,10 +21,6 @@ import java.time.Duration;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
-
-
-
 @Service
 public class AeropuertoService {
     @Autowired
