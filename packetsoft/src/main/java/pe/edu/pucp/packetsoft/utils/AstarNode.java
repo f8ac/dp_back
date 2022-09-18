@@ -5,6 +5,7 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import pe.edu.pucp.packetsoft.models.Aeropuerto;
 
 @Getter @Setter
 public class AstarNode implements Comparable<AstarNode> {
@@ -22,6 +23,8 @@ public class AstarNode implements Comparable<AstarNode> {
     public double g = Double.MAX_VALUE;
     // Hardcoded heuristic
     public double h; 
+
+    public Aeropuerto aeropuerto;
 
     public AstarNode(double h){
         this.h = h;
