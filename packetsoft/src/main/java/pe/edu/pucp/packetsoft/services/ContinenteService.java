@@ -23,7 +23,7 @@ public class ContinenteService {
 
     public void insertTodos(){
         Continente con1 = new Continente("America");
-        Continente con2 = new Continente("Europoa");
+        Continente con2 = new Continente("Europa");
         Continente con3 = new Continente("Africa");
 
 

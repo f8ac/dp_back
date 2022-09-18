@@ -1,40 +1,40 @@
-01   SKBO   Bogota              Colombia        bogo 
-02   SEQM   Quito               Ecuador         quit
-03   SVMI   Caracas             Venezuela       cara
-04   SBBR   Brasilia            Brasil          bras
-05   SPIM   Lima                Peru            lima
-06   SLLP   La_Paz              Bolivia         lapa
-07   SCEL   Santiago_de_Chile   Chile           sant
-08   SABE   Buenos_Aires        Argentina       buen
-09   SGAS   Asuncion            Paraguay        asun
-10   SUAA   Motenvideo          Uruguay         mont	
-11   LATI   Tirana              Albania         tira
-12   EDDI   Berlin              Alemania        berl
-13   LOWW   Viena               Austria         vien
-14   EBCI   Bruselas            Belgica         brus
-15   UMMS   Minsk               Bielorrusia     mins
-16   LBSF   Sofia               Bulgaria        sofi
-17   LKPR   Praga               Checa           prag
-18   LDZA   Zagreb              Croacia         zagr
-19   EKCH   Copenhague          Dinamarca       cope
-20   LZIB   Bratislava          Eslovaquia      brat
-21   LJLJ   Liubliana           Eslovenia       liub
-22   LEMD   Madrid              España          madr
-23   EETN   Tallin              Estonia         tall
-24   EFHK   Helsinki            Finlandia       hels
-25   LFPG   Paris               Francia         pari
-26   LGAV   Atenas              Grecia          aten
-27   EHAM   Amsterdam           Holanda         amst
-28   LHBP   Budapest            Hungria         buda
-29   EIDW   Dublin              Irlanda_(Eire)  dubl
-30   BIKF   Reykjavik           Islandia        reyk
-31   LIRA   Roma                Italia          roma
-32   EVRA   Riga                Letonia         riga
-33   ELLX   Luxemburgo          Luxemburgo      luxe
-34   LMML   LaValletta          Malta           lava
-35   ENGM   Oslo                Noruega         oslo
-36   EPMO   Varsovia            Polonia         vars
-37   LPPT   Lisboa              Portugal        lisb
-38   EGLL   Londres             Reino Unido     lond
-39   ESKN   Estocolmo           Suecia          esto
-40   LSZB   Berna               Suiza           bern
+01   SKBO   Bogota              Colombia        bogo 1
+02   SEQM   Quito               Ecuador         quit 1
+03   SVMI   Caracas             Venezuela       cara 1
+04   SBBR   Brasilia            Brasil          bras 1
+05   SPIM   Lima                Peru            lima 1
+06   SLLP   La_Paz              Bolivia         lapa 1
+07   SCEL   Santiago_de_Chile   Chile           sant 1
+08   SABE   Buenos_Aires        Argentina       buen 1
+09   SGAS   Asuncion            Paraguay        asun 1
+10   SUAA   Motenvideo          Uruguay         mont 1
+11   LATI   Tirana              Albania         tira 2
+12   EDDI   Berlin              Alemania        berl 2
+13   LOWW   Viena               Austria         vien 2
+14   EBCI   Bruselas            Belgica         brus 2
+15   UMMS   Minsk               Bielorrusia     mins 2
+16   LBSF   Sofia               Bulgaria        sofi 2
+17   LKPR   Praga               Checa           prag 2
+18   LDZA   Zagreb              Croacia         zagr 2
+19   EKCH   Copenhague          Dinamarca       cope 2
+20   LZIB   Bratislava          Eslovaquia      brat 2
+21   LJLJ   Liubliana           Eslovenia       liub 2
+22   LEMD   Madrid              España          madr 2
+23   EETN   Tallin              Estonia         tall 2
+24   EFHK   Helsinki            Finlandia       hels 2
+25   LFPG   Paris               Francia         pari 2
+26   LGAV   Atenas              Grecia          aten 2
+27   EHAM   Amsterdam           Holanda         amst 2
+28   LHBP   Budapest            Hungria         buda 2
+29   EIDW   Dublin              Irlanda_(Eire)  dubl 2
+30   BIKF   Reykjavik           Islandia        reyk 2
+31   LIRA   Roma                Italia          roma 2
+32   EVRA   Riga                Letonia         riga 2
+33   ELLX   Luxemburgo          Luxemburgo      luxe 2
+34   LMML   LaValletta          Malta           lava 2
+35   ENGM   Oslo                Noruega         oslo 2
+36   EPMO   Varsovia            Polonia         vars 2
+37   LPPT   Lisboa              Portugal        lisb 2
+38   EGLL   Londres             Reino_Unido     lond 2
+39   ESKN   Estocolmo           Suecia          esto 2
+40   LSZB   Berna               Suiza           bern 2

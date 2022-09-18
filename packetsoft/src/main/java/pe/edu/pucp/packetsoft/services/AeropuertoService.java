@@ -78,7 +78,7 @@ public class AeropuertoService {
 
     public void insertfile() throws IOException, InterruptedException {
         String line="";
-        BufferedReader br = new BufferedReader(new FileReader("packetsoft/src/main/resources/aeropuertosv01.txt"));
+        BufferedReader br = new BufferedReader(new FileReader("src/main/resources/aeropuertosv01.txt"));
         while((line=br.readLine()) != null) {
             String linea=line.trim().replaceAll(" +", " "); // limpia multiples espacios en blanco
             String [] data=linea.split(" "); // separa las palabras en un array
@@ -115,7 +115,8 @@ public class AeropuertoService {
             aero.setCapacidad_utilizado(0);
 
             Continente con = new Continente();
-            con.setId(1);
+            con.setId(Integer.parseInt(data[5]));
+            // System.out.println(data[5]+data[4]);
             aero.setContinente(con);
 
             daoAeropuerto.insert(aero); // inserta cada aeropuerto
