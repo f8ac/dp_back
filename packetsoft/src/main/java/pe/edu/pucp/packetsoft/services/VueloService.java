@@ -37,7 +37,7 @@ public class VueloService {
 
     public void insertfile() throws IOException, InterruptedException {
         String line="";
-        BufferedReader br = new BufferedReader(new FileReader("packetsoft/src/main/resources/vuelosv01.txt"));
+        BufferedReader br = new BufferedReader(new FileReader("src/main/resources/vuelosv01.txt"));
         while((line=br.readLine()) != null) {
             String [] data=line.split("-"); // separa las palabras en un array
 
