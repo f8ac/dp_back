@@ -43,4 +43,7 @@ public class Vuelo extends BaseEntity{
     @Column(name = "capacidad_utilizada")
     private Integer capacidad_utilizada;
 
+    @Column(name = "tiempo_vuelo_minutos")
+    private Integer tiempo_vuelo_minutos;
+
 }

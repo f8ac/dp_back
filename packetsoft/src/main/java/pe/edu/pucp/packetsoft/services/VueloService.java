@@ -51,14 +51,29 @@ public class VueloService {
 
 
             Calendar calendarioSalida = Calendar.getInstance(); // tiempos de salida y llegada del vuelo
-            calendarioSalida.set(Calendar.HOUR_OF_DAY, Integer.parseInt(data[2].split(":")[0]));
+            calendarioSalida.set(Calendar.HOUR_OF_DAY, Integer.parseInt(data[2].split(":")[0])-aeroSalidaDefinido.getNum_zona_horaria().intValue());
             calendarioSalida.set(Calendar.MINUTE, Integer.parseInt(data[2].split(":")[1]));
             Calendar calendarioLlegada = Calendar.getInstance();
-            calendarioLlegada.set(Calendar.HOUR_OF_DAY, Integer.parseInt(data[3].split(":")[0])+5);
+            calendarioLlegada.set(Calendar.HOUR_OF_DAY, Integer.parseInt(data[3].split(":")[0])-aeroLlegadaDefinido.getNum_zona_horaria().intValue());
             calendarioLlegada.set(Calendar.MINUTE, Integer.parseInt(data[3].split(":")[1]));
 
 
             Vuelo vuelo = new Vuelo(); // creacion del vuelo
+
+            
+
+            int minutos_salida =  (Integer.parseInt(data[2].split(":")[0])- aeroSalidaDefinido.getNum_zona_horaria().intValue()) * 60 + Integer.parseInt(data[2].split(":")[1]);
+            int minutos_llegada = (Integer.parseInt(data[3].split(":")[0])-aeroLlegadaDefinido.getNum_zona_horaria().intValue()) * 60 + Integer.parseInt(data[3].split(":")[1]);
+
+            int tiempo_vuelo_minutos = minutos_llegada - minutos_salida;
+
+            if(tiempo_vuelo_minutos < 0){
+                tiempo_vuelo_minutos += 24 * 60;
+            }
+            if(tiempo_vuelo_minutos > 1440){
+                tiempo_vuelo_minutos -= 1440;
+            }
+            vuelo.setTiempo_vuelo_minutos(tiempo_vuelo_minutos);
             vuelo.setHora_salida(calendarioSalida.getTime());
             vuelo.setHora_llegada(calendarioLlegada.getTime());
             vuelo.setCapacidad_utilizada(0);
