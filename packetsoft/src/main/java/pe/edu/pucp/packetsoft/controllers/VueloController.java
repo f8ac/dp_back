@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Vuelo;
 import pe.edu.pucp.packetsoft.services.VueloService;
 
@@ -34,6 +35,16 @@ public class VueloController {
     @PostMapping(value = "/insertfile")
     void insertfile() throws IOException, InterruptedException{
         vueloService.insertfile();
+    }
+
+    @GetMapping(value = "/listVecinos")
+    List<Vuelo> listVecinos(Aeropuerto aeropuerto){
+        return vueloService.listVecinos(aeropuerto);
+    }
+
+    @GetMapping(value = "/listVecinosLlegada")
+    List<Vuelo> listVecinosLlegada(Aeropuerto aeropuerto){
+        return vueloService.listVecinosLlegada(aeropuerto);
     }
 
 }

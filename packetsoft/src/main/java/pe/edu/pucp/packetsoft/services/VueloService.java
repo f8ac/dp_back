@@ -32,8 +32,14 @@ public class VueloService {
         return daoEmpresa.insert(empresa);
     }
 
+    public List<Vuelo> listVecinos(Aeropuerto aeropuerto){
+        return daoEmpresa.listVecinos(aeropuerto);
+    }
 
-
+    public List<Vuelo> listVecinosLlegada(Aeropuerto aeropuerto){
+        return daoEmpresa.listVecinosLlegada(aeropuerto);
+    }
+    
 
     public void insertfile() throws IOException, InterruptedException {
         String line="";
