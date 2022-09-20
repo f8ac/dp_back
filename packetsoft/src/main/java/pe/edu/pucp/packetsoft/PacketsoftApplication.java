@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import pe.edu.pucp.packetsoft.utils.tabuSearch.TabuSearch;
+
 // import pe.edu.pucp.packetsoft.utils.AstarNode;
 // import pe.edu.pucp.packetsoft.utils.AstarSearch;
 
@@ -17,6 +19,8 @@ public class PacketsoftApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(PacketsoftApplication.class, args);
+
+
 
         // AstarNode head = new AstarNode(3);
         // head.g = 0;

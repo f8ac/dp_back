@@ -1,36 +1,38 @@
-package pe.edu.pucp.packetsoft.utils.tabuSearch;
+package pe.edu.pucp.packetsoft.services;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
-import pe.edu.pucp.packetsoft.services.AeropuertoService;
+import pe.edu.pucp.packetsoft.utils.tabuSearch.TabuSearch;
 
-public class TabuSearch {
+@Service
+public class TabuSearchService {
     @Autowired
     private AeropuertoService aeropuertoService;
+    private int itEtapaLocal;
+    private int itEtapaInten;
+    private int itEtapaDiver;
+    private List<Aeropuerto> aeropuertos;
+    private int [][] matrizR;
+    private int [][] matrizF;
 
+    public void ejecutarAlgoritmo(int id1, int id2, int id3){
+        this.itEtapaLocal = id1;
+        this.itEtapaInten = id2;
+        this.itEtapaDiver = id3;
 
-
-
-
-    public TabuSearch(int itEtapaLocal, int itEtapaInten,int itEtapaDiver){
-        this.itEtapaLocal = itEtapaLocal;
-        this.itEtapaInten = itEtapaInten;
-        this.itEtapaDiver = itEtapaDiver;
-        
-        //aeropuertos = new ArrayList<Aeropuerto>();
-        aeropuertos = aeropuertoService.getAll();
+        //TabuSearch tabuSearch = new TabuSearch(20,20,20);
+        //tabuSearch.tabuSearchImplementation(); 
+        List<Aeropuerto> aeropuertos = aeropuertoService.getAll();
         matrizR = new int [aeropuertos.size()][aeropuertos.size()];
         matrizF = new int [aeropuertos.size()][aeropuertos.size()];
-    }
 
 
 
 
-    public void tabuSearchImplementation(){
         // matriz R ya esta
         // matriz F ya esta
         // solucion inicial falta
@@ -53,14 +55,5 @@ public class TabuSearch {
 
 
         }
-
-
-
     }
-
-    public void generarMatrices(){
-
-    }
-
-
 }
