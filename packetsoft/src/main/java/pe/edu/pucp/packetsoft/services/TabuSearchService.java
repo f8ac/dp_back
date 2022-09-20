@@ -99,6 +99,7 @@ public class TabuSearchService {
         }
         List<Aeropuerto> aeropuertosWithoutDuplicates = new ArrayList<>(new HashSet<>(aeropuertos));
         return aeropuertosWithoutDuplicates;
+        
     }
 
     List<Aeropuerto> obtenerlistVecinosLlegada(Aeropuerto aeropuerto) {
