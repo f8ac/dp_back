@@ -84,8 +84,27 @@ public class TabuSearchService {
         }
         aeropuertosMatriz.add(obtenerlistVecinosLlegada(solucionInicial.get(solucionInicial.size()-1 ) ));
 
-        for (int i = 0; i < this.tamanioMatriz; i++) {
-            for (int j = 0; j < this.tamanioMatriz; j++) {
+        int totalVecinos = calcularTotalVecinos(aeropuertosMatriz);
+        boolean banderaMov = false;
+        List<Aeropuerto> solucionAux = new ArrayList<Aeropuerto>();
+        solucionAux.addAll(solucionInicial);
+        List<Aeropuerto> mejorMov = new ArrayList<Aeropuerto>();
+
+        for (int i = 0; i < totalVecinos; i++) {
+            for (int j = 0; j < totalVecinos; j++) {
+               if(matrizR[i][j]==0){
+                    if(i==j){
+                        boolean valido = validarInsercion(i,aeropuertosMatriz,solucionAux);
+                        if(valido){
+                            banderaMov=true;
+                        }
+                    }else{
+
+                    }
+               }
+               if(matrizR[i][j]>0){
+                    matrizR[i][j]--;
+               }
             }
         }
     }
@@ -123,6 +142,14 @@ public class TabuSearchService {
             }
         }
 
+    }
+
+    int calcularTotalVecinos(List<List <Aeropuerto>> vecinos){
+        int total=0;
+        for (int i=0;i<vecinos.size();i++){
+            total+=vecinos.get(i).size();
+        }
+        return total;
     }
 
 }

@@ -80,7 +80,7 @@ public class EnvioService {
     }
 
     public void insertfile() throws IOException, InterruptedException, ParseException {
-        String rutaFolder = "packetsoft/src/main/resources/pack_enviados";
+        String rutaFolder = "src/main/resources/pack_enviados";
         File folder = new File(rutaFolder);
         File[] listOfFiles = folder.listFiles();
         
