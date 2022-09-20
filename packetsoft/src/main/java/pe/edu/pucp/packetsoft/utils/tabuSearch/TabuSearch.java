@@ -1,30 +1,22 @@
 package pe.edu.pucp.packetsoft.utils.tabuSearch;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import pe.edu.pucp.packetsoft.models.Aeropuerto;
-import pe.edu.pucp.packetsoft.services.AeropuertoService;
-
 public class TabuSearch {
-    @Autowired
-    private AeropuertoService aeropuertoService;
+    //@Autowired
+    //private AeropuertoService aeropuertoService;
 
 
 
 
 
     public TabuSearch(int itEtapaLocal, int itEtapaInten,int itEtapaDiver){
-        this.itEtapaLocal = itEtapaLocal;
-        this.itEtapaInten = itEtapaInten;
-        this.itEtapaDiver = itEtapaDiver;
+        //this.itEtapaLocal = itEtapaLocal;
+        //this.itEtapaInten = itEtapaInten;
+        //this.itEtapaDiver = itEtapaDiver;
         
         //aeropuertos = new ArrayList<Aeropuerto>();
-        aeropuertos = aeropuertoService.getAll();
-        matrizR = new int [aeropuertos.size()][aeropuertos.size()];
-        matrizF = new int [aeropuertos.size()][aeropuertos.size()];
+        //aeropuertos = aeropuertoService.getAll();
+        //matrizR = new int [aeropuertos.size()][aeropuertos.size()];
+        //matrizF = new int [aeropuertos.size()][aeropuertos.size()];
     }
 
 
@@ -34,7 +26,7 @@ public class TabuSearch {
         // matriz R ya esta
         // matriz F ya esta
         // solucion inicial falta
-
+/*
         for(int i = 0; i < this.itEtapaLocal; i++) { // primer for itEtapaLocal
 
 
@@ -55,7 +47,7 @@ public class TabuSearch {
         }
 
 
-
+ */
     }
 
     public void generarMatrices(){
