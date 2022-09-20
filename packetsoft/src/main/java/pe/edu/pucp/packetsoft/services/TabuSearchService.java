@@ -89,22 +89,23 @@ public class TabuSearchService {
         List<Aeropuerto> solucionAux = new ArrayList<Aeropuerto>();
         solucionAux.addAll(solucionInicial);
         List<Aeropuerto> mejorMov = new ArrayList<Aeropuerto>();
+        int tamanioFila = aeropuertosMatriz.get(0).size();
 
-        for (int i = 0; i < totalVecinos; i++) {
-            for (int j = 0; j < totalVecinos; j++) {
-               if(matrizR[i][j]==0){
+        for (int i = 0; i < this.tamanioMatriz; i++) { // exception
+            for (int j = 0; j < this.tamanioMatriz; j++) {
+                if(matrizR[i][j]==0){
                     if(i==j){
-                        boolean valido = validarInsercion(i,aeropuertosMatriz,solucionAux);
-                        if(valido){
-                            banderaMov=true;
-                        }
+                        //boolean valido = validarInsercion(i,aeropuertosMatriz,solucionAux);
+                        //if(valido){
+                        //    banderaMov=true;
+                        //}
                     }else{
 
                     }
-               }
-               if(matrizR[i][j]>0){
-                    matrizR[i][j]--;
-               }
+                }
+                if(matrizR[i][j]>0){
+                        matrizR[i][j]--;
+                }
             }
         }
     }
