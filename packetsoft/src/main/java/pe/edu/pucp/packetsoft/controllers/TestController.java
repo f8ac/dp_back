@@ -14,6 +14,7 @@ import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.services.AeropuertoService;
 import pe.edu.pucp.packetsoft.services.ContinenteService;
 import pe.edu.pucp.packetsoft.services.EnvioService;
+import pe.edu.pucp.packetsoft.services.VueloService;
 import pe.edu.pucp.packetsoft.utils.AstarNode;
 
 @RestController
@@ -29,6 +30,9 @@ public class TestController {
 
     @Autowired
     private EnvioService envioService;
+
+    @Autowired
+    private VueloService vueloService;
 
     @PostMapping(value = "/main")
     String main(){
@@ -50,7 +54,8 @@ public class TestController {
             // SE INSERTAN LOS COSTOS DE LOS VERTICES EN ORDEN DE LLEGADA
             List<Envio> listaEnvios = envioService.getAll();
             for (Envio envio : listaEnvios) {
-                aeropuertoService.get(envio.getAero_destino().getId());
+
+                
             }
             result = "insertado xd";
         }catch(Exception ex){
@@ -67,10 +72,11 @@ public class TestController {
     String insert(){
         String result = null;
         try{
-
             continenteService.insertTodos();
             aeropuertoService.insertfile();
             envioService.insertfile();
+            vueloService.insertfile();
+            
         }catch(Exception ex){
             System.err.println(ex.getMessage());
             result = "error lol";
