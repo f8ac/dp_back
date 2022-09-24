@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Envio;
+import pe.edu.pucp.packetsoft.models.Vuelo;
 import pe.edu.pucp.packetsoft.services.AeropuertoService;
 import pe.edu.pucp.packetsoft.services.ContinenteService;
 import pe.edu.pucp.packetsoft.services.EnvioService;
@@ -28,8 +29,8 @@ public class TestController {
     @Autowired
     private ContinenteService continenteService;
 
-    @Autowired
-    private EnvioService envioService;
+    // @Autowired
+    // private EnvioService envioService;
 
     @Autowired
     private VueloService vueloService;
@@ -52,9 +53,23 @@ public class TestController {
             }
 
             // SE INSERTAN LOS COSTOS DE LOS VERTICES EN ORDEN DE LLEGADA
-            List<Envio> listaEnvios = envioService.getAll();
-            for (Envio envio : listaEnvios) {
+            List<Vuelo> listaVuelos = vueloService.getAll();
+            for (Vuelo vuelo : listaVuelos) {
 
+                int iOrigen = -1, iDestino = -1, j = 0;
+                for (AstarNode nodo : listaNodos) {
+                    // ENCONTRAMOS EL NODO ORIGEN EN LA LISTA
+                    if(nodo.getAeropuerto().getId() == vuelo.getAeropuerto_salida().getId()){
+                        iOrigen = j;
+                    }
+                    // ENCONTRAMOS EL NODO DESTINO EN LA LISTA
+                    if(nodo.getAeropuerto().getId() == vuelo.getAeropuerto_llegada().getId()){
+                        iDestino = j; 
+                    }
+                    j++;
+                }
+                int costo = vuelo.getTiempo_vuelo_minutos();
+                listaNodos.get(iOrigen).addBranch(costo, listaNodos.get(iDestino));
                 
             }
             result = "insertado xd";
@@ -74,7 +89,7 @@ public class TestController {
         try{
             continenteService.insertTodos();
             aeropuertoService.insertfile();
-            envioService.insertfile();
+            // envioService.insertfile();
             vueloService.insertfile();
             
         }catch(Exception ex){
