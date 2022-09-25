@@ -25,7 +25,7 @@ public class VueloDaoImp implements VueloDao{
     public List<Vuelo> getAll() {
         List<Vuelo> list = null;
         try {
-            var hql = "from vuelo as v";
+            var hql = "from Vuelo as v";
             list = entityManager.createQuery(hql).getResultList();
         }
         catch (Exception exception){

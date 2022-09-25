@@ -18,8 +18,7 @@ public class PacketsoftApplication {
 
 		SpringApplication.run(PacketsoftApplication.class, args);
 
-
-
+    // SAMPLE ASTAR
         // AstarNode head = new AstarNode(3);
         // head.g = 0;
         // AstarNode n1 = new AstarNode(2);

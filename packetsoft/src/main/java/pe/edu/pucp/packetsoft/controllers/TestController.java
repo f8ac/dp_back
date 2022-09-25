@@ -17,6 +17,7 @@ import pe.edu.pucp.packetsoft.services.ContinenteService;
 import pe.edu.pucp.packetsoft.services.EnvioService;
 import pe.edu.pucp.packetsoft.services.VueloService;
 import pe.edu.pucp.packetsoft.utils.AstarNode;
+import pe.edu.pucp.packetsoft.utils.AstarSearch;
 
 @RestController
 @RequestMapping("/test")
@@ -29,8 +30,8 @@ public class TestController {
     @Autowired
     private ContinenteService continenteService;
 
-    // @Autowired
-    // private EnvioService envioService;
+    @Autowired
+    private EnvioService envioService;
 
     @Autowired
     private VueloService vueloService;
@@ -53,6 +54,7 @@ public class TestController {
             }
 
             // SE INSERTAN LOS COSTOS DE LOS VERTICES EN ORDEN DE LLEGADA
+            
             List<Vuelo> listaVuelos = vueloService.getAll();
             for (Vuelo vuelo : listaVuelos) {
 
@@ -72,6 +74,24 @@ public class TestController {
                 listaNodos.get(iOrigen).addBranch(costo, listaNodos.get(iDestino));
                 
             }
+
+            // EL MAPEO ESTA TERMINADO
+
+            /* 
+            PARA CONOCER EL RESULTADO, TENEMOS QUE LLAMAR A 
+            AstarSearch tomando el origen y el destino de un envio
+            */
+            List<Envio> listaEnvios = envioService.getAll();
+
+            Envio envioPrueba = listaEnvios.get(0);
+
+
+
+            AstarNode res = AstarSearch.aStar(listaNodos.get(0), listaNodos.get(35));
+
+            AstarSearch.printPath(res);
+
+            
             result = "insertado xd";
         }catch(Exception ex){
             System.err.println(ex.getMessage());
@@ -82,6 +102,11 @@ public class TestController {
 
         return result;
     }
+
+    int nodoAeropuerto(List<AstarNode> listaNodos,Aeropuerto aeropuerto){
+        return 0;
+    }
+
 
     @PostMapping(value = "/insert")
     String insert(){
