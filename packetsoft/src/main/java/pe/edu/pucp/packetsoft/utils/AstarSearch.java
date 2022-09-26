@@ -2,11 +2,12 @@ package pe.edu.pucp.packetsoft.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.PriorityQueue;
 
 public class AstarSearch {
-    public static AstarNode aStar(AstarNode start, AstarNode target){
+    public static AstarNode aStar(AstarNode start, AstarNode target,Date time){
 
         PriorityQueue<AstarNode> closedList = new PriorityQueue<>();
         PriorityQueue<AstarNode> openList = new PriorityQueue<>();
@@ -27,13 +28,13 @@ public class AstarSearch {
                 if(!openList.contains(m) && !closedList.contains(m)){
                     m.parent = n;
                     m.g = totalWeight;
-                    m.f = m.g + m.calculateHeuristic(target);
+                    m.f = m.g + m.calculateHeuristic(target,time,edge);
                     openList.add(m);
                 } else {
                     if(totalWeight < m.g){
                         m.parent = n;
                         m.g = totalWeight;
-                        m.f = m.g + m.calculateHeuristic(target);
+                        m.f = m.g + m.calculateHeuristic(target,time,edge);
     
                         if(closedList.contains(m)){
                             closedList.remove(m);

@@ -71,7 +71,7 @@ public class TestController {
                     j++;
                 }
                 int costo = vuelo.getTiempo_vuelo_minutos();
-                listaNodos.get(iOrigen).addBranch(costo, listaNodos.get(iDestino));
+                listaNodos.get(iOrigen).addBranch(costo, listaNodos.get(iDestino),vuelo.getHora_salida(),vuelo.getHora_llegada());
                 
             }
 
@@ -83,11 +83,14 @@ public class TestController {
             */
             List<Envio> listaEnvios = envioService.getAll();
 
-            Envio envioPrueba = listaEnvios.get(0);
+            Envio envioPrueba = listaEnvios.get(100);
 
+            int iOrigen = indexNodoAeropuerto(listaNodos, envioPrueba.getAero_origen());
+            int iDestino = indexNodoAeropuerto(listaNodos, envioPrueba.getAero_destino());
 
+            AstarNode res = AstarSearch.aStar(listaNodos.get(iOrigen), listaNodos.get(iDestino),envioPrueba.getFecha_hora());
 
-            AstarNode res = AstarSearch.aStar(listaNodos.get(0), listaNodos.get(35));
+            // AstarNode res = AstarSearch.aStar(listaNodos.get(0), listaNodos.get(35));
 
             AstarSearch.printPath(res);
 
@@ -103,8 +106,15 @@ public class TestController {
         return result;
     }
 
-    int nodoAeropuerto(List<AstarNode> listaNodos,Aeropuerto aeropuerto){
-        return 0;
+    int indexNodoAeropuerto(List<AstarNode> listaNodos,Aeropuerto aeropuerto){
+        int i = 0;
+        for (AstarNode astarNode : listaNodos) {
+            if(astarNode.aeropuerto.getId() == aeropuerto.getId()){
+                return i;
+            }
+            i++;
+        }
+        return -1;
     }
 
 

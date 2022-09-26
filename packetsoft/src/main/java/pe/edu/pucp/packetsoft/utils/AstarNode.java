@@ -1,6 +1,7 @@
 package pe.edu.pucp.packetsoft.utils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import lombok.Getter;
@@ -43,8 +44,17 @@ public class AstarNode implements Comparable<AstarNode> {
             this.node = node;
         }
 
+        Edge(int weight, AstarNode node, Date salida, Date llegada){
+            this.weight = weight;
+            this.node = node;
+            this.horaSalida = salida;
+            this.horaLlegada = llegada;
+        }
+
         public int weight;
         public AstarNode node;
+        public Date horaSalida;
+        public Date horaLlegada;
     }
 
     public void addBranch(int weight, AstarNode node){
@@ -52,9 +62,29 @@ public class AstarNode implements Comparable<AstarNode> {
         neighbors.add(newEdge);
     }
 
-    public double calculateHeuristic(AstarNode target){
+    public void addBranch(int weight, AstarNode node, Date salida, Date llegada){
+        Edge newEdge = new Edge(weight, node, salida, llegada);
+        neighbors.add(newEdge);
+    }
 
-        // Modificar
+    public double calculateHeuristic(AstarNode target){
+        
         return this.h;
+    }
+
+    public double calculateHeuristic(AstarNode target, Date time,Edge edge){
+        if(compareTimes(time, edge.horaSalida) > 0){
+            return Double.MAX_VALUE; //no considerar este camino
+        }
+        return this.h;
+    }
+
+    public int compareTimes(Date d1, Date d2){
+        int t1;
+        int t2;
+
+        t1 = (int) (d1.getTime() % (24*60*60*1000L));
+        t2 = (int) (d2.getTime() % (24*60*60*1000L));
+        return (t1 - t2);
     }
 }
