@@ -73,10 +73,16 @@ public class AstarNode implements Comparable<AstarNode> {
     }
 
     public double calculateHeuristic(AstarNode target, Date time,Edge edge){
-        if(compareTimes(time, edge.horaSalida) > 0){
+        int tiempoRestante  = compareTimes(time, edge.horaSalida);
+        this.h = (double)tiempoRestante;
+        if(tiempoRestante > 0){
+            System.out.println("Vuelo ya partio: " + this.h);
             return Double.MAX_VALUE; //no considerar este camino
+        }else{
+            System.out.println("Heuristica evaluada: " + this.h);
+            return this.h;
         }
-        return this.h;
+
     }
 
     public int compareTimes(Date d1, Date d2){

@@ -12,7 +12,7 @@ public class AstarSearch {
         PriorityQueue<AstarNode> closedList = new PriorityQueue<>();
         PriorityQueue<AstarNode> openList = new PriorityQueue<>();
     
-        start.f = start.g + start.calculateHeuristic(target);
+        start.f = start.g + start.calculateHeuristic(target,time,start.neighbors.get(0));
         openList.add(start);
     
         while(!openList.isEmpty()){
@@ -67,6 +67,28 @@ public class AstarSearch {
     
         for(int id : ids){
             System.out.print(id + " ");
+        }
+        System.out.println("");
+    }
+
+    public static void printNewPath(AstarNode target){
+        AstarNode n = target;
+    
+        if(n==null)
+            return;
+    
+        List<AstarNode> ids = new ArrayList<AstarNode>();
+    
+        while(n.parent != null){
+            ids.add(n);
+            n = n.parent;
+        }
+        ids.add(n);
+        Collections.reverse(ids);
+    
+        for (AstarNode astarNode : ids) {
+            System.out.print(astarNode.id + "(" + astarNode.h +")");
+            
         }
         System.out.println("");
     }

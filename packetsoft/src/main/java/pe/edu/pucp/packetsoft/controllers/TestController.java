@@ -85,24 +85,19 @@ public class TestController {
 
             Envio envioPrueba = listaEnvios.get(100);
 
-            int iOrigen = indexNodoAeropuerto(listaNodos, envioPrueba.getAero_origen());
+            int iOrigen  = indexNodoAeropuerto(listaNodos,  envioPrueba.getAero_origen());
             int iDestino = indexNodoAeropuerto(listaNodos, envioPrueba.getAero_destino());
 
             AstarNode res = AstarSearch.aStar(listaNodos.get(iOrigen), listaNodos.get(iDestino),envioPrueba.getFecha_hora());
 
             // AstarNode res = AstarSearch.aStar(listaNodos.get(0), listaNodos.get(35));
 
-            AstarSearch.printPath(res);
-
+            AstarSearch.printNewPath(res);
             
             result = "insertado xd";
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }
-        
-
-
-
         return result;
     }
 
