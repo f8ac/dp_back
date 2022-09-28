@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import pe.edu.pucp.packetsoft.models.Envio;
+
 public class AstarSearch {
     public static AstarNode aStar(AstarNode start, AstarNode target,Date time){
 
@@ -27,12 +29,14 @@ public class AstarSearch {
     
                 if(!openList.contains(m) && !closedList.contains(m)){
                     m.parent = n;
+                    m.vuelo = edge.vuelo;
                     m.g = totalWeight;
                     m.f = m.g + m.calculateHeuristic(target,time,edge);
                     openList.add(m);
                 } else {
                     if(totalWeight < m.g){
                         m.parent = n;
+                        m.vuelo = edge.vuelo;
                         m.g = totalWeight;
                         m.f = m.g + m.calculateHeuristic(target,time,edge);
     
@@ -48,6 +52,21 @@ public class AstarSearch {
             closedList.add(n);
         }
         return null;
+    }
+
+    public static void restaAlmacenamiento(AstarNode target, Envio envio){
+        AstarNode n = target;
+    
+        if(n==null)
+            return;
+    
+        while(n.parent != null){
+            if(n.vuelo != null){
+                int cantidad_actual = n.vuelo.getCapacidad_utilizada();
+                n.vuelo.setCapacidad_utilizada(cantidad_actual + envio.getCant_paquetes_total());
+            }
+            n = n.parent;
+        }
     }
     
     public static void printPath(AstarNode target){

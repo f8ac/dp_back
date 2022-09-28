@@ -38,13 +38,13 @@ public class VueloController {
     }
 
     @GetMapping(value = "/listVecinos")
-    List<Vuelo> listVecinos(Aeropuerto aeropuerto){
-        return vueloService.listVecinos(aeropuerto);
+    List<Vuelo> listVecinos(Aeropuerto aeropuerto, List<Integer> aeropuerto2){
+        return vueloService.listVecinos(aeropuerto,aeropuerto2);
     }
 
     @GetMapping(value = "/listVecinosLlegada")
-    List<Vuelo> listVecinosLlegada(Aeropuerto aeropuerto){
-        return vueloService.listVecinosLlegada(aeropuerto);
+    List<Vuelo> listVecinosLlegada(Aeropuerto aeropuerto,List<Integer>  aeropuerto2){
+        return vueloService.listVecinosLlegada(aeropuerto,aeropuerto2);
     }
 
 }

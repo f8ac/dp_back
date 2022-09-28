@@ -31,6 +31,10 @@ public class EnvioService {
         return daoEnvio.getAll();
     }
 
+    public Envio get(int id){
+        return daoEnvio.get(id);
+    }
+
     public Envio insert(Envio envio){
         return daoEnvio.insert(envio);
     }

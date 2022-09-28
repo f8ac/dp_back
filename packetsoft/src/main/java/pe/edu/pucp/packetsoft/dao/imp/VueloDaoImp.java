@@ -62,10 +62,18 @@ public class VueloDaoImp implements VueloDao{
 
     @Transactional
     @Override
-    public List<Vuelo> listVecinos(Aeropuerto aeropuerto) {
+    public List<Vuelo> listVecinos(Aeropuerto aeropuerto,List<Integer> aeropuertosId) {
         List<Vuelo> list = null;
         try {
-            var hql = "from Vuelo as a where a.aeropuerto_salida = "+ aeropuerto.getId();
+            String condicion="(";
+            for(int i=0;i<aeropuertosId.size();i++){
+                condicion+=aeropuertosId.get(i);
+                if(i!=aeropuertosId.size()-1){
+                    condicion+=",";
+                }
+            }
+            condicion+=")";
+            var hql = "from Vuelo as a where a.aeropuerto_salida = "+ aeropuerto.getId()+" and a.aeropuerto_llegada not in "+ condicion;
             list = entityManager.createQuery(hql).getResultList();
         }
         catch (Exception exception){
@@ -76,10 +84,18 @@ public class VueloDaoImp implements VueloDao{
 
     @Transactional
     @Override
-    public List<Vuelo> listVecinosLlegada(Aeropuerto aeropuerto) {
+    public List<Vuelo> listVecinosLlegada(Aeropuerto aeropuerto,List<Integer> aeropuertosId) {
         List<Vuelo> list = null;
         try {
-            var hql = "from Vuelo as a where a.aeropuerto_llegada = "+ aeropuerto.getId();
+            String condicion="(";
+            for(int i=0;i<aeropuertosId.size();i++){
+                condicion+=aeropuertosId.get(i);
+                if(i!=aeropuertosId.size()-1){
+                    condicion+=",";
+                }
+            }
+            condicion+=")";
+            var hql = "from Vuelo as a where a.aeropuerto_llegada = "+ aeropuerto.getId()+" and a.aeropuerto_salida not in "+ condicion;
             list = entityManager.createQuery(hql).getResultList();
         }
         catch (Exception exception){

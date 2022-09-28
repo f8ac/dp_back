@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
+import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.Vuelo;
 
 @Service
@@ -17,6 +18,8 @@ public class TabuSearchService {
     private AeropuertoService aeropuertoService;
     @Autowired
     private VueloService vueloService;
+    @Autowired
+    private EnvioService envioService;
 
     private int itEtapaLocal;
     private int itEtapaInten;
@@ -30,6 +33,7 @@ public class TabuSearchService {
     private int tenenciaMax = 10;
 
     public void ejecutarAlgoritmo(int id1, int id2, int id3) {
+
         this.itEtapaLocal = id1;
         this.itEtapaInten = id2;
         this.itEtapaDiver = id3;
@@ -41,13 +45,21 @@ public class TabuSearchService {
 
         // mejorSolucion y solucion inicial
         List<Aeropuerto> mejorSolucion = new ArrayList<>();
+
         List<Aeropuerto> solucionInicial = new ArrayList<>();
         solucionInicial.add(aeropuertos.get(2));// SVMI-SEQM
-        solucionInicial.add(aeropuertos.get(1));// SEQM -
-        solucionInicial.add(aeropuertos.get(3)); // SBBR -
+        solucionInicial.add(aeropuertos.get(1));// SEQM-
+        solucionInicial.add(aeropuertos.get(3)); // SBBR-
         // solucionInicial.add(aeropuertos.get(7));
 
-        //
+        //Vuelos
+        List<Vuelo> soluIniVuelo = new ArrayList<>();
+        soluIniVuelo.add(vueloService.get(2));
+        soluIniVuelo.add(vueloService.get(5));
+
+        //Envio
+        //Necesitamos sacar un envio
+        Envio envio = envioService.get(1);
 
         // empieza el algoritmo
         mejorSolucion.addAll(solucionInicial);
@@ -77,12 +89,18 @@ public class TabuSearchService {
         List<Aeropuerto> aeropuertosVecinos;
         List<List<Aeropuerto>> aeropuertosMatriz = new ArrayList<List<Aeropuerto>>();
 
-        for (int i = 0; i < solucionInicial.size()-1; i++) {
-            aeropuertosVecinos = buscarVecinos(solucionInicial.get(i));
-            aeropuertosMatriz.add(aeropuertosVecinos);
-            
+        //Lista de ids de solucion inicial
+        List<Integer> solucionInicialId = new ArrayList<Integer>();
+        for (int i=0;i<solucionInicial.size();i++){
+            solucionInicialId.add(solucionInicial.get(i).getId());
         }
-        aeropuertosMatriz.add(obtenerlistVecinosLlegada(solucionInicial.get(solucionInicial.size()-1 ) ));
+
+        for (int i = 0; i < solucionInicial.size()-1; i++) {
+            aeropuertosVecinos = buscarVecinos(solucionInicial.get(i),solucionInicialId);
+            aeropuertosMatriz.add(aeropuertosVecinos);
+        }
+
+        aeropuertosMatriz.add(obtenerlistVecinosLlegada(solucionInicial.get(solucionInicial.size()-1),solucionInicialId));
 
         int totalVecinos = calcularTotalVecinos(aeropuertosMatriz);
         boolean banderaMov = false;
@@ -113,8 +131,8 @@ public class TabuSearchService {
         }
     }
 
-    List<Aeropuerto> buscarVecinos(Aeropuerto aeropuerto) {
-        List<Vuelo> vuelos = vueloService.listVecinos(aeropuerto);
+    List<Aeropuerto> buscarVecinos(Aeropuerto aeropuerto,List<Integer> aeropuertosId) {
+        List<Vuelo> vuelos = vueloService.listVecinos(aeropuerto,aeropuertosId);
         List<Aeropuerto> aeropuertos = new ArrayList<>();
         for (int i = 0; i < vuelos.size(); i++) {
             aeropuertos.add(vuelos.get(i).getAeropuerto_llegada());
@@ -125,8 +143,8 @@ public class TabuSearchService {
         
     }
 
-    List<Aeropuerto> obtenerlistVecinosLlegada(Aeropuerto aeropuerto) {
-        List<Vuelo> vuelos = vueloService.listVecinosLlegada(aeropuerto);
+    List<Aeropuerto> obtenerlistVecinosLlegada(Aeropuerto aeropuerto,List<Integer> aeropuertosId) {
+        List<Vuelo> vuelos = vueloService.listVecinosLlegada(aeropuerto,aeropuertosId);
         List<Aeropuerto> aeropuertos = new ArrayList<>();
         for (int i = 0; i < vuelos.size(); i++) {
             aeropuertos.add(vuelos.get(i).getAeropuerto_salida());

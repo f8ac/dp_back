@@ -71,7 +71,7 @@ public class TestController {
                     j++;
                 }
                 int costo = vuelo.getTiempo_vuelo_minutos();
-                listaNodos.get(iOrigen).addBranch(costo, listaNodos.get(iDestino),vuelo.getHora_salida(),vuelo.getHora_llegada());
+                listaNodos.get(iOrigen).addBranch(costo, listaNodos.get(iDestino),vuelo);
                 
             }
 
@@ -90,9 +90,11 @@ public class TestController {
 
             AstarNode res = AstarSearch.aStar(listaNodos.get(iOrigen), listaNodos.get(iDestino),envioPrueba.getFecha_hora());
 
+            AstarSearch.restaAlmacenamiento(res, envioPrueba);
             // AstarNode res = AstarSearch.aStar(listaNodos.get(0), listaNodos.get(35));
 
-            AstarSearch.printNewPath(res);
+            // AstarSearch.printNewPath(res);
+            AstarSearch.printPath(res);
             
             result = "insertado xd";
         }catch(Exception ex){
