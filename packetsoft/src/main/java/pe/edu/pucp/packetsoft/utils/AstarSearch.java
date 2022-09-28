@@ -83,11 +83,11 @@ public class AstarSearch {
         }
         ids.add(n.id);
         Collections.reverse(ids);
-    
+        // System.out.println("\n==================================");
         for(int id : ids){
             System.out.print(id + " ");
         }
-        System.out.println("");
+        System.out.println("\n==================================");
     }
 
     public static void printNewPath(AstarNode target){
@@ -105,10 +105,12 @@ public class AstarSearch {
         ids.add(n);
         Collections.reverse(ids);
     
+        System.out.println("==================================");
         for (AstarNode astarNode : ids) {
             System.out.print(astarNode.id + "(" + astarNode.h +")");
             
         }
+        System.out.println("==================================");
         System.out.println("");
     }
 }

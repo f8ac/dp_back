@@ -75,26 +75,52 @@ public class TestController {
                 
             }
 
-            // EL MAPEO ESTA TERMINADO
+            // EL MAPEO ESTA TERMINADO ================================================================================
 
             /* 
             PARA CONOCER EL RESULTADO, TENEMOS QUE LLAMAR A 
             AstarSearch tomando el origen y el destino de un envio
+
+            Para la simulacion total es mejor iterar los envios, luego ya se 
+            iteraran minutos simulando el paso del tiempo
             */
+
             List<Envio> listaEnvios = envioService.getAll();
 
-            Envio envioPrueba = listaEnvios.get(100);
+            // PRUEBA CON SOLO UN ELEMENTO ========================================================================== 
+            // Envio envioPrueba = listaEnvios.get(100);
 
-            int iOrigen  = indexNodoAeropuerto(listaNodos,  envioPrueba.getAero_origen());
-            int iDestino = indexNodoAeropuerto(listaNodos, envioPrueba.getAero_destino());
+            // int iOrigen  = indexNodoAeropuerto(listaNodos,  envioPrueba.getAero_origen());
+            // int iDestino = indexNodoAeropuerto(listaNodos, envioPrueba.getAero_destino());
 
-            AstarNode res = AstarSearch.aStar(listaNodos.get(iOrigen), listaNodos.get(iDestino),envioPrueba.getFecha_hora());
+            // AstarNode res = AstarSearch.aStar(listaNodos.get(iOrigen), listaNodos.get(iDestino),envioPrueba.getFecha_hora());
 
-            AstarSearch.restaAlmacenamiento(res, envioPrueba);
-            // AstarNode res = AstarSearch.aStar(listaNodos.get(0), listaNodos.get(35));
+            // AstarSearch.restaAlmacenamiento(res, envioPrueba);
+            // // AstarNode res = AstarSearch.aStar(listaNodos.get(0), listaNodos.get(35));
 
-            // AstarSearch.printNewPath(res);
-            AstarSearch.printPath(res);
+            // // AstarSearch.printNewPath(res);
+            // AstarSearch.printPath(res);
+        
+
+            // PRUEBA CON LA LISTA DE ENVIOS ========================================================================== 
+
+
+            for (int j = 0; j < 100; j++) {
+                Envio envioActual = listaEnvios.get(j);
+                int origen  = indexNodoAeropuerto(listaNodos,  envioActual.getAero_origen());
+                int destino = indexNodoAeropuerto(listaNodos, envioActual.getAero_destino());
+
+                AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino),envioActual.getFecha_hora());
+
+                AstarSearch.restaAlmacenamiento(target, envioActual);
+                AstarSearch.printPath(target);
+                
+            }
+
+
+
+
+            
             
             result = "insertado xd";
         }catch(Exception ex){
