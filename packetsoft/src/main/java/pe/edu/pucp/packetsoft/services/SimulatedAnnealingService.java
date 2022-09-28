@@ -41,7 +41,7 @@ public class SimulatedAnnealingService {
                 if (currentDistance < bestDistance) {
                     bestDistance = currentDistance;
                 } else if (Math.exp((bestDistance - currentDistance) / t) < Math.random()) {
-                    currentSolution.revertSwap();
+                    //currentSolution.revertSwap();
                 }
                 t *= coolingRate;
             } else {

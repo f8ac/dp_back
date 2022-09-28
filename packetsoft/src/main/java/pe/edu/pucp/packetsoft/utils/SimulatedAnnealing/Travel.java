@@ -52,7 +52,7 @@ public class Travel {
             } else {
                 destination = getAeropuerto(0);
             }
-            distance += starting.getAeropuerto(destination);
+            //distance += starting.getAeropuerto(destination);
         }
         return distance;
     }
