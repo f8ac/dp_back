@@ -105,12 +105,13 @@ public class TestController {
             // PRUEBA CON LA LISTA DE ENVIOS ========================================================================== 
 
 
-            for (int j = 0; j < 100; j++) {
+            for (int j = 0; j < 200; j++) {
+                System.out.print(j+") ");
                 Envio envioActual = listaEnvios.get(j);
                 int origen  = indexNodoAeropuerto(listaNodos,  envioActual.getAero_origen());
                 int destino = indexNodoAeropuerto(listaNodos, envioActual.getAero_destino());
 
-                AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino),envioActual.getFecha_hora());
+                AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino),envioActual);
 
                 AstarSearch.restaAlmacenamiento(target, envioActual);
                 AstarSearch.printPath(target);

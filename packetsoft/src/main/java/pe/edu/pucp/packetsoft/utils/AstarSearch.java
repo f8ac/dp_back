@@ -2,19 +2,18 @@ package pe.edu.pucp.packetsoft.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.PriorityQueue;
 
 import pe.edu.pucp.packetsoft.models.Envio;
 
 public class AstarSearch {
-    public static AstarNode aStar(AstarNode start, AstarNode target,Date time){
+    public static AstarNode aStar(AstarNode start, AstarNode target,Envio envio){
 
         PriorityQueue<AstarNode> closedList = new PriorityQueue<>();
         PriorityQueue<AstarNode> openList = new PriorityQueue<>();
     
-        start.f = start.g + start.calculateHeuristic(target,time,start.neighbors.get(0));
+        start.f = start.g + start.calculateHeuristic(target,envio.getFecha_hora(),start.neighbors.get(0));
         openList.add(start);
     
         while(!openList.isEmpty()){
@@ -24,25 +23,29 @@ public class AstarSearch {
             }
     
             for(AstarNode.Edge edge : n.neighbors){
-                AstarNode m = edge.node;
-                double totalWeight = n.g + edge.weight;
-    
-                if(!openList.contains(m) && !closedList.contains(m)){
-                    m.parent = n;
-                    m.vuelo = edge.vuelo;
-                    m.g = totalWeight;
-                    m.f = m.g + m.calculateHeuristic(target,time,edge);
-                    openList.add(m);
-                } else {
-                    if(totalWeight < m.g){
+                if(edge.vuelo.getCapacidad_utilizada() + envio.getCant_paquetes_total() > edge.vuelo.getCapacidad_total()){
+                    System.out.println("Paquete sobrepasa capacidad.");
+                }else{
+                    AstarNode m = edge.node;
+                    double totalWeight = n.g + edge.weight;
+        
+                    if(!openList.contains(m) && !closedList.contains(m)){
                         m.parent = n;
                         m.vuelo = edge.vuelo;
                         m.g = totalWeight;
-                        m.f = m.g + m.calculateHeuristic(target,time,edge);
-    
-                        if(closedList.contains(m)){
-                            closedList.remove(m);
-                            openList.add(m);
+                        m.f = m.g + m.calculateHeuristic(target,envio.getFecha_hora(),edge);
+                        openList.add(m);
+                    } else {
+                        if(totalWeight < m.g){
+                            m.parent = n;
+                            m.vuelo = edge.vuelo;
+                            m.g = totalWeight;
+                            m.f = m.g + m.calculateHeuristic(target,envio.getFecha_hora(),edge);
+        
+                            if(closedList.contains(m)){
+                                closedList.remove(m);
+                                openList.add(m);
+                            }
                         }
                     }
                 }
@@ -64,6 +67,7 @@ public class AstarSearch {
             if(n.vuelo != null){
                 int cantidad_actual = n.vuelo.getCapacidad_utilizada();
                 n.vuelo.setCapacidad_utilizada(cantidad_actual + envio.getCant_paquetes_total());
+                System.out.print("<"+(100 - n.vuelo.getCapacidad_utilizada())+">");
             }
             n = n.parent;
         }
@@ -87,7 +91,8 @@ public class AstarSearch {
         for(int id : ids){
             System.out.print(id + " ");
         }
-        System.out.println("\n==================================");
+        // System.out.println("\n==================================");
+        System.out.println("");
     }
 
     public static void printNewPath(AstarNode target){
@@ -105,12 +110,12 @@ public class AstarSearch {
         ids.add(n);
         Collections.reverse(ids);
     
-        System.out.println("==================================");
+        // System.out.println("==================================");
         for (AstarNode astarNode : ids) {
             System.out.print(astarNode.id + "(" + astarNode.h +")");
             
         }
-        System.out.println("==================================");
+        // System.out.println("==================================");
         System.out.println("");
     }
 }
