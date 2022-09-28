@@ -77,14 +77,14 @@ public class AstarNode implements Comparable<AstarNode> {
         // this.h = (double)tiempoRestante;
         if(tiempoRestante < 0){
             this.h = Double.MAX_VALUE;
-            System.out.println("Vuelo ya partio: " + this.h);
+            System.out.print(".");
         }else{
             if(edge.vuelo.getCapacidad_total() == edge.vuelo.getCapacidad_utilizada()){
                 System.err.println("El vuelo ya no admite más paquetes");
                 this.h = Double.MAX_VALUE;
             }else{
                 this.h = tiempoRestante;
-                System.out.println("Heuristica evaluada: " + this.h);
+                System.out.print("*");
             }
             
         }
