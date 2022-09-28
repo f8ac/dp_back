@@ -22,6 +22,11 @@ public class EnvioController {
         return envioService.getAll();
     }
 
+    @GetMapping(value = "/get/{id}")
+    Envio get(@PathVariable int id){
+        return envioService.get(id);
+    }
+
     @PostMapping(value = "/insert")
     Envio insert(@RequestBody Envio envio){
         return envioService.insert(envio);

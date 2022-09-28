@@ -48,5 +48,19 @@ public class EnvioDaoImp implements EnvioDao {
         }
         return result;
     }
+
+
+    @Transactional
+    @Override
+    public Envio get(int id) {
+        Envio envio = null;
+        try {
+            envio = entityManager.find(Envio.class, id);
+        }
+        catch (Exception exception){
+            System.out.println(exception.getMessage());
+        }
+        return envio;
+    }
     
 }

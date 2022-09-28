@@ -9,6 +9,6 @@ public interface VueloDao {
     List<Vuelo> getAll();
     Vuelo get(int id);
     Vuelo insert(Vuelo vuelo);
-    List<Vuelo> listVecinos(Aeropuerto aeropuerto);
-    List<Vuelo> listVecinosLlegada(Aeropuerto aeropuerto);
+    List<Vuelo> listVecinos(Aeropuerto aeropuerto, List<Integer> aeropuertosId);
+    List<Vuelo> listVecinosLlegada(Aeropuerto aeropuerto, List<Integer> aeropuertosId);
 }

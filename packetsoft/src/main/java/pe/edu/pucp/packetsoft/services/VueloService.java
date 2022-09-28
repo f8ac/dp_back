@@ -32,12 +32,12 @@ public class VueloService {
         return daoEmpresa.insert(empresa);
     }
 
-    public List<Vuelo> listVecinos(Aeropuerto aeropuerto){
-        return daoEmpresa.listVecinos(aeropuerto);
+    public List<Vuelo> listVecinos(Aeropuerto aeropuerto, List<Integer> aeropuertosId){
+        return daoEmpresa.listVecinos(aeropuerto, aeropuertosId);
     }
 
-    public List<Vuelo> listVecinosLlegada(Aeropuerto aeropuerto){
-        return daoEmpresa.listVecinosLlegada(aeropuerto);
+    public List<Vuelo> listVecinosLlegada(Aeropuerto aeropuerto, List<Integer> aeropuertosId){
+        return daoEmpresa.listVecinosLlegada(aeropuerto,aeropuertosId);
     }
     
 
