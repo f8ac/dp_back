@@ -93,6 +93,9 @@ public class TabuSearchService {
 
         for (int i = 0; i < this.tamanioMatriz; i++) { // exception
             for (int j = 0; j < this.tamanioMatriz; j++) {
+                // validar que esta en aeropuertosMatriz
+
+                //DSFAD i = 1, j=1
                 if(matrizR[i][j]==0){
                     if(i==j){
                         //boolean valido = validarInsercion(i,aeropuertosMatriz,solucionAux);
