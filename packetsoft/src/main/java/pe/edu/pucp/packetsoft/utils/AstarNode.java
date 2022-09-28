@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
+import pe.edu.pucp.packetsoft.models.Vuelo;
 
 @Getter @Setter
 public class AstarNode implements Comparable<AstarNode> {
@@ -26,6 +27,7 @@ public class AstarNode implements Comparable<AstarNode> {
     public double h; 
 
     public Aeropuerto aeropuerto;
+    public Vuelo vuelo; // solamente usado para la ruta resultado
 
     public AstarNode(double h){
         this.h = h;
@@ -44,17 +46,15 @@ public class AstarNode implements Comparable<AstarNode> {
             this.node = node;
         }
 
-        Edge(int weight, AstarNode node, Date salida, Date llegada){
+        Edge(int weight, AstarNode node, Vuelo vuelo){
             this.weight = weight;
             this.node = node;
-            this.horaSalida = salida;
-            this.horaLlegada = llegada;
+            this.vuelo = vuelo;
         }
 
         public int weight;
         public AstarNode node;
-        public Date horaSalida;
-        public Date horaLlegada;
+        public Vuelo vuelo;
     }
 
     public void addBranch(int weight, AstarNode node){
@@ -62,8 +62,8 @@ public class AstarNode implements Comparable<AstarNode> {
         neighbors.add(newEdge);
     }
 
-    public void addBranch(int weight, AstarNode node, Date salida, Date llegada){
-        Edge newEdge = new Edge(weight, node, salida, llegada);
+    public void addBranch(int weight, AstarNode node, Vuelo vuelo){
+        Edge newEdge = new Edge(weight, node, vuelo);
         neighbors.add(newEdge);
     }
 
@@ -73,16 +73,22 @@ public class AstarNode implements Comparable<AstarNode> {
     }
 
     public double calculateHeuristic(AstarNode target, Date time,Edge edge){
-        int tiempoRestante  = compareTimes(time, edge.horaSalida);
-        this.h = (double)tiempoRestante;
-        if(tiempoRestante > 0){
+        int tiempoRestante  = compareTimes(edge.vuelo.getHora_salida(),time);
+        // this.h = (double)tiempoRestante;
+        if(tiempoRestante < 0){
+            this.h = Double.MAX_VALUE;
             System.out.println("Vuelo ya partio: " + this.h);
-            return Double.MAX_VALUE; //no considerar este camino
         }else{
-            System.out.println("Heuristica evaluada: " + this.h);
-            return this.h;
+            if(edge.vuelo.getCapacidad_total() == edge.vuelo.getCapacidad_utilizada()){
+                System.err.println("El vuelo ya no admite más paquetes");
+                this.h = Double.MAX_VALUE;
+            }else{
+                this.h = tiempoRestante;
+                System.out.println("Heuristica evaluada: " + this.h);
+            }
+            
         }
-
+        return this.h;
     }
 
     public int compareTimes(Date d1, Date d2){
