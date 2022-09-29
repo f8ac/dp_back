@@ -101,28 +101,22 @@ public class TestController {
             // // AstarSearch.printNewPath(res);
             // AstarSearch.printPath(res);
         
-
             // PRUEBA CON LA LISTA DE ENVIOS ========================================================================== 
-
-
-            for (int j = 0; j < 200; j++) {
+            int j = 0;
+            for (Envio envioActual : listaEnvios) {
+                if(j == 100)break;
+                
                 System.out.print(j+") ");
-                Envio envioActual = listaEnvios.get(j);
+                envioActual = listaEnvios.get(j);
                 int origen  = indexNodoAeropuerto(listaNodos,  envioActual.getAero_origen());
                 int destino = indexNodoAeropuerto(listaNodos, envioActual.getAero_destino());
 
-                AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino),envioActual);
+                AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino), envioActual);
 
                 AstarSearch.restaAlmacenamiento(target, envioActual);
                 AstarSearch.printPath(target);
-                
+                j++;
             }
-
-
-
-
-            
-            
             result = "insertado xd";
         }catch(Exception ex){
             System.err.println(ex.getMessage());
@@ -157,8 +151,6 @@ public class TestController {
         }
         return result;
     }
-
-
 
     /*   
     @PostMapping(value = "/obsolete")
