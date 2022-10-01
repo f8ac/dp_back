@@ -43,31 +43,28 @@ public class TabuSearchService {
         matrizR = new int[aeropuertos.size()][aeropuertos.size()];
         matrizF = new int[aeropuertos.size()][aeropuertos.size()];
 
-        // mejorSolucion y solucion inicial
-        List<Aeropuerto> mejorSolucion = new ArrayList<>();
+        List<Vuelo> mejorSolucion = new ArrayList<>();
 
-        List<Aeropuerto> solucionInicial = new ArrayList<>();
-        solucionInicial.add(aeropuertos.get(2));// SVMI-SEQM
-        solucionInicial.add(aeropuertos.get(1));// SEQM-
-        solucionInicial.add(aeropuertos.get(3)); // SBBR-
-        // solucionInicial.add(aeropuertos.get(7));
+        List<Aeropuerto> solucionInicial = new ArrayList<Aeropuerto>();
+        solucionInicial.add(aeropuertos.get(2));
+        solucionInicial.add(aeropuertos.get(1));
+        solucionInicial.add(aeropuertos.get(3));
 
         //Vuelos
-        List<Vuelo> soluIniVuelo = new ArrayList<>();
+        List<Vuelo> soluIniVuelo = new ArrayList<Vuelo>();
         soluIniVuelo.add(vueloService.get(2));
         soluIniVuelo.add(vueloService.get(5));
 
         //Envio
-        //Necesitamos sacar un envio
         Envio envio = envioService.get(1);
 
         // empieza el algoritmo
-        mejorSolucion.addAll(solucionInicial);
+        mejorSolucion.addAll(soluIniVuelo);
         for (int i = 0; i < this.itEtapaLocal; i++) { // primer for itEtapaLocal
-            movimiento(matrizR, matrizF, mejorSolucion, solucionInicial);
+            movimiento(matrizR, matrizF, mejorSolucion, solucionInicial, soluIniVuelo);
         }
-        matrizR = new int[aeropuertos.size()][aeropuertos.size()];
 
+        matrizR = new int[aeropuertos.size()][aeropuertos.size()];
         for (int i = 0; i < this.itEtapaInten; i++) { // segundo for itEtapaInten
 
         }
@@ -79,13 +76,14 @@ public class TabuSearchService {
         }
     }
 
-    void movimiento(int[][] matrizR, int[][] matrizF, List<Aeropuerto> mejorSolucion,
-            List<Aeropuerto> solucionInicial) {
+    void movimiento(int[][] matrizR, int[][] matrizF, List<Vuelo> mejorSolucion,
+            List<Aeropuerto> solucionInicial, List<Vuelo> soluInicialVuelo) {
         /*
          * 
          * solucionInicial <- (A1,A2,3,4,A5)
          * 
          */
+
         List<Aeropuerto> aeropuertosVecinos;
         List<List<Aeropuerto>> aeropuertosMatriz = new ArrayList<List<Aeropuerto>>();
 
@@ -103,32 +101,61 @@ public class TabuSearchService {
         aeropuertosMatriz.add(obtenerlistVecinosLlegada(solucionInicial.get(solucionInicial.size()-1),solucionInicialId));
 
         int totalVecinos = calcularTotalVecinos(aeropuertosMatriz);
+
         boolean banderaMov = false;
+
         List<Aeropuerto> solucionAux = new ArrayList<Aeropuerto>();
-        solucionAux.addAll(solucionInicial);
+
+        List<Vuelo> solucionAuxVuelo = new ArrayList<Vuelo>();
+
         List<Aeropuerto> mejorMov = new ArrayList<Aeropuerto>();
-        int tamanioFila = aeropuertosMatriz.get(0).size();
+        List<Vuelo> mejorMovVuelo = new ArrayList<Vuelo>();
 
-        for (int i = 0; i < this.tamanioMatriz; i++) { // exception
-            for (int j = 0; j < this.tamanioMatriz; j++) {
-                // validar que esta en aeropuertosMatriz
+        int mejori=0;
 
-                //DSFAD i = 1, j=1
-                if(matrizR[i][j]==0){
-                    if(i==j){
-                        //boolean valido = validarInsercion(i,aeropuertosMatriz,solucionAux);
-                        //if(valido){
-                        //    banderaMov=true;
-                        //}
+        for (int i = 0; i < totalVecinos; i++) {
+            banderaMov = false;
+
+            solucionAux.clear();
+            solucionAux.addAll(solucionInicial);
+
+            solucionAuxVuelo.clear();
+            solucionAuxVuelo.addAll(soluInicialVuelo);
+
+            if(matrizR[i][i]==0){
+                boolean valido = validarInsercion(i,aeropuertosMatriz,solucionAux,solucionAuxVuelo);
+                if(valido){
+                    banderaMov=true;
+                }
+                if(banderaMov){
+                    if(mejorMov.isEmpty() && mejorMovVuelo.isEmpty()){
+                        mejorMov.addAll(solucionAux);
+                        mejori=i;
                     }else{
-
+                        if(fitness(solucionAuxVuelo)>fitness(mejorMovVuelo)){
+                            mejorMov.clear();
+                            mejorMov.addAll(solucionAux);
+                            mejori=i;
+                        }
                     }
                 }
-                if(matrizR[i][j]>0){
-                        matrizR[i][j]--;
-                }
+            }
+            if(matrizR[i][i]>0){
+                matrizR[i][i]--;
             }
         }
+
+        if(!(mejorMov.isEmpty() &&  mejorMovVuelo.isEmpty())){
+            solucionInicial.addAll(mejorMov);
+            soluInicialVuelo.addAll(mejorMovVuelo);
+            matrizR[mejori][mejori]+=5;
+            matrizF[mejori][mejori]+=1;
+            if(fitness(soluInicialVuelo)>fitness(mejorSolucion)){
+                mejorSolucion.clear();
+                mejorSolucion.addAll(soluInicialVuelo);
+            }
+        }
+        
     }
 
     List<Aeropuerto> buscarVecinos(Aeropuerto aeropuerto,List<Integer> aeropuertosId) {
@@ -174,4 +201,13 @@ public class TabuSearchService {
         return total;
     }
 
+    boolean validarInsercion(int i,List<List <Aeropuerto>> vecinos,List<Aeropuerto> soluAux,List<Vuelo> soluAuxVuelo){
+
+        return true;
+    }
+
+    double fitness(List<Vuelo> solu){
+
+        return 2.0;
+    }
 }
