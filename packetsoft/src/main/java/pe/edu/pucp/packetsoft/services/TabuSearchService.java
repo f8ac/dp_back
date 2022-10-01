@@ -111,7 +111,7 @@ public class TabuSearchService {
         List<Aeropuerto> mejorMov = new ArrayList<Aeropuerto>();
         List<Vuelo> mejorMovVuelo = new ArrayList<Vuelo>();
 
-        int mejori;
+        int mejori=0;
 
         for (int i = 0; i < totalVecinos; i++) {
             banderaMov = false;
@@ -201,6 +201,13 @@ public class TabuSearchService {
         return total;
     }
 
-    
+    boolean validarInsercion(int i,List<List <Aeropuerto>> vecinos,List<Aeropuerto> soluAux,List<Vuelo> soluAuxVuelo){
 
+        return true;
+    }
+
+    double fitness(List<Vuelo> solu){
+
+        return 2.0;
+    }
 }
