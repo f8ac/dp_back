@@ -61,7 +61,7 @@ public class TabuSearchService {
         // empieza el algoritmo
         mejorSolucion.addAll(soluIniVuelo);
         for (int i = 0; i < this.itEtapaLocal; i++) { // primer for itEtapaLocal
-            movimiento(matrizR, matrizF, mejorSolucion, solucionInicial, soluIniVuelo);
+            movimiento(matrizR, matrizF, mejorSolucion, solucionInicial, soluIniVuelo,envio);
         }
 
         matrizR = new int[aeropuertos.size()][aeropuertos.size()];
@@ -77,7 +77,7 @@ public class TabuSearchService {
     }
 
     void movimiento(int[][] matrizR, int[][] matrizF, List<Vuelo> mejorSolucion,
-            List<Aeropuerto> solucionInicial, List<Vuelo> soluInicialVuelo) {
+            List<Aeropuerto> solucionInicial, List<Vuelo> soluInicialVuelo,Envio envio) {
         /*
          * 
          * solucionInicial <- (A1,A2,3,4,A5)
@@ -125,7 +125,7 @@ public class TabuSearchService {
             solucionAuxVuelo.addAll(soluInicialVuelo);
 
             if(matrizR[i][i]==0){
-                boolean valido = validarInsercion(i,aeropuertosMatriz,cantidad,solucionAux,solucionAuxVuelo);
+                boolean valido = validarInsercion(i,aeropuertosMatriz,cantidad,solucionAux,solucionAuxVuelo,envio);
                 if(valido){
                     banderaMov=true;
                 }
@@ -204,12 +204,27 @@ public class TabuSearchService {
         return total;
     }
 
-    boolean validarInsercion(int i,List<List <Aeropuerto>> vecinos,List<Integer> cant,List<Aeropuerto> soluAux,List<Vuelo> soluAuxVuelo){
+    boolean validarInsercion(int i,List<List <Aeropuerto>> vecinos,List<Integer> cant,List<Aeropuerto> soluAux,List<Vuelo> soluAuxVuelo,Envio envio){
         boolean valido=false;
         int posA=-1,posV=-1;
+        int cantAeropSolAux = soluAux.size();
         hallarAeropuerto(i,cant,posA,posV);
+        Vuelo vuelo1 = null,vuelo2=null;
         if(posA!=-1 && posV!=-1){
-            
+            soluAux.add(posA+1, vecinos.get(posA).get(posV));
+            buscarVuelos(soluAux,soluAuxVuelo,vuelo1,vuelo2,envio);
+            if(vuelo1!=null && vuelo2!=null){
+                if(posV==cantAeropSolAux-1){
+                    soluAuxVuelo.remove(posA-1);
+                    soluAuxVuelo.add(posA-1,vuelo1);
+                    soluAuxVuelo.add(posA,vuelo2);
+                }else{
+                    soluAuxVuelo.remove(posA);
+                    soluAuxVuelo.add(posA,vuelo1);
+                    soluAuxVuelo.add(posA+1,vuelo2);
+                }
+                valido=true;
+            }
         }
         return valido;
     }
@@ -226,12 +241,16 @@ public class TabuSearchService {
             if(total>num){
                 posA=i;
                 if(i==0){
-                    posV=num-1;
+                    posV=num;
                 }else{
-                    posV=num-totalA-1;
+                    posV=num-totalA;
                 }
             }
             totalA=total;
         }
+    }
+
+    void buscarVuelos(List<Aeropuerto> soluAux,List<Vuelo> soluAuxVuelo,Vuelo vuelo1,Vuelo vuelo2,Envio envio){
+        
     }
 }
