@@ -100,7 +100,9 @@ public class TabuSearchService {
 
         aeropuertosMatriz.add(obtenerlistVecinosLlegada(solucionInicial.get(solucionInicial.size()-1),solucionInicialId));
 
-        int totalVecinos = calcularTotalVecinos(aeropuertosMatriz);
+        List<Integer> cantidad = new ArrayList<Integer>();
+ 
+        int totalVecinos = calcularTotalVecinos(aeropuertosMatriz,cantidad);
 
         boolean banderaMov = false;
 
@@ -123,7 +125,7 @@ public class TabuSearchService {
             solucionAuxVuelo.addAll(soluInicialVuelo);
 
             if(matrizR[i][i]==0){
-                boolean valido = validarInsercion(i,aeropuertosMatriz,solucionAux,solucionAuxVuelo);
+                boolean valido = validarInsercion(i,aeropuertosMatriz,cantidad,solucionAux,solucionAuxVuelo);
                 if(valido){
                     banderaMov=true;
                 }
@@ -193,21 +195,43 @@ public class TabuSearchService {
 
     }
 
-    int calcularTotalVecinos(List<List <Aeropuerto>> vecinos){
+    int calcularTotalVecinos(List<List <Aeropuerto>> vecinos, List<Integer> cantidad){
         int total=0;
         for (int i=0;i<vecinos.size();i++){
             total+=vecinos.get(i).size();
+            cantidad.add(vecinos.get(i).size());
         }
         return total;
     }
 
-    boolean validarInsercion(int i,List<List <Aeropuerto>> vecinos,List<Aeropuerto> soluAux,List<Vuelo> soluAuxVuelo){
-
-        return true;
+    boolean validarInsercion(int i,List<List <Aeropuerto>> vecinos,List<Integer> cant,List<Aeropuerto> soluAux,List<Vuelo> soluAuxVuelo){
+        boolean valido=false;
+        int posA=-1,posV=-1;
+        hallarAeropuerto(i,cant,posA,posV);
+        if(posA!=-1 && posV!=-1){
+            
+        }
+        return valido;
     }
 
     double fitness(List<Vuelo> solu){
 
         return 2.0;
+    }
+
+    void hallarAeropuerto(int num,List<Integer> cant,int posA,int posV){
+        int total=0,totalA=0;
+        for(int i=0;i<cant.size();i++){
+            total += cant.get(i);
+            if(total>num){
+                posA=i;
+                if(i==0){
+                    posV=num-1;
+                }else{
+                    posV=num-totalA-1;
+                }
+            }
+            totalA=total;
+        }
     }
 }
