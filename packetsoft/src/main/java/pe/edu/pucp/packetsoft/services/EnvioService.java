@@ -65,6 +65,7 @@ public class EnvioService {
                 calendarioSalida.set(Calendar.DAY_OF_MONTH, Integer.parseInt( data[1].substring(6,8) ));
                 calendarioSalida.set(Calendar.HOUR_OF_DAY, Integer.parseInt( data[2].substring(0,2) ));
                 calendarioSalida.set(Calendar.MINUTE, Integer.parseInt( data[2].substring(3,5) ));
+                calendarioSalida.add(Calendar.HOUR_OF_DAY, aeroSalidaDefinido.getNum_zona_horaria().intValue()*-1);
 
                 // crea el objeto envio a insertar
                 Envio envio = new Envio();
@@ -87,8 +88,8 @@ public class EnvioService {
         String rutaFolder = "src/main/resources/pack_enviados";
         File folder = new File(rutaFolder);
         File[] listOfFiles = folder.listFiles();
-        
-        for (int i = 0; i < listOfFiles.length; i++) { // lee los archivos de la ruta carpeta
+        //listOfFiles.length
+        for (int i = 1; i < 2; i++) { // lee los archivos de la ruta carpeta
             if (listOfFiles[i].isFile()) {
                 System.out.println("File " + listOfFiles[i].getName());
                 insertarFileAeroPaquetes(listOfFiles[i].getName(), rutaFolder);

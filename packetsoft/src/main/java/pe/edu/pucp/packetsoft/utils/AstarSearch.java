@@ -23,7 +23,8 @@ public class AstarSearch {
                 return n;
             }
             for(AstarNode.Edge edge : n.neighbors){
-                if(edge.vuelo.getCapacidad_utilizada() + envio.getCant_paquetes_total() > edge.vuelo.getCapacidad_total() || compareTimes(edge.vuelo.getHora_salida(),envio.getFecha_hora()) < 0.0){
+                if( edge.vuelo.getCapacidad_utilizada() + envio.getCant_paquetes_total() > edge.vuelo.getCapacidad_total() 
+                    || edge.vuelo.getHora_salida().before(envio.getFecha_hora())){
                     System.out.print(">");
                 }else{
                     AstarNode m = edge.node;
