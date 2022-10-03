@@ -89,7 +89,7 @@ public class EnvioService {
         File folder = new File(rutaFolder);
         File[] listOfFiles = folder.listFiles();
         //listOfFiles.length
-        for (int i = 1; i < 2; i++) { // lee los archivos de la ruta carpeta
+        for (int i = 0; i < listOfFiles.length; i++) { // lee los archivos de la ruta carpeta
             if (listOfFiles[i].isFile()) {
                 System.out.println("File " + listOfFiles[i].getName());
                 insertarFileAeroPaquetes(listOfFiles[i].getName(), rutaFolder);
