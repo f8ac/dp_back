@@ -38,4 +38,9 @@ public class EnvioController {
         envioService.insertfile();
     }
 
+    @PostMapping(value = "/list/orden/fecha")
+    List<Envio> listOrdenFecha(){
+        return envioService.listOrdenFecha();
+    }
+
 }

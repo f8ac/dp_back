@@ -43,7 +43,7 @@ public class VueloService {
 
     public void insertfile() throws IOException, InterruptedException {
         int mes = Calendar.AUGUST, dia = 2, anio = 2022;
-        for (int i = 1; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             String line="";
             BufferedReader br = new BufferedReader(new FileReader("src/main/resources/vuelosv01.txt"));
             while((line=br.readLine()) != null) {

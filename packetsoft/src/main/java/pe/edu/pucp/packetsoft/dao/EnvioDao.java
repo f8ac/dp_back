@@ -8,4 +8,5 @@ public interface EnvioDao {
     List<Envio> getAll();
     Envio insert(Envio envio);
     Envio get(int id);
+    List<Envio> listOrdenFecha();
 }

@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Env;
 import org.springframework.stereotype.Service;
 
 import pe.edu.pucp.packetsoft.dao.EnvioDao;
@@ -65,6 +66,7 @@ public class EnvioService {
                 calendarioSalida.set(Calendar.DAY_OF_MONTH, Integer.parseInt( data[1].substring(6,8) ));
                 calendarioSalida.set(Calendar.HOUR_OF_DAY, Integer.parseInt( data[2].substring(0,2) ));
                 calendarioSalida.set(Calendar.MINUTE, Integer.parseInt( data[2].substring(3,5) ));
+                calendarioSalida.add(Calendar.HOUR_OF_DAY, aeroSalidaDefinido.getNum_zona_horaria().intValue()*-1);
 
                 // crea el objeto envio a insertar
                 Envio envio = new Envio();
@@ -87,7 +89,7 @@ public class EnvioService {
         String rutaFolder = "src/main/resources/pack_enviados";
         File folder = new File(rutaFolder);
         File[] listOfFiles = folder.listFiles();
-        
+        //listOfFiles.length
         for (int i = 0; i < listOfFiles.length; i++) { // lee los archivos de la ruta carpeta
             if (listOfFiles[i].isFile()) {
                 System.out.println("File " + listOfFiles[i].getName());
@@ -95,6 +97,10 @@ public class EnvioService {
             }
         }
 
+    }
+
+    public List<Envio> listOrdenFecha(){
+        return daoEnvio.listOrdenFecha();
     }
 
 }
