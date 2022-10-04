@@ -23,6 +23,8 @@ public class TabuSearchService {
     private VueloService vueloService;
     @Autowired
     private EnvioService envioService;
+    @Autowired
+    private AstarService astarService;
 
     private int itEtapaLocal;
     private int itEtapaInten;
@@ -51,7 +53,7 @@ public class TabuSearchService {
 
         List<Vuelo> mejorSolucion = new ArrayList<>();
 
-        
+        astarService.pruebaUnica(null);
 
         List<Aeropuerto> solucionInicial = new ArrayList<Aeropuerto>();
         solucionInicial.add(aeropuertos.get(2));
