@@ -1,6 +1,8 @@
 package pe.edu.pucp.packetsoft.services;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,6 +34,9 @@ public class TabuSearchService {
     private int tenenciaMin = 5;
     private int tenenciaMax = 10;
 
+    private int posA;
+    private int posV;
+
     public void ejecutarAlgoritmo(int id1, int id2, int id3) {
 
         this.itEtapaLocal = id1;
@@ -48,12 +53,10 @@ public class TabuSearchService {
         List<Aeropuerto> solucionInicial = new ArrayList<Aeropuerto>();
         solucionInicial.add(aeropuertos.get(2));
         solucionInicial.add(aeropuertos.get(1));
-        solucionInicial.add(aeropuertos.get(3));
 
         //Vuelos
         List<Vuelo> soluIniVuelo = new ArrayList<Vuelo>();
         soluIniVuelo.add(vueloService.get(2));
-        soluIniVuelo.add(vueloService.get(5));
 
         //Envio
         Envio envio = envioService.get(1);
@@ -64,16 +67,20 @@ public class TabuSearchService {
             movimiento(matrizR, matrizF, mejorSolucion, solucionInicial, soluIniVuelo,envio);
         }
 
-        matrizR = new int[aeropuertos.size()][aeropuertos.size()];
+        for(int i=0;i<mejorSolucion.size();i++){
+            System.out.print(mejorSolucion.get(i)+"->");
+        }
+            
+
+        /*matrizR = new int[aeropuertos.size()][aeropuertos.size()];
         for (int i = 0; i < this.itEtapaInten; i++) { // segundo for itEtapaInten
 
         }
         matrizR = new int[aeropuertos.size()][aeropuertos.size()];
         penalizarMovimientos(matrizR, matrizF, cantMovFrecuentes);
-
         for (int i = 0; i < this.itEtapaDiver; i++) { // tercer for itEtapaDiver
 
-        }
+        }*/
     }
 
     void movimiento(int[][] matrizR, int[][] matrizF, List<Vuelo> mejorSolucion,
@@ -115,6 +122,11 @@ public class TabuSearchService {
 
         int mejori=0;
 
+        posA=-1;
+        posV=-1;
+
+        int j;
+
         for (int i = 0; i < totalVecinos; i++) {
             banderaMov = false;
 
@@ -124,7 +136,11 @@ public class TabuSearchService {
             solucionAuxVuelo.clear();
             solucionAuxVuelo.addAll(soluInicialVuelo);
 
-            if(matrizR[i][i]==0){
+            hallarAeropuerto(i,cantidad);
+            j = aeropuertosMatriz.get(posA).get(posV).getId();
+
+
+            if(matrizR[j-1][j-1]==0){
                 boolean valido = validarInsercion(i,aeropuertosMatriz,cantidad,solucionAux,solucionAuxVuelo,envio);
                 if(valido){
                     banderaMov=true;
@@ -132,18 +148,18 @@ public class TabuSearchService {
                 if(banderaMov){
                     if(mejorMov.isEmpty() && mejorMovVuelo.isEmpty()){
                         mejorMov.addAll(solucionAux);
-                        mejori=i;
+                        mejori=j-1;
                     }else{
                         if(fitness(solucionAuxVuelo)>fitness(mejorMovVuelo)){
                             mejorMov.clear();
                             mejorMov.addAll(solucionAux);
-                            mejori=i;
+                            mejori=j-1;
                         }
                     }
                 }
             }
-            if(matrizR[i][i]>0){
-                matrizR[i][i]--;
+            if(matrizR[j-1][j-1]>0){
+                matrizR[j-1][j-1]--;
             }
         }
 
@@ -206,23 +222,24 @@ public class TabuSearchService {
 
     boolean validarInsercion(int i,List<List <Aeropuerto>> vecinos,List<Integer> cant,List<Aeropuerto> soluAux,List<Vuelo> soluAuxVuelo,Envio envio){
         boolean valido=false;
-        int posA=-1,posV=-1;
+        posA=-1;
+        posV=-1;
         int cantAeropSolAux = soluAux.size();
-        hallarAeropuerto(i,cant,posA,posV);
+        hallarAeropuerto(i,cant);
         Vuelo vuelo1 = null,vuelo2=null;
         if(posA!=-1 && posV!=-1){
-            soluAux.add(posA+1, vecinos.get(posA).get(posV));
-            buscarVuelos(soluAux,soluAuxVuelo,vuelo1,vuelo2,envio);
+            soluAux.add(posA+1,vecinos.get(posA).get(posV));
+            buscarVuelos(posA+1,cantAeropSolAux,soluAux,soluAuxVuelo,vuelo1,vuelo2,envio);
             if(vuelo1!=null && vuelo2!=null){
-                if(posV==cantAeropSolAux-1){
-                    soluAuxVuelo.remove(posA-1);
-                    soluAuxVuelo.add(posA-1,vuelo1);
-                    soluAuxVuelo.add(posA,vuelo2);
-                }else{
-                    soluAuxVuelo.remove(posA);
-                    soluAuxVuelo.add(posA,vuelo1);
-                    soluAuxVuelo.add(posA+1,vuelo2);
-                }
+                //if(posA==cantAeropSolAux-1){
+                    //soluAuxVuelo.remove(posA-1);
+                    //soluAuxVuelo.add(posA-1,vuelo1);
+                    //soluAuxVuelo.add(posA,vuelo2);
+                //}else{
+                soluAuxVuelo.remove(posA);
+                soluAuxVuelo.add(posA,vuelo1);
+                soluAuxVuelo.add(posA+1,vuelo2);
+                //}
                 valido=true;
             }
         }
@@ -230,11 +247,18 @@ public class TabuSearchService {
     }
 
     double fitness(List<Vuelo> solu){
-
-        return 2.0;
+        int size = solu.size();
+        int tiempo_vuelo=0;
+        for(int i=0;i<size;i++){
+            tiempo_vuelo+=solu.get(i).getTiempo_vuelo_minutos();
+        }
+        if(size==2){
+            tiempo_vuelo*=3;
+        }
+        return tiempo_vuelo;
     }
 
-    void hallarAeropuerto(int num,List<Integer> cant,int posA,int posV){
+    void hallarAeropuerto(int num,List<Integer> cant){
         int total=0,totalA=0;
         for(int i=0;i<cant.size();i++){
             total += cant.get(i);
@@ -245,12 +269,34 @@ public class TabuSearchService {
                 }else{
                     posV=num-totalA;
                 }
+                break;
             }
             totalA=total;
         }
     }
 
-    void buscarVuelos(List<Aeropuerto> soluAux,List<Vuelo> soluAuxVuelo,Vuelo vuelo1,Vuelo vuelo2,Envio envio){
+    void buscarVuelos(int pos,int total,List<Aeropuerto> soluAux,List<Vuelo> soluAuxVuelo,Vuelo vuelo1,Vuelo vuelo2,Envio envio){
+        Calendar horasalida1 = Calendar.getInstance();
+        Calendar horasalida2 = Calendar.getInstance();
+        Calendar horallegada2 = Calendar.getInstance();
+        if(pos==1){
+            horasalida1.setTime(envio.getFecha_hora());
+        }else{
+            horasalida1 = Calendar.getInstance();
+            horasalida1.setTime(soluAuxVuelo.get(pos-2).getHora_llegada());
+            horasalida1.add(Calendar.HOUR_OF_DAY, 1);
+        }
+        vuelo1 = vueloService.buscarVuelo1(soluAux.get(pos-1).getId(),soluAux.get(pos).getId(),horasalida1,envio.getCant_paquetes_total());
         
+        horasalida2.setTime(vuelo1.getHora_llegada());
+        horasalida2.add(Calendar.HOUR_OF_DAY, 1);
+        
+        if(pos+1==total){
+            vuelo2 = vueloService.buscarVuelo1(soluAux.get(pos).getId(),soluAux.get(pos+1).getId(),horasalida2,envio.getCant_paquetes_total());
+        }else{
+            horallegada2.setTime(soluAuxVuelo.get(pos+1).getHora_salida());
+            horallegada2.add(Calendar.HOUR_OF_DAY, -1);
+            vuelo2 = vueloService.buscarVuelo2(soluAux.get(pos).getId(),soluAux.get(pos+1).getId(),horasalida2,horallegada2,envio.getCant_paquetes_total());
+        }
     }
 }

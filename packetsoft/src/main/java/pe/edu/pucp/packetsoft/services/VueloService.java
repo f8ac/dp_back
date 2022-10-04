@@ -145,4 +145,12 @@ public class VueloService {
     public void insertTenDays() throws IOException, InterruptedException{
 
     }
+
+    public Vuelo buscarVuelo1(int idinicio,int idfin, Calendar horaSalida, int paquetes){
+        return daoEmpresa.buscarVuelo1(idinicio,idfin,horaSalida,paquetes);
+    }
+
+    public Vuelo buscarVuelo2(int idinicio,int idfin, Calendar horaSalida,Calendar horaLlegada,int paquetes){
+        return daoEmpresa.buscarVuelo2(idinicio,idfin,horaSalida,horaLlegada,paquetes);
+    }
 }

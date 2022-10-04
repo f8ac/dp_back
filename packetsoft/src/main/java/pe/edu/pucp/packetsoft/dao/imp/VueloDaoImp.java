@@ -1,5 +1,6 @@
 package pe.edu.pucp.packetsoft.dao.imp;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -102,6 +103,32 @@ public class VueloDaoImp implements VueloDao{
             System.out.println(exception.getMessage());
         }
         return list;
+    }
+
+    @Override
+    public Vuelo buscarVuelo1(int idinicio, int idfin, Calendar horaSalida, int paquetes) {
+        List<Vuelo> vuelo = null;
+        try {
+            var hql = "from Vuelo as v where v.aeropuerto_salida = "+idinicio+" and v.aeropuerto_llegada = "+idfin+" and v.hora_salida >"+horaSalida.getTime()+" and (v.capacidad_total-v.capacidad_utilizada)>="+paquetes+" order by v.tiempo_vuelo_minutos";
+            vuelo = entityManager.createQuery(hql).getResultList();
+        }
+        catch (Exception exception){
+            System.out.println(exception.getMessage());
+        }
+        return vuelo.get(0);
+    }
+
+    @Override
+    public Vuelo buscarVuelo2(int idinicio, int idfin, Calendar horaSalida, Calendar horaLlegada, int paquetes) {
+        List<Vuelo> vuelo = null;
+        try {
+            var hql = "from Vuelo as v where v.aeropuerto_salida = "+idinicio+" and v.aeropuerto_llegada = "+idfin+" and v.hora_salida >"+horaSalida.getTime()+" and v.hora_llegada <"+horaLlegada.getTime()+" and (v.capacidad_total-v.capacidad_utilizada)>="+paquetes+" order by v.tiempo_vuelo_minutos";
+            vuelo = entityManager.createQuery(hql).getResultList();
+        }
+        catch (Exception exception){
+            System.out.println(exception.getMessage());
+        }
+        return vuelo.get(0);
     }
 
 
