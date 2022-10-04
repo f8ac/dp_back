@@ -58,7 +58,6 @@ public class AstarSearch {
 
     public static void restaAlmacenamiento(AstarNode target, Envio envio){
         AstarNode n = target;
-        AstarNode m = null;
         if(n==null)
             return;
         while(n.parent != null){
@@ -68,7 +67,6 @@ public class AstarSearch {
                 n.vuelo.setCapacidad_utilizada(cantidad_actual + envio.getCant_paquetes_total());
                 System.out.print("<"+(100 - n.vuelo.getCapacidad_utilizada())+">");
             }
-            m = n;
             n = n.parent;
             // m.parent = null;
         }

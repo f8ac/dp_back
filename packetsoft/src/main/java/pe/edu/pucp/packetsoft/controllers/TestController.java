@@ -4,8 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,7 +39,7 @@ public class TestController {
     private VueloService vueloService;
 
     @PostMapping(value = "/main")
-    String main(){
+    String main(@RequestBody int[] iter){
         String result = null;
         // insert();
         try{
@@ -69,6 +71,7 @@ public class TestController {
                 }
                 int costo = vuelo.getTiempo_vuelo_minutos();
                 listaNodos.get(iOrigen).addBranch(costo, listaNodos.get(iDestino),vuelo);
+                vuelo.setCapacidad_utilizada(iter[1]*vuelo.getCapacidad_total()/100);
             }
 
             // EL MAPEO ESTA TERMINADO ================================================================================
@@ -100,8 +103,10 @@ public class TestController {
         
             // PRUEBA CON LA LISTA DE ENVIOS ========================================================================== 
             int j = 0;
+            StopWatch watch = new  StopWatch();
+            watch.start();
             for (Envio envioActual : listaEnvios) {
-                if(j == 100)break;
+                if(j == iter[0])break;
                 
                 System.out.print(j+") ");
                 envioActual = listaEnvios.get(j);
@@ -115,6 +120,8 @@ public class TestController {
                 AstarSearch.clearParents(listaNodos);
                 j++;
             }
+            watch.stop();
+            System.out.print("Tiempo total para procesar "+iter[0]+" pedidos: "+watch.getTotalTimeMillis()+" milisegundos.");
             result = "insertado xd";
         }catch(Exception ex){
             System.err.println(ex.getMessage());
