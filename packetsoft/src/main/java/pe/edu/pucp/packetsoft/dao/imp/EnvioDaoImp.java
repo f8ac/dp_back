@@ -62,5 +62,18 @@ public class EnvioDaoImp implements EnvioDao {
         }
         return envio;
     }
-    
+
+    @Transactional
+    @Override
+    public List<Envio> listOrdenFecha() {
+        List<Envio> result = null;
+        try{
+            var hql = "from Envio as e order by e.fecha_hora";
+            result = entityManager.createQuery(hql).getResultList();
+        }
+        catch (Exception exception){
+            System.out.println(exception.getMessage());
+        }
+        return result;
+    }
 }

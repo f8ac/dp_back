@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Env;
 import org.springframework.stereotype.Service;
 
 import pe.edu.pucp.packetsoft.dao.EnvioDao;
@@ -96,6 +97,10 @@ public class EnvioService {
             }
         }
 
+    }
+
+    public List<Envio> listOrdenFecha(){
+        return daoEnvio.listOrdenFecha();
     }
 
 }

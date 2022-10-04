@@ -20,12 +20,13 @@ public class AstarSearch {
         while(!openList.isEmpty()){
             AstarNode n = openList.peek();
             if(n == target){
+                System.out.print("$");
                 return n;
             }
             for(AstarNode.Edge edge : n.neighbors){
                 if( edge.vuelo.getCapacidad_utilizada() + envio.getCant_paquetes_total() > edge.vuelo.getCapacidad_total() 
                     || edge.vuelo.getHora_salida().before(envio.getFecha_hora())){
-                    System.out.print(">");
+                    // System.out.print(">");
                 }else{
                     AstarNode m = edge.node;
                     double totalWeight = n.g + edge.weight;
@@ -57,15 +58,19 @@ public class AstarSearch {
 
     public static void restaAlmacenamiento(AstarNode target, Envio envio){
         AstarNode n = target;
+        AstarNode m = null;
         if(n==null)
             return;
         while(n.parent != null){
             if(n.vuelo != null){
+                
                 int cantidad_actual = n.vuelo.getCapacidad_utilizada();
                 n.vuelo.setCapacidad_utilizada(cantidad_actual + envio.getCant_paquetes_total());
                 System.out.print("<"+(100 - n.vuelo.getCapacidad_utilizada())+">");
             }
+            m = n;
             n = n.parent;
+            // m.parent = null;
         }
     }
     
@@ -121,5 +126,11 @@ public class AstarSearch {
         t1 = (int) (d1.getTime() % (24*60*60*1000L));
         t2 = (int) (d2.getTime() % (24*60*60*1000L));
         return (t1 - t2);
+    }
+
+    public static void clearParents(List<AstarNode> lista){
+        for (AstarNode astarNode : lista) {
+            astarNode.parent = null;
+        }
     }
 }

@@ -41,7 +41,6 @@ public class TestController {
         String result = null;
         // insert();
         try{
-
             // SE INSERTAN LOS AEROPUERTOS EN UNA LISTA DE NODOS DEL MISMO TAMANIO
             List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
             List<AstarNode> listaNodos = Arrays.asList(new AstarNode[listaAeropuertos.size()]);
@@ -52,9 +51,7 @@ public class TestController {
                 listaNodos.set(i,nodo);
                 i++;
             }
-
             // SE INSERTAN LOS COSTOS DE LOS VERTICES EN ORDEN DE LLEGADA
-            
             List<Vuelo> listaVuelos = vueloService.getAll();
             for (Vuelo vuelo : listaVuelos) {
 
@@ -72,7 +69,6 @@ public class TestController {
                 }
                 int costo = vuelo.getTiempo_vuelo_minutos();
                 listaNodos.get(iOrigen).addBranch(costo, listaNodos.get(iDestino),vuelo);
-                
             }
 
             // EL MAPEO ESTA TERMINADO ================================================================================
@@ -85,7 +81,8 @@ public class TestController {
             iteraran minutos simulando el paso del tiempo
             */
 
-            List<Envio> listaEnvios = envioService.getAll();
+            //OBTENEMOS LOS ENVIOS ORDENADOS POR FECHA
+            List<Envio> listaEnvios = envioService.listOrdenFecha();
 
             // PRUEBA CON SOLO UN ELEMENTO ========================================================================== 
             // Envio envioPrueba = listaEnvios.get(100);
@@ -115,6 +112,7 @@ public class TestController {
 
                 AstarSearch.restaAlmacenamiento(target, envioActual);
                 AstarSearch.printPath(target);
+                AstarSearch.clearParents(listaNodos);
                 j++;
             }
             result = "insertado xd";
