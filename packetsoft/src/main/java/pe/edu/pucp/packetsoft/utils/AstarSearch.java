@@ -131,4 +131,22 @@ public class AstarSearch {
             astarNode.parent = null;
         }
     }
+
+    public static List<Integer> generaListaIDS(AstarNode target){
+        AstarNode n = target;
+    
+        
+        if(n==null)
+            return null;
+    
+        List<Integer> ids = new ArrayList<>();
+    
+        while(n.parent != null){
+            ids.add(n.id);
+            n = n.parent;
+        }
+        ids.add(n.id);
+        Collections.reverse(ids);
+        return ids;
+    }
 }

@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pe.edu.pucp.packetsoft.controllers.TestController;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.Vuelo;
@@ -49,6 +50,8 @@ public class TabuSearchService {
         matrizF = new int[aeropuertos.size()][aeropuertos.size()];
 
         List<Vuelo> mejorSolucion = new ArrayList<>();
+
+        
 
         List<Aeropuerto> solucionInicial = new ArrayList<Aeropuerto>();
         solucionInicial.add(aeropuertos.get(2));
