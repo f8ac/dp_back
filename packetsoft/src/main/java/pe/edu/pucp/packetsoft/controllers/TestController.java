@@ -1,6 +1,8 @@
 package pe.edu.pucp.packetsoft.controllers;
 
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,13 +104,24 @@ public class TestController {
             // AstarSearch.printPath(res);
         
             // PRUEBA CON LA LISTA DE ENVIOS ========================================================================== 
+            // Date fechaInicio = new Date();
+            Calendar calInicio = Calendar.getInstance();
+            calInicio.set(iter[4], iter[3]-1, iter[2], 0, 0, 0);
+            Date fechaInicio = new Date();
+            // fechaInicio.setTime(calInicio);
             int j = 0;
             StopWatch watch = new  StopWatch();
             watch.start();
             for (Envio envioActual : listaEnvios) {
+
                 if(j == iter[0])break;
+
+                if(envioActual.getFecha_hora().after(calInicio.getTime())){
+                    // System.out.println("this is the one");
+                    
+                }
                 
-                System.out.print(j+") ");
+                System.out.print(j+") "+envioActual.getFecha_hora() + " ");
                 envioActual = listaEnvios.get(j);
                 int origen  = indexNodoAeropuerto(listaNodos,  envioActual.getAero_origen());
                 int destino = indexNodoAeropuerto(listaNodos, envioActual.getAero_destino());
@@ -121,7 +134,7 @@ public class TestController {
                 j++;
             }
             watch.stop();
-            System.out.print("Tiempo total para procesar "+iter[0]+" pedidos: "+watch.getTotalTimeMillis()+" milisegundos.");
+            System.out.print("Tiempo total para procesar "+iter[0]+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
             result = "insertado xd";
         }catch(Exception ex){
             System.err.println(ex.getMessage());

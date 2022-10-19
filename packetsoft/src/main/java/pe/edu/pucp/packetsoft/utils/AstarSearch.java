@@ -65,7 +65,7 @@ public class AstarSearch {
                 
                 int cantidad_actual = n.vuelo.getCapacidad_utilizada();
                 n.vuelo.setCapacidad_utilizada(cantidad_actual + envio.getCant_paquetes_total());
-                System.out.print("<"+(100 - n.vuelo.getCapacidad_utilizada())+">");
+                System.out.print(" <Cap.res. "+n.vuelo.getId()+": "+(100 - n.vuelo.getCapacidad_utilizada())+"> ");
             }
             n = n.parent;
             // m.parent = null;
@@ -88,7 +88,10 @@ public class AstarSearch {
         Collections.reverse(flights);
         // System.out.println("\n==================================");
         for(AstarNode flight : flights){
-            System.out.print(flight.aeropuerto.getId() + "["+flight.vuelo.getId()+"] ");
+            if(flight.vuelo != null){
+                System.out.print(" ["+flight.vuelo.getId()+"] ");// "["+flight.vuelo.getId()+"] "+ 
+            }
+            System.out.print(flight.aeropuerto.getId());
         }
         // System.out.println("\n==================================");
         System.out.println("");
@@ -129,6 +132,7 @@ public class AstarSearch {
     public static void clearParents(List<AstarNode> lista){
         for (AstarNode astarNode : lista) {
             astarNode.parent = null;
+            astarNode.vuelo = null;
         }
     }
 
