@@ -78,17 +78,17 @@ public class AstarSearch {
         if(n==null)
             return;
     
-        List<Integer> ids = new ArrayList<>();
+        List<AstarNode> flights = new ArrayList<>();
     
         while(n.parent != null){
-            ids.add(n.id);
+            flights.add(n);
             n = n.parent;
         }
-        ids.add(n.id);
-        Collections.reverse(ids);
+        flights.add(n);
+        Collections.reverse(flights);
         // System.out.println("\n==================================");
-        for(int id : ids){
-            System.out.print(id + " ");
+        for(AstarNode flight : flights){
+            System.out.print(flight.aeropuerto.getId() + "["+flight.vuelo.getId()+"] ");
         }
         // System.out.println("\n==================================");
         System.out.println("");
