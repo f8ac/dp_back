@@ -62,10 +62,9 @@ public class AstarSearch {
             return;
         while(n.parent != null){
             if(n.vuelo != null){
-                
                 int cantidad_actual = n.vuelo.getCapacidad_utilizada();
                 n.vuelo.setCapacidad_utilizada(cantidad_actual + envio.getCant_paquetes_total());
-                System.out.print(" <Cap.res. "+n.vuelo.getId()+": "+(100 - n.vuelo.getCapacidad_utilizada())+"> ");
+                // System.out.print("=> <CR("+n.vuelo.getId()+"): "+(n.vuelo.getCapacidad_total() - n.vuelo.getCapacidad_utilizada())+"> ");
             }
             n = n.parent;
             // m.parent = null;

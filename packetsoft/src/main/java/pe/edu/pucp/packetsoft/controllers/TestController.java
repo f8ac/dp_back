@@ -146,7 +146,7 @@ public class TestController {
                 j++;
             }
             watch.stop();
-            System.out.print("Tiempo total para procesar "+iter[0]+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
+            System.out.print("Tiempo total para procesar "+j+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
             result = "eksito";
         }catch(Exception ex){
             System.err.println(ex.getMessage());
