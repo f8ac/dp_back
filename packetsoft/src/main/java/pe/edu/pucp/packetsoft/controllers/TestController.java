@@ -43,7 +43,6 @@ public class TestController {
     @PostMapping(value = "/main")
     String main(@RequestBody int[] iter){
         String result = null;
-        // insert();
         try{
             // SE INSERTAN LOS AEROPUERTOS EN UNA LISTA DE NODOS DEL MISMO TAMANIO
             List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
@@ -71,17 +70,25 @@ public class TestController {
                     }
                     j++;
                 }
+                // Evaluamos los aeropuertos de origen y destino.
+                // Si estan en un mismo continente el almacenamiento sera un numero entre 20 y 30,
+                // para distinto continente sera un numero entre 25 y 40
+                int rand, max, min; 
+                if(vuelo.getAeropuerto_salida().getContinente().getId() == vuelo.getAeropuerto_llegada().getContinente().getId()){
+                    max = 30; min = 20;
+                }else{
+                    max = 40; min = 25;
+                }
+                rand = (int)((Math.random()*(max - min))+min);
+                vuelo.setCapacidad_total(rand*10);
                 int costo = vuelo.getTiempo_vuelo_minutos();
                 listaNodos.get(iOrigen).addBranch(costo, listaNodos.get(iDestino),vuelo);
-                vuelo.setCapacidad_utilizada(iter[1]*vuelo.getCapacidad_total()/100);
+                // vuelo.setCapacidad_utilizada(iter[1]*vuelo.getCapacidad_total()/100);
             }
-
             // EL MAPEO ESTA TERMINADO ================================================================================
-
             /* 
             PARA CONOCER EL RESULTADO, TENEMOS QUE LLAMAR A 
             AstarSearch tomando el origen y el destino de un envio
-
             Para la simulacion total es mejor iterar los envios, luego ya se 
             iteraran minutos simulando el paso del tiempo
             */
@@ -91,34 +98,39 @@ public class TestController {
 
             // PRUEBA CON SOLO UN ELEMENTO ========================================================================== 
             // Envio envioPrueba = listaEnvios.get(100);
-
             // int iOrigen  = indexNodoAeropuerto(listaNodos,  envioPrueba.getAero_origen());
             // int iDestino = indexNodoAeropuerto(listaNodos, envioPrueba.getAero_destino());
-
             // AstarNode res = AstarSearch.aStar(listaNodos.get(iOrigen), listaNodos.get(iDestino),envioPrueba.getFecha_hora());
-
             // AstarSearch.restaAlmacenamiento(res, envioPrueba);
             // // AstarNode res = AstarSearch.aStar(listaNodos.get(0), listaNodos.get(35));
-
             // // AstarSearch.printNewPath(res);
             // AstarSearch.printPath(res);
-        
+    
             // PRUEBA CON LA LISTA DE ENVIOS ========================================================================== 
             // Date fechaInicio = new Date();
             Calendar calInicio = Calendar.getInstance();
+            Calendar calFin = Calendar.getInstance();
             calInicio.set(iter[4], iter[3]-1, iter[2], 0, 0, 0);
-            Date fechaInicio = new Date();
-            // fechaInicio.setTime(calInicio);
+            if(iter[5] != 0){
+                calFin.setTime(calInicio.getTime());
+                calFin.add(Calendar.DATE, iter[5]);
+            }else{
+                calFin.set(iter[4]+1, iter[3]-1, iter[2], 0, 0, 0);
+            }
+
             int j = 0;
             StopWatch watch = new  StopWatch();
             watch.start();
             for (Envio envioActual : listaEnvios) {
 
-                if(j == iter[0])break;
-
-                if(envioActual.getFecha_hora().after(calInicio.getTime())){
-                    // System.out.println("this is the one");
-                    
+                if(j == iter[0]){
+                    break;
+                }
+                if(!envioActual.getFecha_hora().before(calFin.getTime())){
+                    break;
+                }
+                if(!envioActual.getFecha_hora().after(calInicio.getTime())){
+                    continue;
                 }
                 
                 System.out.print(j+") "+envioActual.getFecha_hora() + " ");
@@ -135,7 +147,7 @@ public class TestController {
             }
             watch.stop();
             System.out.print("Tiempo total para procesar "+iter[0]+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
-            result = "insertado xd";
+            result = "eksito";
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }
@@ -152,7 +164,6 @@ public class TestController {
         }
         return -1;
     }
-
 
     @PostMapping(value = "/insert")
     String insert(){
@@ -173,7 +184,6 @@ public class TestController {
     /*   
     @PostMapping(value = "/obsolete")
     String obsoleteMains(@RequestParam("file") MultipartFile file){
-        
         try{
             InputStream targeStream = new ByteArrayInputStream(file.getBytes());
             BufferedInputStream buffer = new BufferedInputStream(targeStream);
