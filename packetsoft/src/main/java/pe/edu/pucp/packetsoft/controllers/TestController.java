@@ -224,4 +224,108 @@ public class TestController {
         return "main";
     } 
     */
+
+    @PostMapping(value = "/time")
+    String timeTest(){
+        String result = null;
+        //definicion de una fecha random
+        Calendar cal = Calendar.getInstance();
+        cal.set(2022, 0, 1, 0, 0, 0);;
+        StopWatch watch = new  StopWatch();
+        watch.start();
+        for (int i = 0; i<10000; i++) {
+            System.out.print(i+") "+cal.getTime() + "\n");
+            cal.add(Calendar.DATE, 1);
+        }
+        watch.stop();
+        System.out.print("Tiempo total para procesar 10000 fechas: "+watch.getTotalTimeMillis()+" milisegundos.");
+        return result;
+    }
+
+    @PostMapping(value = "/maintime")
+    String mainTime(Prm param){
+        String result = null;
+        try{
+            // SE INSERTAN LOS AEROPUERTOS EN UNA LISTA DE NODOS DEL MISMO TAMANIO
+            List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
+            List<AstarNode> listaNodos = Arrays.asList(new AstarNode[listaAeropuertos.size()]);
+            int i = 0;
+            for (Aeropuerto aeropuerto : listaAeropuertos) {
+                AstarNode nodo = new AstarNode(0);
+                nodo.setAeropuerto(aeropuerto);
+                listaNodos.set(i,nodo);
+                i++;
+            }
+            // SE INSERTAN LOS COSTOS DE LOS VERTICES EN ORDEN DE LLEGADA
+            List<Vuelo> listaVuelos = vueloService.getAll();
+            for (Vuelo vuelo : listaVuelos) {
+
+                int iOrigen = -1, iDestino = -1, j = 0;
+                for (AstarNode nodo : listaNodos) {
+                    // ENCONTRAMOS EL NODO ORIGEN EN LA LISTA
+                    if(nodo.getAeropuerto().getId() == vuelo.getAeropuerto_salida().getId()){
+                        iOrigen = j;
+                    }
+                    // ENCONTRAMOS EL NODO DESTINO EN LA LISTA
+                    if(nodo.getAeropuerto().getId() == vuelo.getAeropuerto_llegada().getId()){
+                        iDestino = j; 
+                    }
+                    j++;
+                }
+                int rand, max, min; 
+                if(vuelo.getAeropuerto_salida().getContinente().getId() == vuelo.getAeropuerto_llegada().getContinente().getId()){
+                    max = 30; min = 20;
+                }else{
+                    max = 40; min = 25;
+                }
+                rand = (int)((Math.random()*(max - min))+min);
+                vuelo.setCapacidad_total(rand*10);
+                int costo = vuelo.getTiempo_vuelo_minutos();
+                listaNodos.get(iOrigen).addBranch(costo, listaNodos.get(iDestino),vuelo);
+            }
+            List<Envio> listaEnvios = envioService.listOrdenFecha();
+
+            Calendar calInicio = Calendar.getInstance();
+            Calendar calFin = Calendar.getInstance();
+            // calInicio.set(iter[4], iter[3]-1, iter[2], 0, 0, 0);
+            // if(iter[5] != 0){
+            //     calFin.setTime(calInicio.getTime());
+            //     calFin.add(Calendar.DATE, iter[5]);
+            // }else{
+            //     calFin.set(iter[4]+1, iter[3]-1, iter[2], 0, 0, 0);
+            // }
+
+            int j = 0;
+            StopWatch watch = new  StopWatch();
+            watch.start();
+            for (Envio envioActual : listaEnvios) {
+                // if(j == iter[0]){
+                //     break;
+                // }
+                if(!envioActual.getFecha_hora().before(calFin.getTime())){
+                    break;
+                }
+                if(!envioActual.getFecha_hora().after(calInicio.getTime())){
+                    continue;
+                } 
+                System.out.print(j+") "+envioActual.getFecha_hora() + " ");
+                envioActual = listaEnvios.get(j);
+                int origen  = indexNodoAeropuerto(listaNodos,  envioActual.getAero_origen());
+                int destino = indexNodoAeropuerto(listaNodos, envioActual.getAero_destino());
+
+                AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino), envioActual);
+
+                AstarSearch.restaAlmacenamiento(target, envioActual);
+                AstarSearch.printPath(target);
+                AstarSearch.clearParents(listaNodos);
+                j++;
+            }
+            watch.stop();
+            System.out.print("Tiempo total para procesar "+j+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
+            result = "eksito";
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
 }
