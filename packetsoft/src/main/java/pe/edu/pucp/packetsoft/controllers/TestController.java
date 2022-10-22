@@ -123,6 +123,12 @@ public class TestController {
             watch.start();
             for (Envio envioActual : listaEnvios) {
 
+                if(esIntercontinental(envioActual)){
+                    envioActual.setIntercontinental(true);
+                }else{
+                    envioActual.setIntercontinental(false);
+                }
+
                 if(j == iter[0]){
                     break;
                 }
@@ -134,13 +140,21 @@ public class TestController {
                 }
                 
                 System.out.print(j+") "+envioActual.getFecha_hora() + " ");
-                envioActual = listaEnvios.get(j);
+                // envioActual = listaEnvios.get(j);
                 int origen  = indexNodoAeropuerto(listaNodos,  envioActual.getAero_origen());
                 int destino = indexNodoAeropuerto(listaNodos, envioActual.getAero_destino());
 
                 AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino), envioActual);
 
-                AstarSearch.restaAlmacenamiento(target, envioActual);
+                if(AstarSearch.restaAlmacenamiento(target, envioActual)){
+                    System.out.println("COLAPSO: el paquete no ha llegado al aeropuerto a tiempo.");
+                    System.out.println("ID envio fallido: " + envioActual.getId());
+                    System.out.println("ID vuelo fallido: " + target.vuelo.getId());
+                    System.out.println("Llegada vuelo fallido: " + target.vuelo.getHora_llegada());
+                    System.out.println(target.vuelo.getAeropuerto_salida().getId());
+                    System.out.println(target.vuelo.getAeropuerto_llegada().getId());
+                    return "Colapse";
+                }
                 AstarSearch.printPath(target);
                 AstarSearch.clearParents(listaNodos);
                 j++;
@@ -154,12 +168,23 @@ public class TestController {
         return result;
     }
 
+    Boolean esIntercontinental(Envio envio){
+        Boolean result = null;
+        try{
+            if(envio.getAero_destino().getContinente().getId() == envio.getAero_origen().getContinente().getId()){
+                return false;
+            }
+            return true;
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
+
     int indexNodoAeropuerto(List<AstarNode> listaNodos,Aeropuerto aeropuerto){
         int i = 0;
         for (AstarNode astarNode : listaNodos) {
-            if(astarNode.aeropuerto.getId() == aeropuerto.getId()){
-                return i;
-            }
+            if(astarNode.aeropuerto.getId() == aeropuerto.getId()){return i;}
             i++;
         }
         return -1;
@@ -243,7 +268,7 @@ public class TestController {
     }
 
     @PostMapping(value = "/maintime")
-    String mainTime(Prm param){
+    String mainTime(@RequestBody Prm param){
         String result = null;
         try{
             // SE INSERTAN LOS AEROPUERTOS EN UNA LISTA DE NODOS DEL MISMO TAMANIO
@@ -285,6 +310,11 @@ public class TestController {
             }
             List<Envio> listaEnvios = envioService.listOrdenFecha();
 
+            // INICIO DEL ALGORITMO
+            // se puede recibir un numero de envios a procesar o una fecha a partir de la cual se puede hacer dos cosas
+            //      - se ejecuta el algoritmo hasta que se terminen los paquetes
+            //      - se ejecuta el algoritmo por una cantidad n de dias
+
             Calendar calInicio = Calendar.getInstance();
             Calendar calFin = Calendar.getInstance();
             // calInicio.set(iter[4], iter[3]-1, iter[2], 0, 0, 0);
@@ -294,7 +324,7 @@ public class TestController {
             // }else{
             //     calFin.set(iter[4]+1, iter[3]-1, iter[2], 0, 0, 0);
             // }
-
+            
             int j = 0;
             StopWatch watch = new  StopWatch();
             watch.start();

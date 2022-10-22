@@ -1,12 +1,14 @@
 package pe.edu.pucp.packetsoft.utils;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
+import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.Vuelo;
 
 @Getter @Setter
@@ -72,13 +74,17 @@ public class AstarNode implements Comparable<AstarNode> {
         return this.h;
     }
 
-    public double calculateHeuristic(AstarNode target, Date time,Edge edge){
-        int tiempoRestante  = compareTimes(edge.vuelo.getHora_salida(),time);
+    public double calculateHeuristic(AstarNode target, Envio envio,Edge edge){
+        int tiempoRestante  = compareTimes(edge.vuelo.getHora_salida(),envio.getFecha_hora());
         // this.h = (double)tiempoRestante;
         if(tiempoRestante < 0){
             this.h = Double.MAX_VALUE;
             System.out.print(".");
-        }else{
+        }
+        // else if(fueraDePlazo(edge.vuelo,envio)){
+        //     this.h = Double.MAX_VALUE;
+        // }
+        else{
             if(edge.vuelo.getCapacidad_total() == edge.vuelo.getCapacidad_utilizada()){
                 System.err.println("El vuelo ya no admite más paquetes");
                 this.h = Double.MAX_VALUE;
@@ -89,6 +95,30 @@ public class AstarNode implements Comparable<AstarNode> {
             
         }
         return this.h;
+    }
+
+    public static Boolean fueraDePlazo(Vuelo vuelo,Envio envio){
+        Boolean result = false;
+        try{
+            int horasAgregadas;
+            if(envio.getIntercontinental())
+                horasAgregadas = 48;
+            else
+                horasAgregadas = 24;
+            if(vuelo.getHora_llegada().after(addHoursToDate(envio.getFecha_hora(),horasAgregadas))){
+                return true;
+            }
+        }catch(Exception ex){
+            System.out.println(ex.getMessage());
+        }
+        return result;
+    }
+
+    public static Date addHoursToDate(Date date, int hours) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.HOUR_OF_DAY, hours);
+        return calendar.getTime();
     }
 
     public int compareTimes(Date d1, Date d2){
