@@ -18,5 +18,9 @@ public class TabuSearchController {
         tabuSearchService.ejecutarAlgoritmo(id1,id2,id3);
     }
 
+    @GetMapping(value = "/pruebaAlgoritmo/{id1}/{id2}/{id3}")
+    void pruebaAlgoritmo(@PathVariable int id1, @PathVariable int id2, @PathVariable int id3){
+        tabuSearchService.pruebaAlgoritmo(id1,id2,id3);
+    }
 
 }

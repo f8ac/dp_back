@@ -1,5 +1,6 @@
 package pe.edu.pucp.packetsoft.dao.imp;
 
+import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
 
@@ -108,27 +109,46 @@ public class VueloDaoImp implements VueloDao{
     @Override
     public Vuelo buscarVuelo1(int idinicio, int idfin, Calendar horaSalida, int paquetes) {
         List<Vuelo> vuelo = null;
+
+       java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm");
+       String currentTime = sdf.format(horaSalida.getTime());
+
         try {
-            var hql = "from Vuelo as v where v.aeropuerto_salida = "+idinicio+" and v.aeropuerto_llegada = "+idfin+" and v.hora_salida >"+horaSalida.getTime()+" and (v.capacidad_total-v.capacidad_utilizada)>="+paquetes+" order by v.tiempo_vuelo_minutos";
+            var hql = "from Vuelo as v where v.aeropuerto_salida = "+idinicio+" and v.aeropuerto_llegada = "+idfin+" and v.hora_salida >"+"'"+currentTime+"'"+" and (v.capacidad_total-v.capacidad_utilizada)>="+paquetes+" order by v.tiempo_vuelo_minutos";
             vuelo = entityManager.createQuery(hql).getResultList();
         }
         catch (Exception exception){
             System.out.println(exception.getMessage());
         }
-        return vuelo.get(0);
+
+        if(vuelo.size()!=0){
+            return vuelo.get(0);
+        }else{
+            return null;
+        }
     }
 
     @Override
     public Vuelo buscarVuelo2(int idinicio, int idfin, Calendar horaSalida, Calendar horaLlegada, int paquetes) {
         List<Vuelo> vuelo = null;
+        
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String currentTime1 = sdf.format(horaSalida.getTime());
+        String currentTime2 = sdf.format(horaLlegada.getTime());
+
         try {
-            var hql = "from Vuelo as v where v.aeropuerto_salida = "+idinicio+" and v.aeropuerto_llegada = "+idfin+" and v.hora_salida >"+horaSalida.getTime()+" and v.hora_llegada <"+horaLlegada.getTime()+" and (v.capacidad_total-v.capacidad_utilizada)>="+paquetes+" order by v.tiempo_vuelo_minutos";
+            var hql = "from Vuelo as v where v.aeropuerto_salida = "+idinicio+" and v.aeropuerto_llegada = "+idfin+" and v.hora_salida >"+"'"+currentTime1+"'"+" and v.hora_llegada <"+"'"+currentTime2+"'"+" and (v.capacidad_total-v.capacidad_utilizada)>="+paquetes+" order by v.tiempo_vuelo_minutos";
             vuelo = entityManager.createQuery(hql).getResultList();
         }
         catch (Exception exception){
             System.out.println(exception.getMessage());
         }
-        return vuelo.get(0);
+
+        if(vuelo.size()!=0){
+            return vuelo.get(0);
+        }else{
+            return null;
+        }
     }
 
 
