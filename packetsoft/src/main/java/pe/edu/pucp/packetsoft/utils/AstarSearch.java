@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import pe.edu.pucp.packetsoft.models.Envio;
+import pe.edu.pucp.packetsoft.models.VueloRet;
 
 public class AstarSearch {
     public static AstarNode aStar(AstarNode start, AstarNode target,Envio envio){
@@ -57,7 +58,7 @@ public class AstarSearch {
         return null;
     }
 
-    public static Boolean restaAlmacenamiento(AstarNode target, Envio envio){
+    public static Boolean restaAlmacenamiento(AstarNode target, Envio envio, List<VueloRet> listaVuelos){
         AstarNode n = target;
         if(n==null)
             return false;
@@ -65,11 +66,14 @@ public class AstarSearch {
             if(n.vuelo != null){
                 int cantidad_actual = n.vuelo.getCapacidad_utilizada();
                 n.vuelo.setCapacidad_utilizada(cantidad_actual + envio.getCant_paquetes_total());
+                // elegir de la lista al vueloRet correspondiente
+                // agregar el envio al inventario
+                listaVuelos.get(n.vuelo.getId()-1).getInventario().add(envio);
                 if(colapso(n,envio)){
                     System.err.println("COLAPSO: el paquete no ha llegado a tiempo.");
-                    //n.vuelo.getHora_llegada().after(addHoursToDate(envio.getFecha_hora(),))
                     return true;
                 }
+
             }
             n = n.parent;
         }

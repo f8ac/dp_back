@@ -1,5 +1,6 @@
 package pe.edu.pucp.packetsoft.controllers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.Vuelo;
+import pe.edu.pucp.packetsoft.models.VueloInv;
+import pe.edu.pucp.packetsoft.models.VueloRet;
 import pe.edu.pucp.packetsoft.services.AeropuertoService;
 import pe.edu.pucp.packetsoft.services.ContinenteService;
 import pe.edu.pucp.packetsoft.services.EnvioService;
@@ -26,16 +29,12 @@ import pe.edu.pucp.packetsoft.utils.AstarSearch;
 @RequestMapping("/test")
 @CrossOrigin
 public class TestController {
-    
     @Autowired
     private AeropuertoService aeropuertoService;
-
     @Autowired
     private ContinenteService continenteService;
-
     @Autowired
     private EnvioService envioService;
-
     @Autowired
     private VueloService vueloService;
 
@@ -43,7 +42,7 @@ public class TestController {
     String main(@RequestBody int[] iter){
         String result = null;
         try{
-            // SE INSERTAN LOS AEROPUERTOS EN UNA LISTA DE NODOS DEL MISMO TAMANIO
+            // AEROPUERTOS
             List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
             List<AstarNode> listaNodos = Arrays.asList(new AstarNode[listaAeropuertos.size()]);
             int i = 0;
@@ -53,20 +52,19 @@ public class TestController {
                 listaNodos.set(i,nodo);
                 i++;
             }
-            // SE INSERTAN LOS COSTOS DE LOS VERTICES EN ORDEN DE LLEGADA
+            // VUELOS / VERTICES
             List<Vuelo> listaVuelos = vueloService.getAll();
+            // List<VueloInv> listaVuelos = vueloService.getAll();
+            List<VueloRet> listaVuelosRetorno = new ArrayList<VueloRet>();
             for (Vuelo vuelo : listaVuelos) {
-
                 int iOrigen = -1, iDestino = -1, j = 0;
                 for (AstarNode nodo : listaNodos) {
                     // ENCONTRAMOS EL NODO ORIGEN EN LA LISTA
-                    if(nodo.getAeropuerto().getId() == vuelo.getAeropuerto_salida().getId()){
+                    if(nodo.getAeropuerto().getId() == vuelo.getAeropuerto_salida().getId())
                         iOrigen = j;
-                    }
                     // ENCONTRAMOS EL NODO DESTINO EN LA LISTA
-                    if(nodo.getAeropuerto().getId() == vuelo.getAeropuerto_llegada().getId()){
+                    if(nodo.getAeropuerto().getId() == vuelo.getAeropuerto_llegada().getId())
                         iDestino = j; 
-                    }
                     j++;
                 }
                 // Evaluamos los aeropuertos de origen y destino.
@@ -76,13 +74,16 @@ public class TestController {
                 if(vuelo.getAeropuerto_salida().getContinente().getId() == vuelo.getAeropuerto_llegada().getContinente().getId()){
                     max = 30; min = 20;
                 }else{
-                    max = 40; min = 25;
-                }
+                    max = 40; min = 25;}
                 rand = (int)((Math.random()*(max - min))+min);
                 vuelo.setCapacidad_total(rand*10);
                 int costo = vuelo.getTiempo_vuelo_minutos();
                 listaNodos.get(iOrigen).addBranch(costo, listaNodos.get(iDestino),vuelo);
-                // vuelo.setCapacidad_utilizada(iter[1]*vuelo.getCapacidad_total()/100);
+
+                // Agregamos este vuelo a la lista de vuelos retornables
+                VueloRet vueloRetorno = new VueloRet();
+                vueloRetorno.setVuelo(vuelo);
+                listaVuelosRetorno.add(vueloRetorno);
             }
             // EL MAPEO ESTA TERMINADO ================================================================================
             /* 
@@ -116,7 +117,6 @@ public class TestController {
             }else{
                 calFin.set(iter[4]+1, iter[3]-1, iter[2], 0, 0, 0);
             }
-
             int j = 0;
             StopWatch watch = new  StopWatch();
             watch.start();
@@ -128,15 +128,12 @@ public class TestController {
                     envioActual.setIntercontinental(false);
                 }
 
-                if(j == iter[0]){
+                if(j == iter[0])
                     break;
-                }
-                if(!envioActual.getFecha_hora().before(calFin.getTime())){
+                if(!envioActual.getFecha_hora().before(calFin.getTime()))
                     break;
-                }
-                if(!envioActual.getFecha_hora().after(calInicio.getTime())){
+                if(!envioActual.getFecha_hora().after(calInicio.getTime()))
                     continue;
-                }
                 
                 System.out.print(j+") "+envioActual.getId()+" "+envioActual.getFecha_hora() + " ");
                 // envioActual = listaEnvios.get(j);
@@ -145,7 +142,7 @@ public class TestController {
 
                 AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino), envioActual);
 
-                if(AstarSearch.restaAlmacenamiento(target, envioActual)){
+                if(AstarSearch.restaAlmacenamiento(target, envioActual, listaVuelosRetorno)){
                     System.out.println("COLAPSO: el paquete no ha llegado al aeropuerto a tiempo.");
                     System.out.println("ID envio fallido: " + envioActual.getId());
                     System.out.println("ID vuelo fallido: " + target.vuelo.getId());
@@ -160,7 +157,7 @@ public class TestController {
             }
             watch.stop();
             System.out.print("Tiempo total para procesar "+j+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
-            result = "eksito";
+            result = "Rutas generadas con exito";
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }
@@ -204,50 +201,6 @@ public class TestController {
         }
         return result;
     }
-
-    /*   
-    @PostMapping(value = "/obsolete")
-    String obsoleteMains(@RequestParam("file") MultipartFile file){
-        try{
-            InputStream targeStream = new ByteArrayInputStream(file.getBytes());
-            BufferedInputStream buffer = new BufferedInputStream(targeStream);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(buffer));
-            String line;
-            reader.readLine();
-            reader.readLine();
-            reader.readLine();
-            while(reader.ready()){
-                line = reader.readLine();
-                String nombreContinente = line.trim();
-                Continente continente = new Continente();
-                continente.setNombre(nombreContinente);
-                Continente result = continenteService.insert(continente);
-                while(true){
-                    line = reader.readLine();
-                    if(line == null) break;
-                    if(line == null || line.isEmpty() ){
-                        break;
-                    }
-                    String codAeropuerto;
-                    String nomPais;
-                    String codCiudad;
-                    codAeropuerto = line.substring(4, 11).trim();
-                    nomPais = line.substring(32, 47).trim();
-                    codCiudad = line.substring(48, 52).trim();
-                    Aeropuerto aeropuerto = new Aeropuerto();
-                    aeropuerto.setCod_aeropuerto(codAeropuerto);
-                    aeropuerto.setCod_ciudad(codCiudad);
-                    aeropuerto.setPais(nomPais);
-                    aeropuerto.setContinente(result);
-                    aeropuertoService.insert(aeropuerto);
-                }
-            }
-        }catch(Exception ex){
-            System.err.println(ex.getMessage());
-        }
-        return "main";
-    } 
-    */
 
     @PostMapping(value = "/time")
     String timeTest(){
@@ -344,7 +297,7 @@ public class TestController {
 
                 AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino), envioActual);
 
-                AstarSearch.restaAlmacenamiento(target, envioActual);
+                // AstarSearch.restaAlmacenamiento(target, envioActual,);
                 AstarSearch.printPath(target);
                 AstarSearch.clearParents(listaNodos);
                 j++;
@@ -358,3 +311,48 @@ public class TestController {
         return result;
     }
 }
+
+
+    /*   
+    @PostMapping(value = "/obsolete")
+    String obsoleteMains(@RequestParam("file") MultipartFile file){
+        try{
+            InputStream targeStream = new ByteArrayInputStream(file.getBytes());
+            BufferedInputStream buffer = new BufferedInputStream(targeStream);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(buffer));
+            String line;
+            reader.readLine();
+            reader.readLine();
+            reader.readLine();
+            while(reader.ready()){
+                line = reader.readLine();
+                String nombreContinente = line.trim();
+                Continente continente = new Continente();
+                continente.setNombre(nombreContinente);
+                Continente result = continenteService.insert(continente);
+                while(true){
+                    line = reader.readLine();
+                    if(line == null) break;
+                    if(line == null || line.isEmpty() ){
+                        break;
+                    }
+                    String codAeropuerto;
+                    String nomPais;
+                    String codCiudad;
+                    codAeropuerto = line.substring(4, 11).trim();
+                    nomPais = line.substring(32, 47).trim();
+                    codCiudad = line.substring(48, 52).trim();
+                    Aeropuerto aeropuerto = new Aeropuerto();
+                    aeropuerto.setCod_aeropuerto(codAeropuerto);
+                    aeropuerto.setCod_ciudad(codCiudad);
+                    aeropuerto.setPais(nomPais);
+                    aeropuerto.setContinente(result);
+                    aeropuertoService.insert(aeropuerto);
+                }
+            }
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return "main";
+    } 
+    */
