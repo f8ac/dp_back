@@ -84,6 +84,9 @@ public class TestController {
                 VueloRet vueloRetorno = new VueloRet();
                 vueloRetorno.setVuelo(vuelo);
                 listaVuelosRetorno.add(vueloRetorno);
+                // inicializar el inventario vacio
+                List<Envio> inventario = new ArrayList<Envio>();
+                vueloRetorno.setInventario(inventario);
             }
             // EL MAPEO ESTA TERMINADO ================================================================================
             /* 
@@ -141,6 +144,7 @@ public class TestController {
                 int destino = indexNodoAeropuerto(listaNodos, envioActual.getAero_destino());
 
                 AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino), envioActual);
+                
 
                 if(AstarSearch.restaAlmacenamiento(target, envioActual, listaVuelosRetorno)){
                     System.out.println("COLAPSO: el paquete no ha llegado al aeropuerto a tiempo.");
