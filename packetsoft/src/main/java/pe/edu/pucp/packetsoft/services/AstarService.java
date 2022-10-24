@@ -15,9 +15,10 @@ import pe.edu.pucp.packetsoft.utils.AstarSearch;
 @Service
 public class AstarService {
 
-
+    @Autowired
     AeropuertoService aeropuertoService;
-
+    
+    @Autowired
     VueloService vueloService;
 
     public List<Integer> pruebaUnica(Envio envioPrueba){

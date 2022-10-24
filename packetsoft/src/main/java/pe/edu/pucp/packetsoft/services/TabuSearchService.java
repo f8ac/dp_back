@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import pe.edu.pucp.packetsoft.controllers.TestController;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
@@ -53,18 +54,35 @@ public class TabuSearchService {
 
         List<Vuelo> mejorSolucion = new ArrayList<>();
 
-        astarService.pruebaUnica(null);
+        //astarService.pruebaUnica();
 
         List<Aeropuerto> solucionInicial = new ArrayList<Aeropuerto>();
-        solucionInicial.add(aeropuertos.get(2));
-        solucionInicial.add(aeropuertos.get(1));
+        //solucionInicial.add(aeropuertos.get(2));
+        //solucionInicial.add(aeropuertos.get(1));
 
         //Vuelos
         List<Vuelo> soluIniVuelo = new ArrayList<Vuelo>();
-        soluIniVuelo.add(vueloService.get(2));
+        //soluIniVuelo.add(vueloService.get(2));
 
         //Envio
-        Envio envio = envioService.get(1);
+        Envio envio = envioService.get(11347);
+
+        List<Integer> idsVuelos = null;
+
+        idsVuelos=astarService.pruebaUnica(envio);
+
+        for(int i=0;i<idsVuelos.size();i++){
+            soluIniVuelo.add(vueloService.get(idsVuelos.get(i)));
+        }
+
+        for(int i=0;i<idsVuelos.size();i++){
+            if(i==0){
+                solucionInicial.add(soluIniVuelo.get(i).getAeropuerto_salida());
+                solucionInicial.add(soluIniVuelo.get(i).getAeropuerto_llegada());
+            }else{
+                solucionInicial.add(soluIniVuelo.get(i).getAeropuerto_llegada());
+            }
+        }
 
         // empieza el algoritmo
         mejorSolucion.addAll(soluIniVuelo);
@@ -72,9 +90,9 @@ public class TabuSearchService {
             movimiento(matrizR, matrizF, mejorSolucion, solucionInicial, soluIniVuelo,envio);
         }
 
-        for(int i=0;i<mejorSolucion.size();i++){
-            System.out.print(mejorSolucion.get(i)+"->");
-        }
+        /*for(int i=0;i<mejorSolucion.size();i++){
+            System.out.print(mejorSolucion.get(i).getId()+"->");
+        }*/
             
 
         /*matrizR = new int[aeropuertos.size()][aeropuertos.size()];
@@ -155,7 +173,7 @@ public class TabuSearchService {
                         mejorMov.addAll(solucionAux);
                         mejori=j-1;
                     }else{
-                        if(fitness(solucionAuxVuelo)>fitness(mejorMovVuelo)){
+                        if(fitness(solucionAuxVuelo)<fitness(mejorMovVuelo)){
                             mejorMov.clear();
                             mejorMov.addAll(solucionAux);
                             mejori=j-1;
@@ -169,11 +187,13 @@ public class TabuSearchService {
         }
 
         if(!(mejorMov.isEmpty() &&  mejorMovVuelo.isEmpty())){
-            solucionInicial.addAll(mejorMov);
-            soluInicialVuelo.addAll(mejorMovVuelo);
+            //solucionInicial.clear();
+            //solucionInicial.addAll(mejorMov);
+            //soluInicialVuelo.clear();
+            //soluInicialVuelo.addAll(mejorMovVuelo);
             matrizR[mejori][mejori]+=5;
             matrizF[mejori][mejori]+=1;
-            if(fitness(soluInicialVuelo)>fitness(mejorSolucion)){
+            if(fitness(mejorMovVuelo)<fitness(mejorSolucion)){
                 mejorSolucion.clear();
                 mejorSolucion.addAll(soluInicialVuelo);
             }
@@ -232,19 +252,27 @@ public class TabuSearchService {
         int cantAeropSolAux = soluAux.size();
         hallarAeropuerto(i,cant);
         Vuelo vuelo1 = null,vuelo2=null;
+        List<Vuelo> vuelos;
+        //System.out.print("\n"+posA+" "+posV+" "+i+"esto");
         if(posA!=-1 && posV!=-1){
+
+            if(posA==cantAeropSolAux-1){
+                posA=posA-1;
+            }
             soluAux.add(posA+1,vecinos.get(posA).get(posV));
-            buscarVuelos(posA+1,cantAeropSolAux,soluAux,soluAuxVuelo,vuelo1,vuelo2,envio);
+            vuelos = buscarVuelos(posA+1,cantAeropSolAux,soluAux,soluAuxVuelo,vuelo1,vuelo2,envio);
+            vuelo1 = vuelos.get(0);
+            vuelo2 = vuelos.get(1);
             if(vuelo1!=null && vuelo2!=null){
-                //if(posA==cantAeropSolAux-1){
-                    //soluAuxVuelo.remove(posA-1);
-                    //soluAuxVuelo.add(posA-1,vuelo1);
-                    //soluAuxVuelo.add(posA,vuelo2);
-                //}else{
+                /*if(posA==cantAeropSolAux-1){
+                    soluAuxVuelo.remove(posA-1);
+                    soluAuxVuelo.add(posA-1,vuelo1);
+                    soluAuxVuelo.add(posA,vuelo2);
+                }else{*/
                 soluAuxVuelo.remove(posA);
                 soluAuxVuelo.add(posA,vuelo1);
                 soluAuxVuelo.add(posA+1,vuelo2);
-                //}
+                
                 valido=true;
             }
         }
@@ -280,10 +308,11 @@ public class TabuSearchService {
         }
     }
 
-    void buscarVuelos(int pos,int total,List<Aeropuerto> soluAux,List<Vuelo> soluAuxVuelo,Vuelo vuelo1,Vuelo vuelo2,Envio envio){
+    List<Vuelo> buscarVuelos(int pos,int total,List<Aeropuerto> soluAux,List<Vuelo> soluAuxVuelo,Vuelo vuelo1,Vuelo vuelo2,Envio envio){
         Calendar horasalida1 = Calendar.getInstance();
         Calendar horasalida2 = Calendar.getInstance();
         Calendar horallegada2 = Calendar.getInstance();
+        List<Vuelo> vuelos=new ArrayList<Vuelo>();
         if(pos==1){
             horasalida1.setTime(envio.getFecha_hora());
         }else{
@@ -292,16 +321,32 @@ public class TabuSearchService {
             horasalida1.add(Calendar.HOUR_OF_DAY, 1);
         }
         vuelo1 = vueloService.buscarVuelo1(soluAux.get(pos-1).getId(),soluAux.get(pos).getId(),horasalida1,envio.getCant_paquetes_total());
-        
-        horasalida2.setTime(vuelo1.getHora_llegada());
-        horasalida2.add(Calendar.HOUR_OF_DAY, 1);
-        
-        if(pos+1==total){
-            vuelo2 = vueloService.buscarVuelo1(soluAux.get(pos).getId(),soluAux.get(pos+1).getId(),horasalida2,envio.getCant_paquetes_total());
-        }else{
-            horallegada2.setTime(soluAuxVuelo.get(pos+1).getHora_salida());
-            horallegada2.add(Calendar.HOUR_OF_DAY, -1);
-            vuelo2 = vueloService.buscarVuelo2(soluAux.get(pos).getId(),soluAux.get(pos+1).getId(),horasalida2,horallegada2,envio.getCant_paquetes_total());
+        vuelos.add(vuelo1);
+        if(vuelo1 != null){
+
+            horasalida2.setTime(vuelo1.getHora_llegada());
+            horasalida2.add(Calendar.HOUR_OF_DAY, 1);
+            
+            if(pos+1==total){
+                vuelo2 = vueloService.buscarVuelo1(soluAux.get(pos).getId(),soluAux.get(pos+1).getId(),horasalida2,envio.getCant_paquetes_total());
+            }else{
+                horallegada2.setTime(soluAuxVuelo.get(pos).getHora_salida());
+                horallegada2.add(Calendar.HOUR_OF_DAY, -1);
+                vuelo2 = vueloService.buscarVuelo2(soluAux.get(pos).getId(),soluAux.get(pos+1).getId(),horasalida2,horallegada2,envio.getCant_paquetes_total());
+            }
         }
+        vuelos.add(vuelo2);
+        return vuelos;
+    }
+
+
+    public void pruebaAlgoritmo(int id1, int id2, int id3) {
+        StopWatch watch = new StopWatch();
+        watch.start();
+        for(int i=0;i<10;i++){
+            ejecutarAlgoritmo(id1,id2,id3);
+        }
+        watch.stop();
+        System.out.print("Tiempo total para procesar" +watch.getTotalTimeMillis()+" milisegundos.");
     }
 }
