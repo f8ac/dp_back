@@ -47,6 +47,12 @@ public class TestController {
             List<AstarNode> listaNodos = Arrays.asList(new AstarNode[listaAeropuertos.size()]);
             int i = 0;
             for (Aeropuerto aeropuerto : listaAeropuertos) {
+                // setear capacidad total dependiendo del continente.
+                int cap;
+                if(aeropuerto.getContinente().getId() == 1)
+                    cap = 850;
+                else if(aeropuerto.getContinente().getId() == 2)
+                    cap = 900;
                 AstarNode nodo = new AstarNode(0);
                 nodo.setAeropuerto(aeropuerto);
                 listaNodos.set(i,nodo);
@@ -70,13 +76,16 @@ public class TestController {
                 // Evaluamos los aeropuertos de origen y destino.
                 // Si estan en un mismo continente el almacenamiento sera un numero entre 20 y 30,
                 // para distinto continente sera un numero entre 25 y 40
-                int rand, max, min; 
+                int cap; 
                 if(vuelo.getAeropuerto_salida().getContinente().getId() == vuelo.getAeropuerto_llegada().getContinente().getId()){
-                    max = 30; min = 20;
+                    //
+                    if(vuelo.getAeropuerto_salida().getContinente().getId() == 1)
+                        cap = 250;
+                    else
+                        cap = 300;
                 }else{
-                    max = 40; min = 25;}
-                rand = (int)((Math.random()*(max - min))+min);
-                vuelo.setCapacidad_total(rand*10);
+                    cap = 350;}
+                vuelo.setCapacidad_total(cap);
                 int costo = vuelo.getTiempo_vuelo_minutos();
                 listaNodos.get(iOrigen).addBranch(costo, listaNodos.get(iDestino),vuelo);
 
@@ -88,6 +97,7 @@ public class TestController {
                 List<Envio> inventario = new ArrayList<Envio>();
                 vueloRetorno.setInventario(inventario);
             }
+
             // EL MAPEO ESTA TERMINADO ================================================================================
             /* 
             PARA CONOCER EL RESULTADO, TENEMOS QUE LLAMAR A 
@@ -220,98 +230,6 @@ public class TestController {
         }
         watch.stop();
         System.out.print("Tiempo total para procesar 10000 fechas: "+watch.getTotalTimeMillis()+" milisegundos.");
-        return result;
-    }
-
-    @PostMapping(value = "/maintime")
-    String mainTime(@RequestBody Prm param){
-        String result = null;
-        try{
-            // SE INSERTAN LOS AEROPUERTOS EN UNA LISTA DE NODOS DEL MISMO TAMANIO
-            List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
-            List<AstarNode> listaNodos = Arrays.asList(new AstarNode[listaAeropuertos.size()]);
-            int i = 0;
-            for (Aeropuerto aeropuerto : listaAeropuertos) {
-                AstarNode nodo = new AstarNode(0);
-                nodo.setAeropuerto(aeropuerto);
-                listaNodos.set(i,nodo);
-                i++;
-            }
-            // SE INSERTAN LOS COSTOS DE LOS VERTICES EN ORDEN DE LLEGADA
-            List<Vuelo> listaVuelos = vueloService.getAll();
-            for (Vuelo vuelo : listaVuelos) {
-
-                int iOrigen = -1, iDestino = -1, j = 0;
-                for (AstarNode nodo : listaNodos) {
-                    // ENCONTRAMOS EL NODO ORIGEN EN LA LISTA
-                    if(nodo.getAeropuerto().getId() == vuelo.getAeropuerto_salida().getId()){
-                        iOrigen = j;
-                    }
-                    // ENCONTRAMOS EL NODO DESTINO EN LA LISTA
-                    if(nodo.getAeropuerto().getId() == vuelo.getAeropuerto_llegada().getId()){
-                        iDestino = j; 
-                    }
-                    j++;
-                }
-                int rand, max, min; 
-                if(vuelo.getAeropuerto_salida().getContinente().getId() == vuelo.getAeropuerto_llegada().getContinente().getId()){
-                    max = 30; min = 20;
-                }else{
-                    max = 40; min = 25;
-                }
-                rand = (int)((Math.random()*(max - min))+min);
-                vuelo.setCapacidad_total(rand*10);
-                int costo = vuelo.getTiempo_vuelo_minutos();
-                listaNodos.get(iOrigen).addBranch(costo, listaNodos.get(iDestino),vuelo);
-            }
-            List<Envio> listaEnvios = envioService.listOrdenFecha();
-
-            // INICIO DEL ALGORITMO
-            // se puede recibir un numero de envios a procesar o una fecha a partir de la cual se puede hacer dos cosas
-            //      - se ejecuta el algoritmo hasta que se terminen los paquetes
-            //      - se ejecuta el algoritmo por una cantidad n de dias
-
-            Calendar calInicio = Calendar.getInstance();
-            Calendar calFin = Calendar.getInstance();
-            // calInicio.set(iter[4], iter[3]-1, iter[2], 0, 0, 0);
-            // if(iter[5] != 0){
-            //     calFin.setTime(calInicio.getTime());
-            //     calFin.add(Calendar.DATE, iter[5]);
-            // }else{
-            //     calFin.set(iter[4]+1, iter[3]-1, iter[2], 0, 0, 0);
-            // }
-            
-            int j = 0;
-            StopWatch watch = new  StopWatch();
-            watch.start();
-            for (Envio envioActual : listaEnvios) {
-                // if(j == iter[0]){
-                //     break;
-                // }
-                if(!envioActual.getFecha_hora().before(calFin.getTime())){
-                    break;
-                }
-                if(!envioActual.getFecha_hora().after(calInicio.getTime())){
-                    continue;
-                } 
-                System.out.print(j+") "+envioActual.getId()+" "+envioActual.getFecha_hora() + " ");
-                envioActual = listaEnvios.get(j);
-                int origen  = indexNodoAeropuerto(listaNodos,  envioActual.getAero_origen());
-                int destino = indexNodoAeropuerto(listaNodos, envioActual.getAero_destino());
-
-                AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino), envioActual);
-
-                // AstarSearch.restaAlmacenamiento(target, envioActual,);
-                AstarSearch.printPath(target);
-                AstarSearch.clearParents(listaNodos);
-                j++;
-            }
-            watch.stop();
-            System.out.print("Tiempo total para procesar "+j+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
-            result = "eksito";
-        }catch(Exception ex){
-            System.err.println(ex.getMessage());
-        }
         return result;
     }
 }
