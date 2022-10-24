@@ -138,7 +138,7 @@ public class TestController {
                     continue;
                 }
                 
-                System.out.print(j+") "+envioActual.getFecha_hora() + " ");
+                System.out.print(j+") "+envioActual.getId()+" "+envioActual.getFecha_hora() + " ");
                 // envioActual = listaEnvios.get(j);
                 int origen  = indexNodoAeropuerto(listaNodos,  envioActual.getAero_origen());
                 int destino = indexNodoAeropuerto(listaNodos, envioActual.getAero_destino());
@@ -337,7 +337,7 @@ public class TestController {
                 if(!envioActual.getFecha_hora().after(calInicio.getTime())){
                     continue;
                 } 
-                System.out.print(j+") "+envioActual.getFecha_hora() + " ");
+                System.out.print(j+") "+envioActual.getId()+" "+envioActual.getFecha_hora() + " ");
                 envioActual = listaEnvios.get(j);
                 int origen  = indexNodoAeropuerto(listaNodos,  envioActual.getAero_origen());
                 int destino = indexNodoAeropuerto(listaNodos, envioActual.getAero_destino());
