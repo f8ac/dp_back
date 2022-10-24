@@ -42,4 +42,7 @@ public class Envio extends BaseEntity {
 
     @Column(name = "cant_paquetes_total")
     private Integer cant_paquetes_total;
+
+    @Column(name = "intercontinental")
+    private Boolean intercontinental;
 }

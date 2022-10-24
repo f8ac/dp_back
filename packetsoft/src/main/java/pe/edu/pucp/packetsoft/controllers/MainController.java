@@ -16,30 +16,26 @@ import org.springframework.web.bind.annotation.RestController;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.Vuelo;
-import pe.edu.pucp.packetsoft.models.VueloInv;
 import pe.edu.pucp.packetsoft.models.VueloRet;
 import pe.edu.pucp.packetsoft.services.AeropuertoService;
-import pe.edu.pucp.packetsoft.services.ContinenteService;
 import pe.edu.pucp.packetsoft.services.EnvioService;
 import pe.edu.pucp.packetsoft.services.VueloService;
 import pe.edu.pucp.packetsoft.utils.AstarNode;
 import pe.edu.pucp.packetsoft.utils.AstarSearch;
 
 @RestController
-@RequestMapping("/test")
+@RequestMapping("/main")
 @CrossOrigin
-public class TestController {
+public class MainController {
     @Autowired
     private AeropuertoService aeropuertoService;
-    @Autowired
-    private ContinenteService continenteService;
     @Autowired
     private EnvioService envioService;
     @Autowired
     private VueloService vueloService;
 
     @PostMapping(value = "/main")
-    String main(@RequestBody int[] iter){
+    String main(@RequestBody Prm param){
         String result = null;
         try{
             // AEROPUERTOS
@@ -48,11 +44,12 @@ public class TestController {
             int i = 0;
             for (Aeropuerto aeropuerto : listaAeropuertos) {
                 // setear capacidad total dependiendo del continente.
-                int cap;
+                int cap = 0;
                 if(aeropuerto.getContinente().getId() == 1)
                     cap = 850;
                 else if(aeropuerto.getContinente().getId() == 2)
                     cap = 900;
+                aeropuerto.setCapacidad_total(cap);
                 AstarNode nodo = new AstarNode(0);
                 nodo.setAeropuerto(aeropuerto);
                 listaNodos.set(i,nodo);
@@ -123,12 +120,12 @@ public class TestController {
             // Date fechaInicio = new Date();
             Calendar calInicio = Calendar.getInstance();
             Calendar calFin = Calendar.getInstance();
-            calInicio.set(iter[4], iter[3]-1, iter[2], 0, 0, 0);
-            if(iter[5] != 0){
+            calInicio.set(param.anio, param.mes-1, param.dia, 0, 0, 0);
+            if(param.diaSimul != 0){
                 calFin.setTime(calInicio.getTime());
-                calFin.add(Calendar.DATE, iter[5]);
+                calFin.add(Calendar.DATE, param.diaSimul);
             }else{
-                calFin.set(iter[4]+1, iter[3]-1, iter[2], 0, 0, 0);
+                calFin.set(param.anio+1, param.mes-1, param.dia, 0, 0, 0);
             }
             int j = 0;
             StopWatch watch = new  StopWatch();
@@ -141,7 +138,7 @@ public class TestController {
                     envioActual.setIntercontinental(false);
                 }
 
-                if(j == iter[0])
+                if(j == param.nEnvios)
                     break;
                 if(!envioActual.getFecha_hora().before(calFin.getTime()))
                     break;
@@ -199,82 +196,6 @@ public class TestController {
         }
         return -1;
     }
-
-    @PostMapping(value = "/insert")
-    String insert(){
-        String result = null;
-        try{
-            continenteService.insertTodos();
-            aeropuertoService.insertfile();
-            // envioService.insertfile();
-            vueloService.insertfile();
-            
-        }catch(Exception ex){
-            System.err.println(ex.getMessage());
-            result = "error lol";
-        }
-        return result;
-    }
-
-    @PostMapping(value = "/time")
-    String timeTest(){
-        String result = null;
-        //definicion de una fecha random
-        Calendar cal = Calendar.getInstance();
-        cal.set(2022, 0, 1, 0, 0, 0);;
-        StopWatch watch = new  StopWatch();
-        watch.start();
-        for (int i = 0; i<10000; i++) {
-            System.out.print(i+") "+cal.getTime() + "\n");
-            cal.add(Calendar.DATE, 1);
-        }
-        watch.stop();
-        System.out.print("Tiempo total para procesar 10000 fechas: "+watch.getTotalTimeMillis()+" milisegundos.");
-        return result;
-    }
 }
 
 
-    /*   
-    @PostMapping(value = "/obsolete")
-    String obsoleteMains(@RequestParam("file") MultipartFile file){
-        try{
-            InputStream targeStream = new ByteArrayInputStream(file.getBytes());
-            BufferedInputStream buffer = new BufferedInputStream(targeStream);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(buffer));
-            String line;
-            reader.readLine();
-            reader.readLine();
-            reader.readLine();
-            while(reader.ready()){
-                line = reader.readLine();
-                String nombreContinente = line.trim();
-                Continente continente = new Continente();
-                continente.setNombre(nombreContinente);
-                Continente result = continenteService.insert(continente);
-                while(true){
-                    line = reader.readLine();
-                    if(line == null) break;
-                    if(line == null || line.isEmpty() ){
-                        break;
-                    }
-                    String codAeropuerto;
-                    String nomPais;
-                    String codCiudad;
-                    codAeropuerto = line.substring(4, 11).trim();
-                    nomPais = line.substring(32, 47).trim();
-                    codCiudad = line.substring(48, 52).trim();
-                    Aeropuerto aeropuerto = new Aeropuerto();
-                    aeropuerto.setCod_aeropuerto(codAeropuerto);
-                    aeropuerto.setCod_ciudad(codCiudad);
-                    aeropuerto.setPais(nomPais);
-                    aeropuerto.setContinente(result);
-                    aeropuertoService.insert(aeropuerto);
-                }
-            }
-        }catch(Exception ex){
-            System.err.println(ex.getMessage());
-        }
-        return "main";
-    } 
-    */
