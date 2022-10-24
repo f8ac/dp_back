@@ -102,22 +102,9 @@ public class MainController {
             Para la simulacion total es mejor iterar los envios, luego ya se 
             iteraran minutos simulando el paso del tiempo
             */
-
             //OBTENEMOS LOS ENVIOS ORDENADOS POR FECHA
             List<Envio> listaEnvios = envioService.listOrdenFecha();
-
-            // PRUEBA CON SOLO UN ELEMENTO ========================================================================== 
-            // Envio envioPrueba = listaEnvios.get(100);
-            // int iOrigen  = indexNodoAeropuerto(listaNodos,  envioPrueba.getAero_origen());
-            // int iDestino = indexNodoAeropuerto(listaNodos, envioPrueba.getAero_destino());
-            // AstarNode res = AstarSearch.aStar(listaNodos.get(iOrigen), listaNodos.get(iDestino),envioPrueba.getFecha_hora());
-            // AstarSearch.restaAlmacenamiento(res, envioPrueba);
-            // // AstarNode res = AstarSearch.aStar(listaNodos.get(0), listaNodos.get(35));
-            // // AstarSearch.printNewPath(res);
-            // AstarSearch.printPath(res);
-    
             // PRUEBA CON LA LISTA DE ENVIOS ========================================================================== 
-            // Date fechaInicio = new Date();
             Calendar calInicio = Calendar.getInstance();
             Calendar calFin = Calendar.getInstance();
             calInicio.set(param.anio, param.mes-1, param.dia, 0, 0, 0);
