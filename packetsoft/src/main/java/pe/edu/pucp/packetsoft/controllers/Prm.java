@@ -8,4 +8,5 @@ public class Prm {
     public int minuto;
     public int segundo;
     public int nEnvios;
+    public int diaSimul;
 }

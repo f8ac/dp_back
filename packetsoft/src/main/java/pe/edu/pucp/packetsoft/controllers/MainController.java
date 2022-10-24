@@ -35,7 +35,7 @@ public class MainController {
     private VueloService vueloService;
 
     @PostMapping(value = "/main")
-    String main(@RequestBody int[] iter){
+    String main(@RequestBody Prm param){
         String result = null;
         try{
             // AEROPUERTOS
@@ -120,12 +120,12 @@ public class MainController {
             // Date fechaInicio = new Date();
             Calendar calInicio = Calendar.getInstance();
             Calendar calFin = Calendar.getInstance();
-            calInicio.set(iter[4], iter[3]-1, iter[2], 0, 0, 0);
-            if(iter[5] != 0){
+            calInicio.set(param.anio, param.mes-1, param.dia, 0, 0, 0);
+            if(param.diaSimul != 0){
                 calFin.setTime(calInicio.getTime());
-                calFin.add(Calendar.DATE, iter[5]);
+                calFin.add(Calendar.DATE, param.diaSimul);
             }else{
-                calFin.set(iter[4]+1, iter[3]-1, iter[2], 0, 0, 0);
+                calFin.set(param.anio+1, param.mes-1, param.dia, 0, 0, 0);
             }
             int j = 0;
             StopWatch watch = new  StopWatch();
@@ -138,7 +138,7 @@ public class MainController {
                     envioActual.setIntercontinental(false);
                 }
 
-                if(j == iter[0])
+                if(j == param.nEnvios)
                     break;
                 if(!envioActual.getFecha_hora().before(calFin.getTime()))
                     break;
