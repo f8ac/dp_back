@@ -35,8 +35,8 @@ public class MainController {
     private VueloService vueloService;
 
     @PostMapping(value = "/main")
-    String main(@RequestBody Prm param){
-        String result = null;
+    List<VueloRet> main(@RequestBody Prm param){
+        List<VueloRet> result = null;
         try{
             // AEROPUERTOS
             List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
@@ -147,7 +147,7 @@ public class MainController {
                     System.out.println("Llegada vuelo fallido: " + target.vuelo.getHora_llegada());
                     System.out.println(target.vuelo.getAeropuerto_salida().getId());
                     System.out.println(target.vuelo.getAeropuerto_llegada().getId());
-                    return "Colapse";
+                    break;
                 }
                 AstarSearch.printPath(target);
                 AstarSearch.clearParents(listaNodos);
@@ -155,7 +155,7 @@ public class MainController {
             }
             watch.stop();
             System.out.print("Tiempo total para procesar "+j+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
-            result = "Rutas generadas con exito";
+            result = vuelosTomados(listaVuelosRetorno);
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }
@@ -182,6 +182,21 @@ public class MainController {
             i++;
         }
         return -1;
+    }
+
+    List<VueloRet> vuelosTomados(List<VueloRet> listaVuelos){
+        List<VueloRet> result = null;
+        try{
+            result = new ArrayList<VueloRet>();
+            for (VueloRet vueloRet : listaVuelos) {
+                if(!vueloRet.getInventario().isEmpty()){
+                    result.add(vueloRet);
+                }
+            }
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
     }
 }
 

@@ -69,6 +69,7 @@ public class AstarSearch {
                 // elegir de la lista al vueloRet correspondiente
                 // agregar el envio al inventario
                 listaVuelos.get(n.vuelo.getId()-1).getInventario().add(envio);
+                
                 if(colapso(n,envio)){
                     System.err.println("COLAPSO: el paquete no ha llegado a tiempo.");
                     return true;
