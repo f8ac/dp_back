@@ -3,6 +3,7 @@ package pe.edu.pucp.packetsoft.controllers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +36,8 @@ public class MainController {
     private VueloService vueloService;
 
     @PostMapping(value = "/main")
-    String main(@RequestBody Prm param){
-        String result = null;
+    List<VueloRet> main(@RequestBody Prm param){
+        List<VueloRet> result = null;
         try{
             // AEROPUERTOS
             List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
@@ -55,9 +56,10 @@ public class MainController {
                 listaNodos.set(i,nodo);
                 i++;
             }
-            // VUELOS / VERTICES
+            // VUELOS / VERTICES 
+            // creamos una lista de vertices a partir de la fecha que vamos a simular
             List<Vuelo> listaVuelos = vueloService.getAll();
-            // List<VueloInv> listaVuelos = vueloService.getAll();
+            // List<Vuelo> listaVuelos = vueloService.readFileToLocal();
             List<VueloRet> listaVuelosRetorno = new ArrayList<VueloRet>();
             for (Vuelo vuelo : listaVuelos) {
                 int iOrigen = -1, iDestino = -1, j = 0;
@@ -115,6 +117,9 @@ public class MainController {
                 calFin.set(param.anio+1, param.mes-1, param.dia, 0, 0, 0);
             }
             int j = 0;
+
+            LinkedHashSet<VueloRet> listaVuelosRetorno1 = new LinkedHashSet<VueloRet>();
+
             StopWatch watch = new  StopWatch();
             watch.start();
             for (Envio envioActual : listaEnvios) {
@@ -139,7 +144,7 @@ public class MainController {
 
                 AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino), envioActual);
                 
-
+                // if(AstarSearch.restaAlmacenamiento(target, envioActual, listaVuelosRetorno1)){
                 if(AstarSearch.restaAlmacenamiento(target, envioActual, listaVuelosRetorno)){
                     System.out.println("COLAPSO: el paquete no ha llegado al aeropuerto a tiempo.");
                     System.out.println("ID envio fallido: " + envioActual.getId());
@@ -147,15 +152,16 @@ public class MainController {
                     System.out.println("Llegada vuelo fallido: " + target.vuelo.getHora_llegada());
                     System.out.println(target.vuelo.getAeropuerto_salida().getId());
                     System.out.println(target.vuelo.getAeropuerto_llegada().getId());
-                    return "Colapse";
+                    return listaVuelosRetorno;
                 }
                 AstarSearch.printPath(target);
                 AstarSearch.clearParents(listaNodos);
                 j++;
             }
+            
             watch.stop();
             System.out.print("Tiempo total para procesar "+j+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
-            result = "Rutas generadas con exito";
+            result = listaVuelosRetorno;
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }
