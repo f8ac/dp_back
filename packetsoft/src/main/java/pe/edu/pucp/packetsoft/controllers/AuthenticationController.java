@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -103,6 +104,11 @@ public class AuthenticationController {
         return true;
     }
 
+    @GetMapping(value = "/test")
+    public String  test(){
+        return "test";
+    }
+
     //Excepcion para keyCode third party invalido
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Not authenticated with third party")
@@ -112,5 +118,7 @@ public class AuthenticationController {
     @ExceptionHandler(SQLException.class)
     @ResponseStatus(value = HttpStatus.CONFLICT, reason = "Duplicated data")
     public void conflict2() {}
+
+
     
 }
