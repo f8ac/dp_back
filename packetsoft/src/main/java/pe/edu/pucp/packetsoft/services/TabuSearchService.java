@@ -25,8 +25,8 @@ public class TabuSearchService {
     private AstarService astarService;
 
     private int itEtapaLocal;
-    private int itEtapaInten;
-    private int itEtapaDiver;
+    // private int itEtapaInten;
+    // private int itEtapaDiver;
     // private List<Aeropuerto> aeropuertos;
     private int tamanioMatriz;
     private int[][] matrizR;
@@ -41,8 +41,8 @@ public class TabuSearchService {
     public void ejecutarAlgoritmo(int id1, int id2, int id3) {
 
         this.itEtapaLocal = id1;
-        this.itEtapaInten = id2;
-        this.itEtapaDiver = id3;
+        // this.itEtapaInten = id2;
+        // this.itEtapaDiver = id3;
 
         List<Aeropuerto> aeropuertos = aeropuertoService.getAll();
         tamanioMatriz = aeropuertos.size();
