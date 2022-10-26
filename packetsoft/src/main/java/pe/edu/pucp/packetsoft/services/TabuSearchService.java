@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
-import pe.edu.pucp.packetsoft.controllers.TestController;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.Vuelo;
@@ -26,8 +25,8 @@ public class TabuSearchService {
     private AstarService astarService;
 
     private int itEtapaLocal;
-    // private int itEtapaInten;
-    // private int itEtapaDiver;
+    private int itEtapaInten;
+    private int itEtapaDiver;
     // private List<Aeropuerto> aeropuertos;
     private int tamanioMatriz;
     private int[][] matrizR;
