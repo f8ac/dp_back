@@ -1,6 +1,5 @@
 package pe.edu.pucp.packetsoft.dao.imp;
 
-import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
 
@@ -16,7 +15,7 @@ import pe.edu.pucp.packetsoft.models.Vuelo;
 
 @Transactional
 @Repository
-@SuppressWarnings({"unchecked"})
+@SuppressWarnings({"unchecked","null"})
 public class VueloDaoImp implements VueloDao{
     
     @PersistenceContext

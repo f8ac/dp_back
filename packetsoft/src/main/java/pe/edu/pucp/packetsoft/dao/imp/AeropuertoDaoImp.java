@@ -13,7 +13,7 @@ import java.util.List;
 
 @Transactional
 @Repository
-@SuppressWarnings({"unchecked"})
+@SuppressWarnings({"unchecked","null"})
 public class AeropuertoDaoImp implements AeropuertoDao {
     @PersistenceContext
     private EntityManager entityManager;

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.Vuelo;
-import pe.edu.pucp.packetsoft.models.VueloInv;
 import pe.edu.pucp.packetsoft.models.VueloRet;
 import pe.edu.pucp.packetsoft.services.AeropuertoService;
 import pe.edu.pucp.packetsoft.services.ContinenteService;
@@ -48,12 +47,13 @@ public class TestController {
             int i = 0;
             for (Aeropuerto aeropuerto : listaAeropuertos) {
                 // setear capacidad total dependiendo del continente.
-                int cap;
+                int cap = 0;
                 if(aeropuerto.getContinente().getId() == 1)
                     cap = 850;
                 else if(aeropuerto.getContinente().getId() == 2)
                     cap = 900;
                 AstarNode nodo = new AstarNode(0);
+                aeropuerto.setCapacidad_total(cap);
                 nodo.setAeropuerto(aeropuerto);
                 listaNodos.set(i,nodo);
                 i++;

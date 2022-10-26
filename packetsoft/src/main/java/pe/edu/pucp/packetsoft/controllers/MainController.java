@@ -3,7 +3,6 @@ package pe.edu.pucp.packetsoft.controllers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,14 +95,7 @@ public class MainController {
                 List<Envio> inventario = new ArrayList<Envio>();
                 vueloRetorno.setInventario(inventario);
             }
-
             // EL MAPEO ESTA TERMINADO ================================================================================
-            /* 
-            PARA CONOCER EL RESULTADO, TENEMOS QUE LLAMAR A 
-            AstarSearch tomando el origen y el destino de un envio
-            Para la simulacion total es mejor iterar los envios, luego ya se 
-            iteraran minutos simulando el paso del tiempo
-            */
             //OBTENEMOS LOS ENVIOS ORDENADOS POR FECHA
             List<Envio> listaEnvios = envioService.listOrdenFecha();
             // PRUEBA CON LA LISTA DE ENVIOS ========================================================================== 
@@ -117,8 +109,6 @@ public class MainController {
                 calFin.set(param.anio+1, param.mes-1, param.dia, 0, 0, 0);
             }
             int j = 0;
-
-            LinkedHashSet<VueloRet> listaVuelosRetorno1 = new LinkedHashSet<VueloRet>();
 
             StopWatch watch = new  StopWatch();
             watch.start();

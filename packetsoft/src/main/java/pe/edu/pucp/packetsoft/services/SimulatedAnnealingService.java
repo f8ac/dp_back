@@ -1,23 +1,15 @@
 package pe.edu.pucp.packetsoft.services;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import pe.edu.pucp.packetsoft.models.Aeropuerto;
-import pe.edu.pucp.packetsoft.models.Vuelo;
 import pe.edu.pucp.packetsoft.utils.SimulatedAnnealing.Travel;
 
 @Service
 public class SimulatedAnnealingService {
-    @Autowired
-    private AeropuertoService aeropuertoService;
-    @Autowired
-    private VueloService vueloService;
+    // @Autowired
+    // private AeropuertoService aeropuertoService;
+    // @Autowired
+    // private VueloService vueloService;
 
     private static Travel travel = new Travel(10);
 
@@ -53,7 +45,7 @@ public class SimulatedAnnealingService {
         }
 
 
-        List<Aeropuerto> aeropuertos = aeropuertoService.getAll();
+        // List<Aeropuerto> aeropuertos = aeropuertoService.getAll();
         
 
 

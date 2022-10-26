@@ -26,15 +26,15 @@ public class TabuSearchService {
     private AstarService astarService;
 
     private int itEtapaLocal;
-    private int itEtapaInten;
-    private int itEtapaDiver;
+    // private int itEtapaInten;
+    // private int itEtapaDiver;
     // private List<Aeropuerto> aeropuertos;
     private int tamanioMatriz;
     private int[][] matrizR;
     private int[][] matrizF;
-    private int cantMovFrecuentes = 10;
-    private int tenenciaMin = 5;
-    private int tenenciaMax = 10;
+    // private int cantMovFrecuentes = 10;
+    // private int tenenciaMin = 5;
+    // private int tenenciaMax = 10;
 
     private int posA;
     private int posV;
