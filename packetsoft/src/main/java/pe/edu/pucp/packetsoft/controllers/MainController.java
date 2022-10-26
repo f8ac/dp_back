@@ -101,12 +101,12 @@ public class MainController {
             // PRUEBA CON LA LISTA DE ENVIOS ========================================================================== 
             Calendar calInicio = Calendar.getInstance();
             Calendar calFin = Calendar.getInstance();
-            calInicio.set(param.anio, param.mes-1, param.dia, 0, 0, 0);
+            calInicio.set(param.anio, param.mes-1, param.dia, param.hora, param.minuto, param.segundo);
             if(param.diaSimul != 0){
                 calFin.setTime(calInicio.getTime());
                 calFin.add(Calendar.DATE, param.diaSimul);
             }else{
-                calFin.set(param.anio+1, param.mes-1, param.dia, 0, 0, 0);
+                calFin.set(param.anio+1, param.mes-1, param.dia, param.hora, param.minuto, param.segundo);
             }
             int j = 0;
 
