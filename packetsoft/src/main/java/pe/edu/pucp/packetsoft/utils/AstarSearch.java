@@ -22,7 +22,7 @@ public class AstarSearch {
         while(!openList.isEmpty()){
             AstarNode n = openList.peek();
             if(n == target){
-                System.out.print("$");
+                // System.out.print("$");
                 return n;
             }
             for(AstarNode.Edge edge : n.neighbors){

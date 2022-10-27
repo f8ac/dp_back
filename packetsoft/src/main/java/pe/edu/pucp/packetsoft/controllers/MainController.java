@@ -3,6 +3,7 @@ package pe.edu.pucp.packetsoft.controllers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,7 +99,6 @@ public class MainController {
             // EL MAPEO ESTA TERMINADO ================================================================================
             //OBTENEMOS LOS ENVIOS ORDENADOS POR FECHA
             List<Envio> listaEnvios = envioService.listOrdenFecha();
-            // PRUEBA CON LA LISTA DE ENVIOS ========================================================================== 
             Calendar calInicio = Calendar.getInstance();
             Calendar calFin = Calendar.getInstance();
             calInicio.set(param.anio, param.mes-1, param.dia, param.hora, param.minuto, param.segundo);
@@ -108,47 +108,54 @@ public class MainController {
             }else{
                 calFin.set(param.anio+1, param.mes-1, param.dia, param.hora, param.minuto, param.segundo);
             }
-            int j = 0;
-
+            int j = 0, cont = 1;
+            Calendar curDate = Calendar.getInstance();
+            curDate.setTime(calInicio.getTime());
+            Envio envioActual = new Envio();
             StopWatch watch = new  StopWatch();
             watch.start();
-            for (Envio envioActual : listaEnvios) {
-
-                if(esIntercontinental(envioActual)){
-                    envioActual.setIntercontinental(true);
-                }else{
-                    envioActual.setIntercontinental(false);
-                }
-
-                if(j == param.nEnvios)
+            while(true){
+                envioActual = listaEnvios.get(j);
+                System.out.print("\n"+cont+") "+curDate.getTime()+" "+envioActual.getId()+" "+envioActual.getFecha_hora() + " ");
+                if(curDate.getTime().after(calFin.getTime()))
                     break;
-                if(!envioActual.getFecha_hora().before(calFin.getTime()))
-                    break;
-                if(!envioActual.getFecha_hora().after(calInicio.getTime()))
+                if(curDate.getTime().before(calInicio.getTime())){
+                    curDate.add(Calendar.MINUTE, 1);
                     continue;
-                
-                System.out.print(j+") "+envioActual.getId()+" "+envioActual.getFecha_hora() + " ");
-                // envioActual = listaEnvios.get(j);
-                int origen  = indexNodoAeropuerto(listaNodos,  envioActual.getAero_origen());
-                int destino = indexNodoAeropuerto(listaNodos, envioActual.getAero_destino());
-
-                AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino), envioActual);
-                
-                // if(AstarSearch.restaAlmacenamiento(target, envioActual, listaVuelosRetorno1)){
-                if(AstarSearch.restaAlmacenamiento(target, envioActual, listaVuelosRetorno)){
-                    System.out.println("COLAPSO: el paquete no ha llegado al aeropuerto a tiempo.");
-                    System.out.println("ID envio fallido: " + envioActual.getId());
-                    System.out.println("ID vuelo fallido: " + target.vuelo.getId());
-                    System.out.println("Llegada vuelo fallido: " + target.vuelo.getHora_llegada());
-                    System.out.println(target.vuelo.getAeropuerto_salida().getId());
-                    System.out.println(target.vuelo.getAeropuerto_llegada().getId());
-                    break;
                 }
-                AstarSearch.printPath(target);
-                AstarSearch.clearParents(listaNodos);
-                j++;
+                if(curDate.getTime().after(envioActual.getFecha_hora())){
+                    j++;
+                    cont++;
+                    continue;
+                }
+                if(sameDateTime(curDate.getTime() ,envioActual.getFecha_hora())){
+                    if(esIntercontinental(envioActual))
+                        envioActual.setIntercontinental(true);
+                    else
+                        envioActual.setIntercontinental(false);
+                    if(j == param.nEnvios)
+                        break;
+
+                    int origen  = indexNodoAeropuerto(listaNodos, envioActual.getAero_origen());
+                    int destino = indexNodoAeropuerto(listaNodos, envioActual.getAero_destino());
+                    System.out.print(">Ejecuta");
+                    AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino), envioActual);
+                    if(AstarSearch.restaAlmacenamiento(target, envioActual, listaVuelosRetorno)){
+                        System.out.println("COLAPSO: el paquete no ha llegado al aeropuerto a tiempo.");
+                        System.out.println("ID envio fallido: " + envioActual.getId());
+                        System.out.println("ID vuelo fallido: " + target.vuelo.getId());
+                        System.out.println("Llegada vuelo fallido: " + target.vuelo.getHora_llegada());
+                        System.out.println(target.vuelo.getAeropuerto_salida().getId());
+                        System.out.println(target.vuelo.getAeropuerto_llegada().getId());
+                        break;
+                    }
+                    // AstarSearch.printPath(target);
+                    AstarSearch.clearParents(listaNodos);
+                    j++;
+                }
+                cont++;
+                curDate.add(Calendar.MINUTE, 1);
             }
-            
             watch.stop();
             System.out.print("Tiempo total para procesar "+j+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
             result = vuelosTomados(listaVuelosRetorno);
@@ -189,6 +196,22 @@ public class MainController {
                     result.add(vueloRet);
                 }
             }
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
+
+    @SuppressWarnings({"deprecation"})
+    Boolean sameDateTime(Date a,Date b){
+        Boolean result = null;
+        try{
+            result =       a.getYear()      == b.getYear() 
+                        && a.getMonth()     == b.getMonth()
+                        && a.getDay()       == b.getDay()
+                        && a.getHours()     == b.getHours()
+                        && a.getMinutes()   == b.getMinutes()
+                        ;
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }

@@ -1,0 +1,4 @@
+mvn package
+cd target
+java -jar packetsoft-0.0.1-SNAPSHOT.jar
+

@@ -79,7 +79,7 @@ public class AstarNode implements Comparable<AstarNode> {
         // this.h = (double)tiempoRestante;
         if(tiempoRestante < 0){
             this.h = Double.MAX_VALUE;
-            System.out.print(".");
+            // System.out.print(".");
         }
         // else if(fueraDePlazo(edge.vuelo,envio)){
         //     this.h = Double.MAX_VALUE;
@@ -90,7 +90,7 @@ public class AstarNode implements Comparable<AstarNode> {
                 this.h = Double.MAX_VALUE;
             }else{
                 this.h = tiempoRestante;
-                System.out.print("*");
+                // System.out.print("*");
             }
             
         }
