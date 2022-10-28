@@ -105,6 +105,7 @@ public class MainController {
             if(param.diaSimul != 0){
                 calFin.setTime(calInicio.getTime());
                 calFin.add(Calendar.DATE, param.diaSimul);
+                
             }else{
                 calFin.set(param.anio+1, param.mes-1, param.dia, param.hora, param.minuto, param.segundo);
             }
