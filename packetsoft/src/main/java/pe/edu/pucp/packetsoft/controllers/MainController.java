@@ -152,6 +152,7 @@ public class MainController {
                     }
                     // AstarSearch.printPath(target);
                     AstarSearch.clearParents(listaNodos);
+                    
                     j++;
                 }
                 cont++;
