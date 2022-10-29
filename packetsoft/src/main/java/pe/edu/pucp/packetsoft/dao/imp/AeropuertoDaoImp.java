@@ -1,6 +1,5 @@
 package pe.edu.pucp.packetsoft.dao.imp;
 
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -13,7 +12,7 @@ import java.util.List;
 
 @Transactional
 @Repository
-@SuppressWarnings({"unchecked","null"})
+@SuppressWarnings({ "unchecked", "null" })
 public class AeropuertoDaoImp implements AeropuertoDao {
     @PersistenceContext
     private EntityManager entityManager;
@@ -22,17 +21,14 @@ public class AeropuertoDaoImp implements AeropuertoDao {
     @Override
     public List<Aeropuerto> getAll() {
         List<Aeropuerto> list = null;
-        try{
+        try {
             var hql = "from Aeropuerto as a";
             list = entityManager.createQuery(hql).getResultList();
-        }
-        catch (Exception exception){
+        } catch (Exception exception) {
             System.out.println(exception.getMessage());
         }
         return list;
     }
-
-
 
     @Transactional
     @Override
@@ -40,48 +36,35 @@ public class AeropuertoDaoImp implements AeropuertoDao {
         Aeropuerto aeropuerto = null;
         try {
             aeropuerto = entityManager.find(Aeropuerto.class, id);
-        }
-        catch (Exception exception){
+        } catch (Exception exception) {
             System.out.println(exception.getMessage());
         }
         return aeropuerto;
     }
 
-
-
     @Transactional
     @Override
     public Aeropuerto insert(Aeropuerto aeropuerto) {
         Aeropuerto result = null;
-        try{
+        try {
             result = entityManager.merge(aeropuerto);
-        }
-        catch (Exception exception){
+        } catch (Exception exception) {
             System.out.println(exception.getMessage());
         }
         return result;
     }
 
-
     @Transactional
     @Override
     public Aeropuerto getByCodigo(Aeropuerto aeropuerto) {
         List<Aeropuerto> list = null;
-        try{
-            var hql = "from Aeropuerto as a where a.cod_aeropuerto = '"+ aeropuerto.getCod_aeropuerto() + "'";
+        try {
+            var hql = "from Aeropuerto as a where a.cod_aeropuerto = '" + aeropuerto.getCod_aeropuerto() + "'";
             list = entityManager.createQuery(hql).getResultList();
-        }
-        catch (Exception exception){
+        } catch (Exception exception) {
             System.out.println(exception.getMessage());
         }
         return list.get(0);
     }
-
-
-
-
-
-
-
 
 }
