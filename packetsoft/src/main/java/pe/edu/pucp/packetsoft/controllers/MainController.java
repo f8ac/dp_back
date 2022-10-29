@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.text.AbstractDocument.Content;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -105,11 +107,13 @@ public class MainController {
             if(param.diaSimul != 0){
                 calFin.setTime(calInicio.getTime());
                 calFin.add(Calendar.DATE, param.diaSimul);
-                
+            }else if(param.horaSimul != 0){
+                calFin.setTime(calInicio.getTime());
+                calFin.add(Calendar.HOUR_OF_DAY,param.horaSimul);
             }else{
                 calFin.set(param.anio+1, param.mes-1, param.dia, param.hora, param.minuto, param.segundo);
             }
-            int j = 0, cont = 1;
+            int j = 0, cont = 1, contEnvios = 0;
             Calendar curDate = Calendar.getInstance();
             curDate.setTime(calInicio.getTime());
             Envio envioActual = new Envio();
@@ -117,14 +121,16 @@ public class MainController {
             watch.start();
             while(true){
                 envioActual = listaEnvios.get(j);
-                System.out.print("\n"+cont+") "+curDate.getTime()+" "+envioActual.getId()+" "+envioActual.getFecha_hora() + " ");
+                if(param.debug){
+                    System.out.print("\n"+cont+") "+curDate.getTime()+" "+envioActual.getId()+" "+envioActual.getFecha_hora() + " ");
+                }
                 if(curDate.getTime().after(calFin.getTime()))
                     break;
-                if(curDate.getTime().before(calInicio.getTime())){
+                if(curDate.getTime().before(calInicio.getTime())){ //
                     curDate.add(Calendar.MINUTE, 1);
                     continue;
                 }
-                if(curDate.getTime().after(envioActual.getFecha_hora())){
+                if(calInicio.getTime().after(envioActual.getFecha_hora())){ //
                     j++;
                     cont++;
                     continue;
@@ -134,12 +140,14 @@ public class MainController {
                         envioActual.setIntercontinental(true);
                     else
                         envioActual.setIntercontinental(false);
-                    if(j == param.nEnvios)
+                    if(contEnvios == param.nEnvios)
                         break;
 
                     int origen  = indexNodoAeropuerto(listaNodos, envioActual.getAero_origen());
                     int destino = indexNodoAeropuerto(listaNodos, envioActual.getAero_destino());
-                    System.out.print(">Ejecuta");
+                    if(param.debug){
+                        System.out.print(">Ejecuta" + "["+contEnvios+"]");
+                    }
                     AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino), envioActual);
                     if(AstarSearch.restaAlmacenamiento(target, envioActual, listaVuelosRetorno)){
                         System.out.println("COLAPSO: el paquete no ha llegado al aeropuerto a tiempo.");
@@ -152,14 +160,19 @@ public class MainController {
                     }
                     // AstarSearch.printPath(target);
                     AstarSearch.clearParents(listaNodos);
-                    
+                    contEnvios++;
                     j++;
                 }
                 cont++;
-                curDate.add(Calendar.MINUTE, 1);
+                if(cont == 817){
+                    int k = 0;
+                }
+                if(!sameDateTime(curDate.getTime(), listaEnvios.get(j).getFecha_hora())){
+                    curDate.add(Calendar.MINUTE, 1);
+                }
             }
             watch.stop();
-            System.out.print("Tiempo total para procesar "+j+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
+            System.out.print("Tiempo total para procesar "+contEnvios+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
             result = vuelosTomados(listaVuelosRetorno);
         }catch(Exception ex){
             System.err.println(ex.getMessage());

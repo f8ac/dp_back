@@ -9,4 +9,6 @@ public class Prm {
     public int segundo;
     public int nEnvios;
     public int diaSimul;
+    public int horaSimul;
+    public boolean debug;
 }
