@@ -1,5 +1,7 @@
 package pe.edu.pucp.packetsoft.models;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,5 +36,17 @@ public class Paquete extends BaseEntity{
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_plan_viaje")
     private PlanViaje planViaje;
+
+    @Column(name = "fecha_entrada")
+    private Date fecha_entrada;
+
+    @Column(name = "fecha_entrada")
+    private Date fecha_salida;
+
+    @Column(name = "active")
+    private Boolean active;
+
+    private Integer idAeropuerto;
+    
 
 }

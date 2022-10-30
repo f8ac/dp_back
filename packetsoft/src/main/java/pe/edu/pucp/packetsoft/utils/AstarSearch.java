@@ -58,7 +58,7 @@ public class AstarSearch {
         return null;
     }
 
-    public static Boolean restaAlmacenamiento(AstarNode target, Envio envio, List<VueloRet> listaVuelos){
+    public static Boolean restaAlmacenamiento(AstarNode target, Envio envio, List<VueloRet> listaVuelos, PriorityQueue colaPaquetes){
         AstarNode n = target;
         if(n==null)
             return false;
@@ -66,15 +66,14 @@ public class AstarSearch {
             if(n.vuelo != null){
                 int cantidad_actual = n.vuelo.getCapacidad_utilizada();
                 n.vuelo.setCapacidad_utilizada(cantidad_actual + envio.getCant_paquetes_total());
-                // elegir de la lista al vueloRet correspondiente
-                // agregar el envio al inventario
                 listaVuelos.get(n.vuelo.getId()-1).getInventario().add(envio);
-                
+
+
+                n.aeropuerto.setCapacidad_utilizado(null);
                 if(colapso(n,envio)){
                     System.err.println("COLAPSO: el paquete no ha llegado a tiempo.");
                     return true;
                 }
-
             }
             n = n.parent;
         }
