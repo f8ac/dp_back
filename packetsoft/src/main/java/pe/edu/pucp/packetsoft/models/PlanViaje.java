@@ -2,6 +2,9 @@ package pe.edu.pucp.packetsoft.models;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.SQLDelete;
@@ -24,5 +27,13 @@ public class PlanViaje extends BaseEntity{
     
     @Column(name = "estado")
     private String estado;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_envio")
+    private Envio envio;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_vuelo")
+    private Vuelo vuelo;
 
 }

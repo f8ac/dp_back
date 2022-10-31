@@ -3,6 +3,7 @@ package pe.edu.pucp.packetsoft.controllers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -19,10 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.Paquete;
+import pe.edu.pucp.packetsoft.models.PlanViaje;
 import pe.edu.pucp.packetsoft.models.Vuelo;
 import pe.edu.pucp.packetsoft.models.VueloRet;
 import pe.edu.pucp.packetsoft.services.AeropuertoService;
 import pe.edu.pucp.packetsoft.services.EnvioService;
+import pe.edu.pucp.packetsoft.services.PlanViajeService;
 import pe.edu.pucp.packetsoft.services.VueloService;
 import pe.edu.pucp.packetsoft.utils.AstarNode;
 import pe.edu.pucp.packetsoft.utils.AstarSearch;
@@ -38,6 +41,8 @@ public class MainController {
     private EnvioService envioService;
     @Autowired
     private VueloService vueloService;
+    @Autowired 
+    private PlanViajeService planViajeService;
 
     @PostMapping(value = "/main")
     List<VueloRet> main(@RequestBody Prm param){
@@ -114,6 +119,7 @@ public class MainController {
                         System.out.println(target.vuelo.getAeropuerto_llegada().getId());
                         break;
                     }
+                    savePlan(target,envioActual);
                     // AstarSearch.printPath(target);
                     AstarSearch.clearParents(listaNodos);
                     contEnvios++;
@@ -271,6 +277,32 @@ public class MainController {
             System.err.println(ex.getMessage());
         }
         return result;
+    }
+
+    void savePlan(AstarNode target, Envio envio){
+        try{
+            AstarNode n = target;
+            if(n==null)
+                return;
+            List<AstarNode> flights = new ArrayList<>();
+            while(n.parent != null){
+                flights.add(n);
+                n = n.parent;
+            }
+            flights.add(n);
+            Collections.reverse(flights);
+            for(AstarNode flight : flights){
+                if(flight.vuelo != null){
+                    //se inserta el envio con el vuelo en un entry
+                    PlanViaje nuevo = new PlanViaje();
+                    nuevo.setEnvio(envio);
+                    nuevo.setVuelo(flight.vuelo);
+                    planViajeService.insert(nuevo);
+                }
+            }
+        }catch(Exception ex){
+            System.out.println();
+        }
     }
 }
 
