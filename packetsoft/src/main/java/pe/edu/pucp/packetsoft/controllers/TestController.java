@@ -156,15 +156,15 @@ public class TestController {
                 AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino), envioActual);
                 
 
-                if(AstarSearch.restaAlmacenamiento(target, envioActual, listaVuelosRetorno)){
-                    System.out.println("COLAPSO: el paquete no ha llegado al aeropuerto a tiempo.");
-                    System.out.println("ID envio fallido: " + envioActual.getId());
-                    System.out.println("ID vuelo fallido: " + target.vuelo.getId());
-                    System.out.println("Llegada vuelo fallido: " + target.vuelo.getHora_llegada());
-                    System.out.println(target.vuelo.getAeropuerto_salida().getId());
-                    System.out.println(target.vuelo.getAeropuerto_llegada().getId());
-                    return "Colapse";
-                }
+                // if(AstarSearch.restaAlmacenamiento(target, envioActual, listaVuelosRetorno)){
+                //     System.out.println("COLAPSO: el paquete no ha llegado al aeropuerto a tiempo.");
+                //     System.out.println("ID envio fallido: " + envioActual.getId());
+                //     System.out.println("ID vuelo fallido: " + target.vuelo.getId());
+                //     System.out.println("Llegada vuelo fallido: " + target.vuelo.getHora_llegada());
+                //     System.out.println(target.vuelo.getAeropuerto_salida().getId());
+                //     System.out.println(target.vuelo.getAeropuerto_llegada().getId());
+                //     return "Colapse";
+                // }
                 AstarSearch.printPath(target);
                 AstarSearch.clearParents(listaNodos);
                 j++;

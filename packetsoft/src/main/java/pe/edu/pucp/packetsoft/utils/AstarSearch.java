@@ -67,8 +67,6 @@ public class AstarSearch {
                 int cantidad_actual = n.vuelo.getCapacidad_utilizada();
                 n.vuelo.setCapacidad_utilizada(cantidad_actual + envio.getCant_paquetes_total());
                 listaVuelos.get(n.vuelo.getId()-1).getInventario().add(envio);
-
-
                 n.aeropuerto.setCapacidad_utilizado(null);
                 if(colapso(n,envio)){
                     System.err.println("COLAPSO: el paquete no ha llegado a tiempo.");

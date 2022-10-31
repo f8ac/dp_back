@@ -40,7 +40,7 @@ public class Paquete extends BaseEntity{
     @Column(name = "fecha_entrada")
     private Date fecha_entrada;
 
-    @Column(name = "fecha_entrada")
+    @Column(name = "fecha_salida")
     private Date fecha_salida;
 
     @Column(name = "active")

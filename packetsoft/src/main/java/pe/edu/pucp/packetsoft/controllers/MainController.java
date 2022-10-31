@@ -96,8 +96,8 @@ public class MainController {
                         envioActual.setIntercontinental(true);
                     else
                         envioActual.setIntercontinental(false);
-                    if(contEnvios == param.nEnvios)
-                        break;
+                    // if(contEnvios == param.nEnvios)
+                    //     break;
 
                     int origen  = indexNodoAeropuerto(listaNodos, envioActual.getAero_origen());
                     int destino = indexNodoAeropuerto(listaNodos, envioActual.getAero_destino());

@@ -10,5 +10,6 @@ public class Prm {
     public int nEnvios;
     public int diaSimul;
     public int horaSimul;
+    public int minSimul;
     public boolean debug;
 }
