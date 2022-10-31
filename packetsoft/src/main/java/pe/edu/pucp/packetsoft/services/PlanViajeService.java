@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pe.edu.pucp.packetsoft.dao.PlanViajeDao;
+import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.PlanViaje;
 
 @Service
@@ -24,5 +25,9 @@ public class PlanViajeService {
 
     public PlanViaje get(int id){
         return daoPlan.get(id);
+    }
+
+    public List<PlanViaje> listByEnvio(Envio envio){
+        return daoPlan.listByEnvio(envio);
     }
 }

@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import pe.edu.pucp.packetsoft.dao.PlanViajeDao;
+import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.PlanViaje;
 
 
@@ -51,6 +52,18 @@ public class PlanViajeDaoImp  implements PlanViajeDao{
         PlanViaje result = null;
         try{
             result = entityManager.find(PlanViaje.class, id);
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
+
+    @Override
+    public List<PlanViaje> listByEnvio(Envio envio) {
+        List<PlanViaje> result = null;
+        try{
+            var hql = "from PlanViaje pv where pv.envio = " + envio.getId();
+            result = entityManager.createQuery(hql).getResultList();
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }

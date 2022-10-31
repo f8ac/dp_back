@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.PlanViaje;
 import pe.edu.pucp.packetsoft.services.PlanViajeService;
 
@@ -35,5 +36,10 @@ public class PlanViajeController {
     @GetMapping(value = "/{}")
     PlanViaje get(@PathVariable int id){
         return planViajeService.get(id);
+    }
+
+    @PostMapping(value = "/list/envio")
+    List<PlanViaje> listByEnvio(@RequestBody Envio envio){
+        return planViajeService.listByEnvio(envio);
     }
 }
