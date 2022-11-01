@@ -69,6 +69,8 @@ public class MainController {
             Calendar calInicio = Calendar.getInstance();
             Calendar calFin = Calendar.getInstance();
             setStartAndStopCalendars(calInicio,calFin,param);
+
+            System.out.println("Inicio: "+calInicio.getTime()+", Final: "+calFin.getTime());
             
             Calendar curDate = Calendar.getInstance();
             curDate.setTime(calInicio.getTime());
@@ -212,15 +214,21 @@ public class MainController {
     void setStartAndStopCalendars(Calendar calInicio, Calendar calFin, Prm param){
         try{
             calInicio.set(param.anio, param.mes-1, param.dia, param.hora, param.minuto, param.segundo);
-            if(param.diaSimul != 0){
-                calFin.setTime(calInicio.getTime());
-                calFin.add(Calendar.DATE, param.diaSimul);
-            }else if(param.horaSimul != 0){
-                calFin.setTime(calInicio.getTime());
-                calFin.add(Calendar.HOUR_OF_DAY,param.horaSimul);
-            }else{
+            // if(param.diaSimul != 0){
+            //     calFin.setTime(calInicio.getTime());
+            //     calFin.add(Calendar.DATE, param.diaSimul);
+            // }
+            calFin.setTime(calInicio.getTime());
+            if(param.horaSimul != 0){
+                calFin.add(Calendar.HOUR_OF_DAY, param.horaSimul);
+            }
+            if(param.minSimul != 0){
+                calFin.add(Calendar.MINUTE, param.minSimul);
+            }
+            if(param.horaSimul == 0 && param.minSimul == 0){
                 calFin.set(param.anio+1, param.mes-1, param.dia, param.hora, param.minuto, param.segundo);
             }
+            calFin.add(Calendar.MINUTE, -2);
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }

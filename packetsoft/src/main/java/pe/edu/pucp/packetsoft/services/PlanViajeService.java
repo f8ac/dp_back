@@ -30,4 +30,8 @@ public class PlanViajeService {
     public List<PlanViaje> listByEnvio(Envio envio){
         return daoPlan.listByEnvio(envio);
     }
+
+    public List<Envio> listDistinctEnvios(){
+        return daoPlan.listDistinctEnvios();
+    }
 }

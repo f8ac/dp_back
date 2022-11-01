@@ -69,5 +69,17 @@ public class PlanViajeDaoImp  implements PlanViajeDao{
         }
         return result;
     }
+
+    @Override
+    public List<Envio> listDistinctEnvios() {
+        List<Envio> result = null;
+        try{
+            var hql = "SELECT DISTINCT pv.envio from PlanViaje pv";
+            result = entityManager.createQuery(hql).getResultList();
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
     
 }

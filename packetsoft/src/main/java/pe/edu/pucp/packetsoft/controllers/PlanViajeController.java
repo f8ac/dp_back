@@ -1,5 +1,6 @@
 package pe.edu.pucp.packetsoft.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.PlanViaje;
+import pe.edu.pucp.packetsoft.models.PlanViajeRet;
+import pe.edu.pucp.packetsoft.models.Vuelo;
 import pe.edu.pucp.packetsoft.services.PlanViajeService;
 
 @RestController
@@ -41,5 +44,41 @@ public class PlanViajeController {
     @PostMapping(value = "/list/envio")
     List<PlanViaje> listByEnvio(@RequestBody Envio envio){
         return planViajeService.listByEnvio(envio);
+    }
+
+    @PostMapping(value = "/get/envio/ret")
+    PlanViajeRet getPlanViajeByEnvio(@RequestBody Envio envio){
+        PlanViajeRet result = null;
+        try{
+            List<PlanViaje> viajesXenvio = planViajeService.listByEnvio(envio);
+            PlanViajeRet nuevoPlanViajeRet = new PlanViajeRet();
+            viajesXenvio.get(0).getEnvio();
+            nuevoPlanViajeRet.setEnvio(envio);
+            List<Vuelo> itinerario = new ArrayList<Vuelo>();
+            for (PlanViaje planViaje : viajesXenvio) {
+                itinerario.add(planViaje.getVuelo());
+            }
+            nuevoPlanViajeRet.setItinerario(itinerario);
+            result = nuevoPlanViajeRet;
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
+
+    @PostMapping(value = "/list/envio/ret")
+    List<PlanViajeRet> listPlanViajeRet(){
+        List<PlanViajeRet> result = null;
+        try{
+            List<PlanViajeRet> tablaPlanes = new ArrayList<PlanViajeRet>();
+            List<Envio> listaEnvios = planViajeService.listDistinctEnvios();
+            for (Envio envio : listaEnvios) {
+                tablaPlanes.add(getPlanViajeByEnvio(envio));
+            }
+            result = tablaPlanes;
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
     }
 }
