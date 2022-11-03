@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Envio;
-import pe.edu.pucp.packetsoft.models.Paquete;
+import pe.edu.pucp.packetsoft.models.Movimiento;
 import pe.edu.pucp.packetsoft.models.PlanViaje;
 import pe.edu.pucp.packetsoft.models.Vuelo;
 import pe.edu.pucp.packetsoft.models.VueloRet;
@@ -53,8 +53,8 @@ public class MainController {
             List<AstarNode> listaNodos = airportsToNodes(listaAeropuertos);
 
             //creamos una linked list que controle los paquetes que tienen que ser liberados
-            Comparator<Paquete> comPaquetes = new PaquetesComp();
-            PriorityQueue colaPaquetes = new PriorityQueue<Paquete>(comPaquetes);
+            Comparator<Movimiento> comPaquetes = new PaquetesComp();
+            PriorityQueue<Movimiento> colaPaquetes = new PriorityQueue<Movimiento>(comPaquetes);
             
             // VUELOS / VERTICES 
             // creamos una lista de vertices a partir de la fecha que vamos a simular
@@ -80,6 +80,9 @@ public class MainController {
             StopWatch watch = new  StopWatch();
             watch.start();
             while(true){
+
+                attendQueue(colaPaquetes, curDate);
+
                 envioActual = listaEnvios.get(j);
                 if(param.debug){
                     System.out.print("\n"+contRows+") "+curDate.getTime()+" "+envioActual.getId()+" "+envioActual.getFecha_hora() + " ");
@@ -159,6 +162,7 @@ public class MainController {
                 else if(aeropuerto.getContinente().getId() == 2)
                     cap = 900;
                 aeropuerto.setCapacidad_total(cap);
+                aeropuerto.setCapacidad_utilizado(0);
                 AstarNode nodo = new AstarNode(0);
                 nodo.setAeropuerto(aeropuerto);
                 listaNodos.set(i,nodo);
@@ -270,6 +274,24 @@ public class MainController {
         }
         return result;
     }
+
+    void attendQueue(PriorityQueue<Movimiento> colaPaquetes, Calendar curDate){
+        try{
+            while(true){
+                if(sameDateTime(curDate.getTime(), colaPaquetes.peek().getFecha()) ){
+                    Movimiento curMov = colaPaquetes.poll();
+                    Aeropuerto aeropuerto = curMov.getAeropuerto();
+                    int curCap = aeropuerto.getCapacidad_utilizado();
+                    aeropuerto.setCapacidad_utilizado(curCap + curMov.getEnvio().getCant_paquetes_total() * curMov.getOperacion());
+                }else{
+                    break;
+                }
+            }
+            
+        }catch(Exception ex){
+            System.err.print(ex.getMessage());
+        }
+    }                           
 
     @SuppressWarnings({"deprecation"})
     Boolean sameDateTime(Date a,Date b){

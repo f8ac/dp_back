@@ -2,15 +2,15 @@ package pe.edu.pucp.packetsoft.utils;
 
 import java.util.Comparator;
 
-import pe.edu.pucp.packetsoft.models.Paquete;
+import pe.edu.pucp.packetsoft.models.Movimiento;
 
-public class PaquetesComp implements Comparator<Paquete>{
+public class PaquetesComp implements Comparator<Movimiento>{
 
     @Override
-    public int compare(Paquete arg0, Paquete arg1) {
+    public int compare(Movimiento arg0, Movimiento arg1) {
         int result = 0;
         try{
-            if(arg0.getFecha_salida().before(arg1.getFecha_salida())){
+            if(arg0.getFecha().before(arg1.getFecha())){
                 result = 1;
             }else{
                 result = -1;

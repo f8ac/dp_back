@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import pe.edu.pucp.packetsoft.models.Envio;
+import pe.edu.pucp.packetsoft.models.Movimiento;
 import pe.edu.pucp.packetsoft.models.VueloRet;
 
 public class AstarSearch {
@@ -58,16 +59,42 @@ public class AstarSearch {
         return null;
     }
 
-    public static Boolean restaAlmacenamiento(AstarNode target, Envio envio, List<VueloRet> listaVuelos, PriorityQueue colaPaquetes){
+    public static Boolean restaAlmacenamiento(AstarNode target, Envio envio, List<VueloRet> listaVuelos, PriorityQueue<Movimiento> colaPaquetes){
         AstarNode n = target;
         if(n==null)
             return false;
+
+        int capAeroRegistro = envio.getAero_origen().getCapacidad_utilizado();
+        envio.getAero_origen().setCapacidad_utilizado(capAeroRegistro + envio.getCant_paquetes_total());
         while(n.parent != null){
             if(n.vuelo != null){
                 int cantidad_actual = n.vuelo.getCapacidad_utilizada();
                 n.vuelo.setCapacidad_utilizada(cantidad_actual + envio.getCant_paquetes_total());
                 listaVuelos.get(n.vuelo.getId()-1).getInventario().add(envio);
-                n.aeropuerto.setCapacidad_utilizado(null);
+
+                // se tiene que guardar la informacion del envio, su entrada y su salida
+                // de un aeropuerto en una cola, cuando el cronometro llegue a la hora
+                // correspondiente a la cabeza de la cola, se suma o resta el almacenamiento
+                // del aeropuerto respectivo.
+
+                //creamos un movimiento de entrada y otro de salida
+                Movimiento movEnt = new Movimiento();
+                Movimiento movSal = new Movimiento();
+                
+                movEnt.setAeropuerto(n.vuelo.getAeropuerto_llegada());
+                movEnt.setEnvio(envio);
+                movEnt.setOperacion(-1);
+                movEnt.setFecha(n.vuelo.getHora_llegada());
+
+                movSal.setAeropuerto(n.vuelo.getAeropuerto_salida());
+                movSal.setEnvio(envio);
+                movSal.setOperacion(1);
+                movSal.setFecha(n.vuelo.getHora_salida());
+                
+                colaPaquetes.add(movEnt);
+                colaPaquetes.add(movSal);
+
+
                 if(colapso(n,envio)){
                     System.err.println("COLAPSO: el paquete no ha llegado a tiempo.");
                     return true;
