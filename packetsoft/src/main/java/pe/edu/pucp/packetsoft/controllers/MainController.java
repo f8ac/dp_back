@@ -58,7 +58,8 @@ public class MainController {
             
             // VUELOS / VERTICES 
             // creamos una lista de vertices a partir de la fecha que vamos a simular
-            List<Vuelo> listaVuelos = vueloService.getAll();
+            // List<Vuelo> listaVuelos = vueloService.getAll();
+            List<Vuelo> listaVuelos = vueloService.readFileToLocal();
             // List<Vuelo> listaVuelos = vueloService.readFileToLocal();
             List<VueloRet> listaVuelosRetorno = processFlights(listaVuelos, listaNodos);
             

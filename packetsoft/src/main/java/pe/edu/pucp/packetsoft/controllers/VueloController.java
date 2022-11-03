@@ -46,5 +46,10 @@ public class VueloController {
     List<Vuelo> listVecinosLlegada(Aeropuerto aeropuerto,List<Integer>  aeropuerto2){
         return vueloService.listVecinosLlegada(aeropuerto,aeropuerto2);
     }
+ 
+    @PostMapping(value = "/insertfile2")
+    void insertfile2() throws IOException, InterruptedException{
+        vueloService.insertfile2();
+    }
 
 }
