@@ -139,49 +139,51 @@ public class VueloService {
             defaultCalendar.set(Calendar.HOUR_OF_DAY    , 0);
             defaultCalendar.set(Calendar.MINUTE         , 0);
             defaultCalendar.set(Calendar.SECOND         , 0);
+            Calendar calendarioSalida  = Calendar.getInstance();
+            Calendar calendarioLlegada = Calendar.getInstance();
+            calendarioSalida .setTime(defaultCalendar.getTime());
+            calendarioLlegada.setTime(defaultCalendar.getTime());
+            Aeropuerto aeroSalida = new Aeropuerto();
+            Aeropuerto aeroLlegada = new Aeropuerto();
             String line="";
             BufferedReader br = new BufferedReader(new FileReader("src/main/resources/vuelosv02.txt"));
-            // int i = 0;
             while((line=br.readLine()) != null) {
                 String [] data=line.split("-"); // separa las palabras en un array
-                // aeropuerto de salida y llegada
-                Aeropuerto aeroSalida = new Aeropuerto();
-                Aeropuerto aeroLlegada = new Aeropuerto();
                 aeroSalida.setCod_aeropuerto(data[0]);
                 aeroLlegada.setCod_aeropuerto(data[1]);
                 Aeropuerto aeroSalidaDefinido = aeropuertoService.getByCodigo(aeroSalida);
                 Aeropuerto aeroLlegadaDefinido = aeropuertoService.getByCodigo(aeroLlegada);
-                //hora llegada = data[3][0]
-                //hora salida  = data[2][0]
-                //minuto llegada = data[3][1]
-                //minuto salida  = data[2][1]
                 int horaSalida  = Integer.parseInt(data[2].split(":")[0]);
                 int horaLlegada = Integer.parseInt(data[3].split(":")[0]);
                 int minutoSalida  = Integer.parseInt(data[2].split(":")[1]);
                 int minutoLlegada = Integer.parseInt(data[3].split(":")[1]);
                 int zonaHorariaSalida  =  aeroSalidaDefinido.getNum_zona_horaria().intValue();
                 int zonaHorariaLlegada = aeroLlegadaDefinido.getNum_zona_horaria().intValue();
-                
-                Calendar calendarioSalida = Calendar.getInstance();
-                Calendar calendarioLlegada = Calendar.getInstance();
-
+                calendarioSalida .setTime(defaultCalendar.getTime());
+                calendarioLlegada.setTime(defaultCalendar.getTime());
                 calendarioSalida.set (Calendar.HOUR_OF_DAY, horaSalida);
                 calendarioSalida.set (Calendar.MINUTE, minutoSalida);
                 calendarioLlegada.set(Calendar.HOUR_OF_DAY, horaLlegada);
                 calendarioLlegada.set(Calendar.MINUTE, minutoLlegada);
-
                 calendarioSalida.add (Calendar.HOUR_OF_DAY, -1*zonaHorariaSalida);
                 calendarioLlegada.add(Calendar.HOUR_OF_DAY, -1*zonaHorariaLlegada);
-
                 if(calendarioLlegada.before(calendarioSalida)){
-                    calendarioSalida.add(Calendar.DAY_OF_MONTH, -1);
+                    calendarioLlegada.add(Calendar.DAY_OF_MONTH, 1);
                 }
-
                 long durationMilis = calendarioLlegada.getTimeInMillis() - calendarioSalida.getTimeInMillis();
-
                 long tiempo_vuelo_minutos = TimeUnit.MILLISECONDS.toMinutes(durationMilis);
 
                 Vuelo vuelo = new Vuelo(); // creacion del vuelo
+
+                if(diffContinent(aeroSalidaDefinido,aeroLlegadaDefinido) ){
+                    if(tiempo_vuelo_minutos < 360){
+                        calendarioLlegada.add(Calendar.DAY_OF_MONTH, 1);
+                        tiempo_vuelo_minutos+=1440;
+                    }
+                    vuelo.setInternacional(true);
+                }else{
+                    vuelo.setInternacional(false);
+                }
                 vuelo.setTiempo_vuelo_minutos((int)tiempo_vuelo_minutos);
                 vuelo.setHora_salida(calendarioSalida.getTime());
                 vuelo.setHora_llegada(calendarioLlegada.getTime());
@@ -239,11 +241,22 @@ public class VueloService {
                 calendarioSalida.add (Calendar.HOUR_OF_DAY, -1*zonaHorariaSalida);
                 calendarioLlegada.add(Calendar.HOUR_OF_DAY, -1*zonaHorariaLlegada);
                 if(calendarioLlegada.before(calendarioSalida)){
-                    calendarioSalida.add(Calendar.DAY_OF_MONTH, -1);
+                    calendarioLlegada.add(Calendar.DAY_OF_MONTH, 1);
                 }
                 long durationMilis = calendarioLlegada.getTimeInMillis() - calendarioSalida.getTimeInMillis();
                 long tiempo_vuelo_minutos = TimeUnit.MILLISECONDS.toMinutes(durationMilis);
+
                 Vuelo vuelo = new Vuelo(); // creacion del vuelo
+
+                if(diffContinent(aeroSalidaDefinido,aeroLlegadaDefinido) ){
+                    if(tiempo_vuelo_minutos < 360){
+                        calendarioLlegada.add(Calendar.DAY_OF_MONTH, 1);
+                        tiempo_vuelo_minutos+=1440;
+                    }
+                    vuelo.setInternacional(true);
+                }else{
+                    vuelo.setInternacional(false);
+                }
                 vuelo.setTiempo_vuelo_minutos((int)tiempo_vuelo_minutos);
                 vuelo.setHora_salida(calendarioSalida.getTime());
                 vuelo.setHora_llegada(calendarioLlegada.getTime());
@@ -265,5 +278,16 @@ public class VueloService {
 
     public Vuelo buscarVuelo2(int idinicio,int idfin, Calendar horaSalida,Calendar horaLlegada,int paquetes){
         return daoEmpresa.buscarVuelo2(idinicio,idfin,horaSalida,horaLlegada,paquetes);
+    }
+
+    public Boolean diffContinent(Aeropuerto a1, Aeropuerto a2){
+        try{
+            if(a1.getContinente().getId() != a2.getContinente().getId()){
+                return true;
+            }
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return false;
     }
 }

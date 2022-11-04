@@ -47,4 +47,7 @@ public class Vuelo extends BaseEntity{
     @Column(name = "tiempo_vuelo_minutos")
     private Integer tiempo_vuelo_minutos;
 
+    @Column(name = "internacional")
+    private Boolean internacional;
+
 }
