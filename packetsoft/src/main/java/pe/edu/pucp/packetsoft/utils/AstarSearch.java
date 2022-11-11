@@ -9,52 +9,57 @@ import java.util.PriorityQueue;
 
 import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.Movimiento;
+import pe.edu.pucp.packetsoft.models.Vuelo;
 import pe.edu.pucp.packetsoft.models.VueloRet;
 
 public class AstarSearch {
     public static AstarNode aStar(AstarNode start, AstarNode target,Envio envio){
-
-        PriorityQueue<AstarNode> closedList = new PriorityQueue<>();
-        PriorityQueue<AstarNode> openList = new PriorityQueue<>();
-    
-        start.f = start.g + start.calculateHeuristic(target,envio,start.neighbors.get(0));
-        openList.add(start);
-    
-        while(!openList.isEmpty()){
-            AstarNode n = openList.peek();
-            if(n == target){
-                // System.out.print("$");
-                return n;
-            }
-            for(AstarNode.Edge edge : n.neighbors){
-                if( edge.vuelo.getCapacidad_utilizada() + envio.getCant_paquetes_total() > edge.vuelo.getCapacidad_total() 
-                    || edge.vuelo.getHora_salida().before(envio.getFecha_hora())){
-                    // System.out.print(">");
-                }else{
-                    AstarNode m = edge.node;
-                    double totalWeight = n.g + edge.weight;
-                    if(!openList.contains(m) && !closedList.contains(m)){
-                        m.parent = n;
-                        m.vuelo = edge.vuelo;
-                        m.g = totalWeight;
-                        m.f = m.g + m.calculateHeuristic(target,envio,edge);
-                        openList.add(m);
-                    } else {
-                        if(totalWeight < m.g){
+        try{
+            PriorityQueue<AstarNode> closedList = new PriorityQueue<>();
+            PriorityQueue<AstarNode> openList = new PriorityQueue<>();
+        
+            start.f = start.g + start.calculateHeuristic(target,envio,start.neighbors.get(0));
+            openList.add(start);
+        
+            while(!openList.isEmpty()){
+                AstarNode n = openList.peek();
+                if(n == target){
+                    // System.out.print("$");
+                    return n;
+                }
+                for(AstarNode.Edge edge : n.neighbors){
+                    if( edge.vuelo.getCapacidad_utilizada() + envio.getCant_paquetes_total() > edge.vuelo.getCapacidad_total() 
+                        || edge.vuelo.getHora_salida().before(envio.getFecha_hora())){
+                        // System.out.println("Salida de vuelo vs registro envio:" + edge.vuelo.getHora_salida() + envio.getFecha_hora());
+                    }else{
+                        AstarNode m = edge.node;
+                        double totalWeight = n.g + edge.weight;
+                        if(!openList.contains(m) && !closedList.contains(m)){
                             m.parent = n;
                             m.vuelo = edge.vuelo;
                             m.g = totalWeight;
                             m.f = m.g + m.calculateHeuristic(target,envio,edge);
-                            if(closedList.contains(m)){
-                                closedList.remove(m);
-                                openList.add(m);
+                            openList.add(m);
+                        } else {
+                            if(totalWeight < m.g){
+                                m.parent = n;
+                                m.vuelo = edge.vuelo;
+                                m.g = totalWeight;
+                                m.f = m.g + m.calculateHeuristic(target,envio,edge);
+                                if(closedList.contains(m)){
+                                    closedList.remove(m);
+                                    openList.add(m);
+                                }
                             }
                         }
                     }
                 }
+                openList.remove(n);
+                closedList.add(n);
             }
-            openList.remove(n);
-            closedList.add(n);
+            
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
         }
         return null;
     }
@@ -70,7 +75,8 @@ public class AstarSearch {
             if(n.vuelo != null){
                 int cantidad_actual = n.vuelo.getCapacidad_utilizada();
                 n.vuelo.setCapacidad_utilizada(cantidad_actual + envio.getCant_paquetes_total());
-                listaVuelos.get(n.vuelo.getId()-1).getInventario().add(envio);
+                int idxVuelo = searchFlightReturnIndex( n.vuelo, listaVuelos);
+                listaVuelos.get(idxVuelo).getInventario().add(envio);
 
                 // se tiene que guardar la informacion del envio, su entrada y su salida
                 // de un aeropuerto en una cola, cuando el cronometro llegue a la hora
@@ -115,6 +121,8 @@ public class AstarSearch {
                 horasAgregadas = 24;
             }
             if(nodo.vuelo.getHora_llegada().after(addHoursToDate(envio.getFecha_hora(),horasAgregadas))){
+                System.out.println("\nHora Limite: "+ addHoursToDate(envio.getFecha_hora(),horasAgregadas));
+                System.out.println("Hora de llegada: "+nodo.vuelo.getHora_llegada());
                 return true;
             }
         }catch(Exception ex){
@@ -194,5 +202,21 @@ public class AstarSearch {
         ids.add(n.id);
         Collections.reverse(ids);
         return ids;
+    }
+
+    static int searchFlightReturnIndex(Vuelo vuelo, List<VueloRet> listaVuelosRet){
+        int result = -1;
+        try{
+            int idVuelo = vuelo.getId(), index = 0;
+            for (VueloRet vueloRet : listaVuelosRet) {
+                if(idVuelo == vueloRet.getVuelo().getId()){
+                    return index;
+                }
+                index++;
+            }
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
     }
 }

@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -212,6 +211,14 @@ public class VueloService {
             defaultCalendar.set(Calendar.HOUR_OF_DAY    , 0);
             defaultCalendar.set(Calendar.MINUTE         , 0);
             defaultCalendar.set(Calendar.SECOND         , 0);
+            Calendar topCalendar = Calendar.getInstance();
+            topCalendar.set(Calendar.YEAR           , 2022);
+            topCalendar.set(Calendar.MONTH          , Calendar.AUGUST);
+            topCalendar.set(Calendar.DAY_OF_MONTH   , 2);
+            topCalendar.set(Calendar.HOUR_OF_DAY    , 0);
+            topCalendar.set(Calendar.MINUTE         , 0);
+            topCalendar.set(Calendar.SECOND         , 0);
+            System.out.println(defaultCalendar.getTime());
             Calendar calendarioSalida  = Calendar.getInstance();
             Calendar calendarioLlegada = Calendar.getInstance();
             calendarioSalida .setTime(defaultCalendar.getTime());
@@ -224,7 +231,7 @@ public class VueloService {
                 String [] data=line.split("-"); // separa las palabras en un array
                 aeroSalida.setCod_aeropuerto(data[0]);
                 aeroLlegada.setCod_aeropuerto(data[1]);
-                Aeropuerto aeroSalidaDefinido = aeropuertoService.getByCodigo(aeroSalida);
+                Aeropuerto aeroSalidaDefinido  = aeropuertoService.getByCodigo(aeroSalida);
                 Aeropuerto aeroLlegadaDefinido = aeropuertoService.getByCodigo(aeroLlegada);
                 int horaSalida  = Integer.parseInt(data[2].split(":")[0]);
                 int horaLlegada = Integer.parseInt(data[3].split(":")[0]);
@@ -240,8 +247,15 @@ public class VueloService {
                 calendarioLlegada.set(Calendar.MINUTE, minutoLlegada);
                 calendarioSalida.add (Calendar.HOUR_OF_DAY, -1*zonaHorariaSalida);
                 calendarioLlegada.add(Calendar.HOUR_OF_DAY, -1*zonaHorariaLlegada);
-                if(calendarioLlegada.before(calendarioSalida)){
-                    calendarioLlegada.add(Calendar.DAY_OF_MONTH, 1);
+                while(calendarioSalida.after(topCalendar) || calendarioSalida.equals(topCalendar)){
+                    calendarioSalida.add(Calendar.DATE, -1);
+                    calendarioLlegada.add(Calendar.DATE, -1);
+                }
+                while(calendarioSalida.before(defaultCalendar)){
+                    calendarioSalida.add(Calendar.DATE, 1);
+                }
+                while(calendarioLlegada.before(calendarioSalida)){
+                    calendarioLlegada.add(Calendar.DATE, 1);
                 }
                 long durationMilis = calendarioLlegada.getTimeInMillis() - calendarioSalida.getTimeInMillis();
                 long tiempo_vuelo_minutos = TimeUnit.MILLISECONDS.toMinutes(durationMilis);
@@ -272,13 +286,13 @@ public class VueloService {
         }
     }
 
-    public Vuelo buscarVuelo1(int idinicio,int idfin, Calendar horaSalida, int paquetes){
-        return daoEmpresa.buscarVuelo1(idinicio,idfin,horaSalida,paquetes);
-    }
+    // public Vuelo buscarVuelo1(int idinicio,int idfin, Calendar horaSalida, int paquetes){
+    //     return daoEmpresa.buscarVuelo1(idinicio,idfin,horaSalida,paquetes);
+    // }
 
-    public Vuelo buscarVuelo2(int idinicio,int idfin, Calendar horaSalida,Calendar horaLlegada,int paquetes){
-        return daoEmpresa.buscarVuelo2(idinicio,idfin,horaSalida,horaLlegada,paquetes);
-    }
+    // public Vuelo buscarVuelo2(int idinicio,int idfin, Calendar horaSalida,Calendar horaLlegada,int paquetes){
+    //     return daoEmpresa.buscarVuelo2(idinicio,idfin,horaSalida,horaLlegada,paquetes);
+    // }
 
     public Boolean diffContinent(Aeropuerto a1, Aeropuerto a2){
         try{
@@ -289,5 +303,15 @@ public class VueloService {
             System.err.println(ex.getMessage());
         }
         return false;
+    }
+
+    public List<Vuelo> getSortedFromTime(int hora, int minuto, int horaSimul){
+        List<Vuelo> result = null;
+        try{
+            result = daoEmpresa.getSortedFromTime(hora,minuto, horaSimul);
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
     }
 }

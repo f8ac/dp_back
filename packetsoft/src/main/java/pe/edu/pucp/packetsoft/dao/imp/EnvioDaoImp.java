@@ -63,7 +63,6 @@ public class EnvioDaoImp implements EnvioDao {
         return envio;
     }
 
-    @Transactional
     @Override
     public List<Envio> listOrdenFecha() {
         List<Envio> result = null;

@@ -317,7 +317,7 @@ public class TabuSearchService {
             horasalida1.setTime(soluAuxVuelo.get(pos-2).getHora_llegada());
             horasalida1.add(Calendar.HOUR_OF_DAY, 1);
         }
-        vuelo1 = vueloService.buscarVuelo1(soluAux.get(pos-1).getId(),soluAux.get(pos).getId(),horasalida1,envio.getCant_paquetes_total());
+        // vuelo1 = vueloService.buscarVuelo1(soluAux.get(pos-1).getId(),soluAux.get(pos).getId(),horasalida1,envio.getCant_paquetes_total());
         vuelos.add(vuelo1);
         if(vuelo1 != null){
 
@@ -325,11 +325,11 @@ public class TabuSearchService {
             horasalida2.add(Calendar.HOUR_OF_DAY, 1);
             
             if(pos+1==total){
-                vuelo2 = vueloService.buscarVuelo1(soluAux.get(pos).getId(),soluAux.get(pos+1).getId(),horasalida2,envio.getCant_paquetes_total());
+                // vuelo2 = vueloService.buscarVuelo1(soluAux.get(pos).getId(),soluAux.get(pos+1).getId(),horasalida2,envio.getCant_paquetes_total());
             }else{
                 horallegada2.setTime(soluAuxVuelo.get(pos).getHora_salida());
                 horallegada2.add(Calendar.HOUR_OF_DAY, -1);
-                vuelo2 = vueloService.buscarVuelo2(soluAux.get(pos).getId(),soluAux.get(pos+1).getId(),horasalida2,horallegada2,envio.getCant_paquetes_total());
+                // vuelo2 = vueloService.buscarVuelo2(soluAux.get(pos).getId(),soluAux.get(pos+1).getId(),horasalida2,horallegada2,envio.getCant_paquetes_total());
             }
         }
         vuelos.add(vuelo2);
