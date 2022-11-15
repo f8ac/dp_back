@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pe.edu.pucp.packetsoft.controllers.Prm;
 import pe.edu.pucp.packetsoft.dao.EnvioDao;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Envio;
@@ -101,4 +102,7 @@ public class EnvioService {
         return daoEnvio.listOrdenFecha();
     }
 
+    public List<Envio> listCertainHoursFromDatetime(Prm param){
+        return daoEnvio.listCertainHoursFromDatetime(param);
+    }
 }

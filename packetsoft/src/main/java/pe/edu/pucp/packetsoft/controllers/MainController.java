@@ -42,8 +42,8 @@ public class MainController {
     private EnvioService envioService;
     @Autowired
     private VueloService vueloService;
-    @Autowired 
-    private PlanViajeService planViajeService;
+    // @Autowired 
+    // private PlanViajeService planViajeService;
 
     @PostMapping(value = "/main")
     List<VueloRet> main(@RequestBody Prm param){
@@ -66,7 +66,8 @@ public class MainController {
             
             // EL MAPEO ESTA TERMINADO ================================================================================
             //OBTENEMOS LOS ENVIOS ORDENADOS POR FECHA
-            List<Envio> listaEnvios = envioService.listOrdenFecha();
+            // List<Envio> listaEnvios = envioService.listOrdenFecha();
+            List<Envio> listaEnvios = envioService.listCertainHoursFromDatetime(param);
 
             Calendar calInicio = Calendar.getInstance();
             Calendar calFin = Calendar.getInstance();
