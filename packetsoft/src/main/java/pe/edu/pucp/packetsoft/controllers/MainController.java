@@ -66,8 +66,8 @@ public class MainController {
             
             // EL MAPEO ESTA TERMINADO ================================================================================
             //OBTENEMOS LOS ENVIOS ORDENADOS POR FECHA
-            // List<Envio> listaEnvios = envioService.listOrdenFecha();
-            List<Envio> listaEnvios = envioService.listCertainHoursFromDatetime(param);
+            List<Envio> listaEnvios = envioService.listOrdenFecha();
+            // List<Envio> listaEnvios = envioService.listCertainHoursFromDatetime(param);
 
             Calendar calInicio = Calendar.getInstance();
             Calendar calFin = Calendar.getInstance();
