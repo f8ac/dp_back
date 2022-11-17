@@ -295,6 +295,7 @@ public class MainController {
             
         }catch(Exception ex){
             System.err.print(ex.getMessage());
+            // System.err.print(ex.getMessage());
         }
     }                           
 
