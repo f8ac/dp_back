@@ -34,4 +34,8 @@ public class PlanViajeService {
     public List<Envio> listDistinctEnvios(){
         return daoPlan.listDistinctEnvios();
     }
+
+    public PlanViaje insertPlan(PlanViaje plan){
+        return daoPlan.insertPlan(plan);
+    }
 }

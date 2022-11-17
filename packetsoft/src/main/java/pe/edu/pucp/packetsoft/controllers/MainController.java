@@ -329,7 +329,7 @@ public class MainController {
                     PlanViaje nuevo = new PlanViaje();
                     nuevo.setEnvio(envio);
                     nuevo.setVuelo(flight.vuelo);
-                    planViajeService.insert(nuevo);
+                    planViajeService.insertPlan(nuevo);
                 }
             }
         }catch(Exception ex){

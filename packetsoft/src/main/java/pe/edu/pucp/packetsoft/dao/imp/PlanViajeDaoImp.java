@@ -81,5 +81,23 @@ public class PlanViajeDaoImp  implements PlanViajeDao{
         }
         return result;
     }
+
+    @Transactional
+    @Override
+    public PlanViaje insertPlan(PlanViaje plan) {
+        PlanViaje result = null;
+        try{
+            //buscar si ya existe el plan de viaje para este envio
+            var hql = "from PlanViaje p where p.envio = " + plan.getEnvio().getId();
+            List<PlanViaje> listaPlanes = entityManager.createQuery(hql).getResultList();
+            //si la lista tiene elementos, entonces ya existe el plan de viaje
+            if(listaPlanes.size()==0 || listaPlanes == null){
+                result = entityManager.merge(plan);
+            }
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
     
 }

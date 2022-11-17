@@ -11,4 +11,5 @@ public interface PlanViajeDao {
     public PlanViaje get(int id);
     public List<PlanViaje> listByEnvio(Envio envio);
     public List<Envio> listDistinctEnvios();
+    public PlanViaje insertPlan(PlanViaje plan);
 }
