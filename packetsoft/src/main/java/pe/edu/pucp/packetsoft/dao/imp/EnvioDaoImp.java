@@ -8,7 +8,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TemporalType;
 import javax.transaction.Transactional;
 
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Env;
 import org.springframework.stereotype.Repository;
 
 import pe.edu.pucp.packetsoft.controllers.Prm;
@@ -99,7 +98,7 @@ public class EnvioDaoImp implements EnvioDao {
 
             System.out.println(calInicio.getTime());
             System.out.println(calFin.getTime());
-            var hql = "from Envio as e where (e.fecha_hora between :start and :end)";
+            var hql = "from Envio as e where (e.fecha_hora between :start and :end) order by e.fecha_hora";
             result = entityManager.createQuery(hql)
                 .setParameter("start"   , calInicio.getTime()   , TemporalType.DATE)
                 .setParameter("end"     , calFin.getTime()      , TemporalType.DATE)

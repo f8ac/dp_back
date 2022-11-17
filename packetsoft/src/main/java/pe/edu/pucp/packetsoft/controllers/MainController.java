@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.text.AbstractDocument.Content;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -42,8 +44,8 @@ public class MainController {
     private EnvioService envioService;
     @Autowired
     private VueloService vueloService;
-    // @Autowired 
-    // private PlanViajeService planViajeService;
+    @Autowired 
+    private PlanViajeService planViajeService;
 
     @PostMapping(value = "/main")
     List<VueloRet> main(@RequestBody Prm param){
@@ -61,13 +63,12 @@ public class MainController {
             // creamos una lista de vertices a partir de la fecha que vamos a simular
             List<Vuelo> listaVuelos = flightsForTodayAndTomorrow(param);
             // List<Vuelo> listaVuelos = vueloService.readFileToLocal();
-            // List<Vuelo> listaVuelos = vueloService.readFileToLocal();
             List<VueloRet> listaVuelosRetorno = processFlights(listaVuelos, listaNodos, param);
             
             // EL MAPEO ESTA TERMINADO ================================================================================
             //OBTENEMOS LOS ENVIOS ORDENADOS POR FECHA
-            List<Envio> listaEnvios = envioService.listOrdenFecha();
-            // List<Envio> listaEnvios = envioService.listCertainHoursFromDatetime(param);
+            // List<Envio> listaEnvios = envioService.listOrdenFecha();
+            List<Envio> listaEnvios = envioService.listCertainHoursFromDatetime(param);
 
             Calendar calInicio = Calendar.getInstance();
             Calendar calFin = Calendar.getInstance();
@@ -135,10 +136,9 @@ public class MainController {
                     j++;
                 }
                 contRows++;
-                if(contRows == 998){
-                    int k = 0;
-                }
-                if(!sameDateTime(curDate.getTime(), listaEnvios.get(j).getFecha_hora())){
+                if(j >= listaEnvios.size()){
+                    break;
+                }else if(!sameDateTime(curDate.getTime(), listaEnvios.get(j).getFecha_hora())){
                     curDate.add(Calendar.MINUTE, 1);
                 }
             }
@@ -295,7 +295,6 @@ public class MainController {
             
         }catch(Exception ex){
             System.err.print(ex.getMessage());
-            // System.err.print(ex.getMessage());
         }
     }                           
 
@@ -329,11 +328,10 @@ public class MainController {
             Collections.reverse(flights);
             for(AstarNode flight : flights){
                 if(flight.vuelo != null){
-                    //se inserta el envio con el vuelo en un entry
                     PlanViaje nuevo = new PlanViaje();
                     nuevo.setEnvio(envio);
                     nuevo.setVuelo(flight.vuelo);
-                    // planViajeService.insert(nuevo);
+                    planViajeService.insert(nuevo);
                 }
             }
         }catch(Exception ex){

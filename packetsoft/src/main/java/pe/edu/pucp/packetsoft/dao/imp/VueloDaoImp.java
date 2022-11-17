@@ -151,6 +151,7 @@ public class VueloDaoImp implements VueloDao{
     // }
 
     @Override
+    @SuppressWarnings({"deprecation"})
     public List<Vuelo> getSortedFromTime(int hora, int minuto, int horaSimul){
         List<Vuelo> result = null;
         try{
