@@ -11,6 +11,7 @@ import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.Paquete;
 import pe.edu.pucp.packetsoft.models.Vuelo;
+import pe.edu.pucp.packetsoft.models.VueloUtil;
 
 @Getter @Setter
 public class AstarNode implements Comparable<AstarNode> {
@@ -30,7 +31,7 @@ public class AstarNode implements Comparable<AstarNode> {
     public double h; 
 
     public Aeropuerto aeropuerto;
-    public Vuelo vuelo; // solamente usado para la ruta resultado
+    public VueloUtil vuelo; // solamente usado para la ruta resultado
     public List<Paquete> inventario;
 
     public AstarNode(double h){
@@ -50,7 +51,7 @@ public class AstarNode implements Comparable<AstarNode> {
             this.node = node;
         }
 
-        Edge(int weight, AstarNode node, Vuelo vuelo){
+        Edge(int weight, AstarNode node, VueloUtil vuelo){
             this.weight = weight;
             this.node = node;
             this.vuelo = vuelo;
@@ -58,7 +59,7 @@ public class AstarNode implements Comparable<AstarNode> {
 
         public int weight;
         public AstarNode node;
-        public Vuelo vuelo;
+        public VueloUtil vuelo;
     }
 
     public void addBranch(int weight, AstarNode node){
@@ -66,7 +67,7 @@ public class AstarNode implements Comparable<AstarNode> {
         neighbors.add(newEdge);
     }
 
-    public void addBranch(int weight, AstarNode node, Vuelo vuelo){
+    public void addBranch(int weight, AstarNode node, VueloUtil vuelo){
         Edge newEdge = new Edge(weight, node, vuelo);
         neighbors.add(newEdge);
     }
@@ -77,7 +78,7 @@ public class AstarNode implements Comparable<AstarNode> {
     }
 
     public double calculateHeuristic(AstarNode target, Envio envio,Edge edge){
-        int tiempoRestante  = compareTimes(edge.vuelo.getHora_salida(),envio.getFecha_hora());
+        int tiempoRestante  = compareTimes(edge.vuelo.getVuelo().getHora_salida(),envio.getFecha_hora());
         // this.h = (double)tiempoRestante;
         if(tiempoRestante < 0){
             this.h = Double.MAX_VALUE;
@@ -87,7 +88,7 @@ public class AstarNode implements Comparable<AstarNode> {
         //     this.h = Double.MAX_VALUE;
         // }
         else{
-            if(edge.vuelo.getCapacidad_total() == edge.vuelo.getCapacidad_utilizada()){
+            if(edge.vuelo.getVuelo().getCapacidad_total() == edge.vuelo.getVuelo().getCapacidad_utilizada()){
                 System.err.println("El vuelo ya no admite más paquetes");
                 this.h = Double.MAX_VALUE;
             }else{

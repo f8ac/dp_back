@@ -12,5 +12,5 @@ import lombok.Setter;
 @Getter @Setter
 public class PlanViajeRet {
     private Envio envio;
-    private List<Vuelo> itinerario;
+    private List<VueloUtil> itinerario;
 }

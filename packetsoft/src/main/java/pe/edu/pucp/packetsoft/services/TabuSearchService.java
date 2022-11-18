@@ -21,8 +21,8 @@ public class TabuSearchService {
     private VueloService vueloService;
     @Autowired
     private EnvioService envioService;
-    @Autowired
-    private AstarService astarService;
+    // @Autowired
+    // private AstarService astarService;
 
     private int itEtapaLocal;
     // private int itEtapaInten;
@@ -66,7 +66,8 @@ public class TabuSearchService {
 
         List<Integer> idsVuelos = null;
 
-        idsVuelos=astarService.pruebaUnica(envio);
+        // idsVuelos=astarService.pruebaUnica(envio);
+        idsVuelos = new ArrayList<>();
 
         for(int i=0;i<idsVuelos.size();i++){
             soluIniVuelo.add(vueloService.get(idsVuelos.get(i)));

@@ -38,4 +38,8 @@ public class PlanViajeService {
     public PlanViaje insertPlan(PlanViaje plan){
         return daoPlan.insertPlan(plan);
     }
+
+    public void deleteAll(){
+        daoPlan.deleteAll();
+    }
 }

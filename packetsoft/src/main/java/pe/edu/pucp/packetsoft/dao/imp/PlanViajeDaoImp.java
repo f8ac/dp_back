@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import pe.edu.pucp.packetsoft.dao.PlanViajeDao;
 import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.PlanViaje;
+import pe.edu.pucp.packetsoft.models.VueloUtil;
 
 
 @Transactional
@@ -87,17 +88,37 @@ public class PlanViajeDaoImp  implements PlanViajeDao{
     public PlanViaje insertPlan(PlanViaje plan) {
         PlanViaje result = null;
         try{
-            //buscar si ya existe el plan de viaje para este envio
-            var hql = "from PlanViaje p where p.envio = " + plan.getEnvio().getId();
+            // buscar si ya existe el plan de viaje para este envio comparando el id del envio e id del vuelo
+            var hql = "from PlanViaje p where p.envio = " + plan.getEnvio().getId() + " and p.vuelo_util = " + plan.getVuelo_util().getId_aux();
             List<PlanViaje> listaPlanes = entityManager.createQuery(hql).getResultList();
             //si la lista tiene elementos, entonces ya existe el plan de viaje
             if(listaPlanes.size()==0 || listaPlanes == null){
+                //primero insertamos el vueloutil
+                VueloUtil resultVuelo = entityManager.merge(plan.getVuelo_util());
+                //lo seteamos en el plan de viaje
+                plan.setVuelo_util(resultVuelo);
+                //insertamos el plan de viaje
                 result = entityManager.merge(plan);
             }
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }
         return result;
+    }
+
+    @Override
+    public void deleteAll() {
+        List<PlanViaje> resultado = null;
+        
+        try{
+            String hql = "FROM PlanViaje as p ";
+            resultado =  entityManager.createQuery(hql).getResultList();
+
+            for (PlanViaje planViaje : resultado) {
+                entityManager.remove(planViaje);
+            }
+        }catch(Exception ex){ System.out.println(ex.getMessage()); }
+        
     }
     
 }

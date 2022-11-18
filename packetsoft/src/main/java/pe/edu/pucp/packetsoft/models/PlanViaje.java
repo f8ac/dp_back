@@ -7,9 +7,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,8 +14,6 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "plan_viaje")
-@SQLDelete(sql = "UPDATE plan_viaje SET activo = 0 WHERE id = ?")
-@Where(clause = "activo = 1")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -33,7 +28,7 @@ public class PlanViaje extends BaseEntity{
     private Envio envio;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_vuelo")
-    private Vuelo vuelo;
+    @JoinColumn(name = "id_vuelo_util")
+    private VueloUtil vuelo_util;
 
 }

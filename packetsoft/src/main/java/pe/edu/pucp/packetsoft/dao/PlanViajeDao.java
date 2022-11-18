@@ -12,4 +12,5 @@ public interface PlanViajeDao {
     public List<PlanViaje> listByEnvio(Envio envio);
     public List<Envio> listDistinctEnvios();
     public PlanViaje insertPlan(PlanViaje plan);
+    public void deleteAll();
 }

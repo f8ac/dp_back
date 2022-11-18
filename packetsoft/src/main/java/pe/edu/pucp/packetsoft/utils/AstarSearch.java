@@ -9,8 +9,9 @@ import java.util.PriorityQueue;
 
 import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.Movimiento;
-import pe.edu.pucp.packetsoft.models.Vuelo;
+// import pe.edu.pucp.packetsoft.models.Vuelo;
 import pe.edu.pucp.packetsoft.models.VueloRet;
+import pe.edu.pucp.packetsoft.models.VueloUtil;
 
 public class AstarSearch {
     public static AstarNode aStar(AstarNode start, AstarNode target,Envio envio){
@@ -28,8 +29,8 @@ public class AstarSearch {
                     return n;
                 }
                 for(AstarNode.Edge edge : n.neighbors){
-                    if( edge.vuelo.getCapacidad_utilizada() + envio.getCant_paquetes_total() > edge.vuelo.getCapacidad_total() 
-                        || edge.vuelo.getHora_salida().before(envio.getFecha_hora())){
+                    if( edge.vuelo.getVuelo().getCapacidad_utilizada() + envio.getCant_paquetes_total() > edge.vuelo.getVuelo().getCapacidad_total() 
+                        || edge.vuelo.getSalida_real().before(envio.getFecha_hora())){
                         // System.out.println("Salida de vuelo vs registro envio:" + edge.vuelo.getHora_salida() + envio.getFecha_hora());
                     }else{
                         AstarNode m = edge.node;
@@ -73,8 +74,8 @@ public class AstarSearch {
         envio.getAero_origen().setCapacidad_utilizado(capAeroRegistro + envio.getCant_paquetes_total());
         while(n.parent != null){
             if(n.vuelo != null){
-                int cantidad_actual = n.vuelo.getCapacidad_utilizada();
-                n.vuelo.setCapacidad_utilizada(cantidad_actual + envio.getCant_paquetes_total());
+                int cantidad_actual = n.vuelo.getVuelo().getCapacidad_utilizada();
+                n.vuelo.getVuelo().setCapacidad_utilizada(cantidad_actual + envio.getCant_paquetes_total());
                 int idxVuelo = searchFlightReturnIndex( n.vuelo, listaVuelos);
                 listaVuelos.get(idxVuelo).getInventario().add(envio);
 
@@ -87,15 +88,15 @@ public class AstarSearch {
                 Movimiento movEnt = new Movimiento();
                 Movimiento movSal = new Movimiento();
                 
-                movEnt.setAeropuerto(n.vuelo.getAeropuerto_llegada());
+                movEnt.setAeropuerto(n.vuelo.getVuelo().getAeropuerto_llegada());
                 movEnt.setEnvio(envio);
                 movEnt.setOperacion(-1);
-                movEnt.setFecha(n.vuelo.getHora_llegada());
+                movEnt.setFecha(n.vuelo.getLlegada_real());
 
-                movSal.setAeropuerto(n.vuelo.getAeropuerto_salida());
+                movSal.setAeropuerto(n.vuelo.getVuelo().getAeropuerto_salida());
                 movSal.setEnvio(envio);
                 movSal.setOperacion(1);
-                movSal.setFecha(n.vuelo.getHora_salida());
+                movSal.setFecha(n.vuelo.getSalida_real());
                 
                 colaPaquetes.add(movEnt);
                 colaPaquetes.add(movSal);
@@ -120,9 +121,9 @@ public class AstarSearch {
             }else{
                 horasAgregadas = 24;
             }
-            if(nodo.vuelo.getHora_llegada().after(addHoursToDate(envio.getFecha_hora(),horasAgregadas))){
+            if(nodo.vuelo.getLlegada_real().after(addHoursToDate(envio.getFecha_hora(),horasAgregadas))){
                 System.out.println("\nHora Limite: "+ addHoursToDate(envio.getFecha_hora(),horasAgregadas));
-                System.out.println("Hora de llegada: "+nodo.vuelo.getHora_llegada());
+                System.out.println("Hora de llegada: "+nodo.vuelo.getLlegada_real());
                 return true;
             }
         }catch(Exception ex){
@@ -151,7 +152,7 @@ public class AstarSearch {
         Collections.reverse(flights);
         for(AstarNode flight : flights){
             if(flight.vuelo != null){
-                System.out.print(" ["+flight.vuelo.getId()+"] ");
+                System.out.print(" ["+flight.vuelo.getId_aux()+"] ");
             }
             System.out.print(flight.aeropuerto.getId());
         }
@@ -204,12 +205,12 @@ public class AstarSearch {
         return ids;
     }
 
-    static int searchFlightReturnIndex(Vuelo vuelo, List<VueloRet> listaVuelosRet){
+    static int searchFlightReturnIndex(VueloUtil vuelo, List<VueloRet> listaVuelosRet){
         int result = -1;
         try{
-            int idVuelo = vuelo.getId(), index = 0;
+            int idVuelo = vuelo.getId_aux(), index = 0;
             for (VueloRet vueloRet : listaVuelosRet) {
-                if(idVuelo == vueloRet.getVuelo().getId()){
+                if(idVuelo == vueloRet.getVuelo_util().getId_aux()){
                     return index;
                 }
                 index++;

@@ -10,6 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter @Setter
 public class VueloRet{
-    private Vuelo vuelo;
+    private VueloUtil vuelo_util;
     private List<Envio> inventario;
 }

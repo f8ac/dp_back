@@ -24,6 +24,7 @@ import pe.edu.pucp.packetsoft.models.Movimiento;
 import pe.edu.pucp.packetsoft.models.PlanViaje;
 import pe.edu.pucp.packetsoft.models.Vuelo;
 import pe.edu.pucp.packetsoft.models.VueloRet;
+import pe.edu.pucp.packetsoft.models.VueloUtil;
 import pe.edu.pucp.packetsoft.services.AeropuertoService;
 import pe.edu.pucp.packetsoft.services.EnvioService;
 import pe.edu.pucp.packetsoft.services.PlanViajeService;
@@ -59,13 +60,11 @@ public class MainController {
             
             // VUELOS / VERTICES 
             // creamos una lista de vertices a partir de la fecha que vamos a simular
-            List<Vuelo> listaVuelos = flightsForTodayAndTomorrow(param);
-            // List<Vuelo> listaVuelos = vueloService.readFileToLocal();
+            List<VueloUtil> listaVuelos = flightsForTodayAndTomorrow(param);
             List<VueloRet> listaVuelosRetorno = processFlights(listaVuelos, listaNodos, param);
             
             // EL MAPEO ESTA TERMINADO ================================================================================
             //OBTENEMOS LOS ENVIOS ORDENADOS POR FECHA
-            // List<Envio> listaEnvios = envioService.listOrdenFecha();
             List<Envio> listaEnvios = envioService.listCertainHoursFromDatetime(param);
 
             Calendar calInicio = Calendar.getInstance();
@@ -120,11 +119,11 @@ public class MainController {
                     if(AstarSearch.restaAlmacenamiento(target, envioActual, listaVuelosRetorno, colaPaquetes)){
                         System.out.println("COLAPSO: el paquete no ha llegado al aeropuerto a tiempo.");
                         System.out.println("ID envio fallido: " + envioActual.getId());
-                        System.out.println("ID vuelo fallido: " + target.vuelo.getId());
-                        System.out.println("Salida vuelo fallido: " + target.vuelo.getHora_salida());
-                        System.out.println("Llegada vuelo fallido: " + target.vuelo.getHora_llegada());
-                        System.out.println(target.vuelo.getAeropuerto_salida().getId());
-                        System.out.println(target.vuelo.getAeropuerto_llegada().getId());
+                        System.out.println("ID vuelo fallido: " + target.vuelo.getVuelo().getId());
+                        System.out.println("Salida vuelo fallido: " + target.vuelo.getVuelo().getHora_salida());
+                        System.out.println("Llegada vuelo fallido: " + target.vuelo.getVuelo().getHora_llegada());
+                        System.out.println(target.vuelo.getVuelo().getAeropuerto_salida().getId());
+                        System.out.println(target.vuelo.getVuelo().getAeropuerto_llegada().getId());
                         break;
                     }
                     savePlan(target,envioActual);
@@ -177,35 +176,35 @@ public class MainController {
         return result;
     }
 
-    List<VueloRet> processFlights(List<Vuelo> listaVuelos, List<AstarNode> listaNodos, Prm param){
+    List<VueloRet> processFlights(List<VueloUtil> listaVuelos, List<AstarNode> listaNodos, Prm param){
         List<VueloRet> result = null;
         try{
             List<VueloRet> listaVuelosRetorno = new ArrayList<VueloRet>();
-            for (Vuelo vuelo : listaVuelos) {
+            for (VueloUtil vuelo : listaVuelos) {
                 int iOrigen = -1, iDestino = -1, j = 0;
                 for (AstarNode nodo : listaNodos) {
                     // ENCONTRAMOS EL NODO ORIGEN Y DESTINO EN LA LISTA
-                    if(nodo.getAeropuerto().getId() == vuelo.getAeropuerto_salida().getId())
+                    if(nodo.getAeropuerto().getId() == vuelo.getVuelo().getAeropuerto_salida().getId())
                         iOrigen = j;
-                    if(nodo.getAeropuerto().getId() == vuelo.getAeropuerto_llegada().getId())
+                    if(nodo.getAeropuerto().getId() == vuelo.getVuelo().getAeropuerto_llegada().getId())
                         iDestino = j; 
                     j++;
                 }
                 int cap; 
-                if(vuelo.getAeropuerto_salida().getContinente().getId() == vuelo.getAeropuerto_llegada().getContinente().getId()){
-                    if(vuelo.getAeropuerto_salida().getContinente().getId() == 1)
+                if(vuelo.getVuelo().getAeropuerto_salida().getContinente().getId() == vuelo.getVuelo().getAeropuerto_llegada().getContinente().getId()){
+                    if(vuelo.getVuelo().getAeropuerto_salida().getContinente().getId() == 1)
                         cap = 250;
                     else
                         cap = 300;
                 }else
                     cap = 350;
-                vuelo.setCapacidad_total(cap);
-                int costo = vuelo.getTiempo_vuelo_minutos();
+                vuelo.setCap_tot_real(cap);
+                int costo = vuelo.getVuelo().getTiempo_vuelo_minutos();
                 // System.out.println(">"+iOrigen);
                 listaNodos.get(iOrigen).addBranch(costo, listaNodos.get(iDestino),vuelo);
                 // Agregamos este vuelo a la lista de vuelos retornables
                 VueloRet vueloRetorno = new VueloRet();
-                vueloRetorno.setVuelo(vuelo);
+                vueloRetorno.setVuelo_util(vuelo);
                 listaVuelosRetorno.add(vueloRetorno);
                 // inicializar el inventario vacio
                 List<Envio> inventario = new ArrayList<Envio>();
@@ -328,7 +327,7 @@ public class MainController {
                 if(flight.vuelo != null){
                     PlanViaje nuevo = new PlanViaje();
                     nuevo.setEnvio(envio);
-                    nuevo.setVuelo(flight.vuelo);
+                    nuevo.setVuelo_util(flight.vuelo);
                     planViajeService.insertPlan(nuevo);
                 }
             }
@@ -337,8 +336,8 @@ public class MainController {
         }
     }
 
-    List<Vuelo> flightsForTodayAndTomorrow(Prm param){
-        List<Vuelo> result = null;
+    List<VueloUtil> flightsForTodayAndTomorrow(Prm param){
+        List<VueloUtil> result = null;
         try{
 
             //get all flights
@@ -346,12 +345,16 @@ public class MainController {
             flights.get(0).setCapacidad_utilizada(123);
 
             //create two local lists 
-            List<Vuelo> firstDay = new ArrayList<>();
-            List<Vuelo> secondDay = new ArrayList<>();
+            List<VueloUtil> firstDay = new ArrayList<>();
+            List<VueloUtil> secondDay = new ArrayList<>();
 
             //copy attributes to local declared classes two times
-            copyListButOnlyAttributes(firstDay, flights, 0);
-            copyListButOnlyAttributes(secondDay, flights, firstDay.size());
+            // copyListButOnlyAttributes(firstDay, flights, 0);
+            // copyListButOnlyAttributes(secondDay, flights, firstDay.size());
+
+            //set data for vueloutil
+            setAttributesVueloUtil(firstDay, flights, 0);
+            setAttributesVueloUtil(secondDay, flights, firstDay.size());
 
             //set the time on the lists for today and tomorrow respectively
             Calendar calFirstDay = Calendar.getInstance();
@@ -365,7 +368,7 @@ public class MainController {
             setDepartureAndArrivalDates(secondDay,calFirstDay);
 
             //join the lists in only one list
-            List<Vuelo> joinedLists = firstDay;
+            List<VueloUtil> joinedLists = firstDay;
             joinedLists.addAll(secondDay);
 
             //return the joined list
@@ -410,18 +413,18 @@ public class MainController {
         }
     }
 
-    void setDepartureAndArrivalDates(List<Vuelo> flightsForTheDay,Calendar day){
+    void setDepartureAndArrivalDates(List<VueloUtil> flightsForTheDay,Calendar day){
         try{
             Calendar calLlegada = Calendar.getInstance();
             Calendar calSalida = Calendar.getInstance();
 
             long diff, diffInMillies;
-            for (Vuelo vuelo : flightsForTheDay) { //modificamos solamente la fecha a los vuelos, las horas son las correspondientes
+            for (VueloUtil vuelo : flightsForTheDay) { //modificamos solamente la fecha a los vuelos, las horas son las correspondientes
 
-                calLlegada.setTime(vuelo.getHora_llegada());
-                calSalida.setTime(vuelo.getHora_salida());
+                calLlegada.setTime(vuelo.getLlegada_real());
+                calSalida.setTime(vuelo.getSalida_real());
 
-                diffInMillies = Math.abs(vuelo.getHora_llegada().getTime() - vuelo.getHora_salida().getTime());
+                diffInMillies = Math.abs(vuelo.getLlegada_real().getTime() - vuelo.getSalida_real().getTime());
                 diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 
                 calLlegada.set(Calendar.DAY_OF_MONTH, day.get(Calendar.DAY_OF_MONTH));
@@ -434,8 +437,27 @@ public class MainController {
 
                 calLlegada.add(Calendar.DATE, (int)diff);
 
-                vuelo.setHora_llegada(calLlegada.getTime());
-                vuelo.setHora_salida(calSalida.getTime());                
+                vuelo.setLlegada_real(calLlegada.getTime());
+                vuelo.setSalida_real(calSalida.getTime());                
+            }
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+    }
+
+    void setAttributesVueloUtil(List<VueloUtil>firstDay, List<Vuelo>flights, int offset){
+        try{
+            for (Vuelo vuelo : flights) {
+                VueloUtil nuevo = new VueloUtil();
+                Vuelo vueloInfo = vuelo;
+
+                nuevo.setId_aux(vuelo.getId());
+                nuevo.setSalida_real(vuelo.getHora_salida());
+                nuevo.setLlegada_real(vuelo.getHora_llegada());
+                nuevo.setCap_util_real(0);
+                nuevo.setVuelo(vueloInfo);
+
+                firstDay.add(nuevo);
             }
         }catch(Exception ex){
             System.err.println(ex.getMessage());
