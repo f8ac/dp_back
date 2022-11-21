@@ -24,7 +24,8 @@ public class EnvioController {
 
     @GetMapping(value = "/get/{id}")
     Envio get(@PathVariable int id){
-        return envioService.get(id);
+        Envio envio = envioService.get(id);
+        return envio;
     }
 
     @PostMapping(value = "/insert")

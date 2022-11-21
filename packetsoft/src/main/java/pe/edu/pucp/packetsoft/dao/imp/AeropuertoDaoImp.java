@@ -67,4 +67,17 @@ public class AeropuertoDaoImp implements AeropuertoDao {
         return list.get(0);
     }
 
+    @Transactional
+    @Override
+    public Aeropuerto getByCodigoString(String codigo) {
+        Aeropuerto result = null;
+        try {
+            var hql = "from Aeropuerto as a where a.cod_aeropuerto = '" + codigo + "'";
+            result = entityManager.createQuery(hql,Aeropuerto.class).getSingleResult();
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
+        return result;
+    }
+
 }

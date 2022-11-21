@@ -8,5 +8,5 @@ public interface AeropuertoDao {
     Aeropuerto get(int id);
     Aeropuerto insert(Aeropuerto aeropuerto);
     Aeropuerto getByCodigo(Aeropuerto aeropuerto);
-
+    Aeropuerto getByCodigoString(String codigo);
 }

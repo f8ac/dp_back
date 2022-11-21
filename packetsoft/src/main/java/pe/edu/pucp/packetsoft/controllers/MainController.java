@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.TimeUnit;
@@ -53,6 +54,7 @@ public class MainController {
             // AEROPUERTOS
             List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
             List<AstarNode> listaNodos = airportsToNodes(listaAeropuertos);
+            Hashtable<String, Aeropuerto> aeroHash = airportToHash(listaAeropuertos);
 
             //creamos una linked list que controle los paquetes que tienen que ser liberados
             Comparator<Movimiento> comPaquetes = new PaquetesComp();
@@ -65,7 +67,8 @@ public class MainController {
             
             // EL MAPEO ESTA TERMINADO ================================================================================
             //OBTENEMOS LOS ENVIOS ORDENADOS POR FECHA
-            List<Envio> listaEnvios = envioService.listCertainHoursFromDatetime(param);
+            // List<Envio> listaEnvios = envioService.listCertainHoursFromDatetime(param);
+            List<Envio> listaEnvios = envioService.readFilesToLocal(param,aeroHash);
 
             Calendar calInicio = Calendar.getInstance();
             Calendar calFin = Calendar.getInstance();
@@ -85,8 +88,13 @@ public class MainController {
                 attendQueue(colaPaquetes, curDate);
 
                 envioActual = listaEnvios.get(j);
+
+                // if(contRows == 5912){
+                //     int x = 1;
+                // }
+
                 if(param.debug){
-                    System.out.print("\n"+contRows+") "+curDate.getTime()+" "+envioActual.getId()+" "+envioActual.getFecha_hora() + " ");
+                    System.out.print("\n"+contRows+") "+curDate.getTime()+" "+envioActual.getCodigo_envio()+" "+envioActual.getFecha_hora() + " ");
                 }
                 if(curDate.getTime().after(calFin.getTime()))
                     break;
@@ -120,13 +128,13 @@ public class MainController {
                         System.out.println("COLAPSO: el paquete no ha llegado al aeropuerto a tiempo.");
                         System.out.println("ID envio fallido: " + envioActual.getId());
                         System.out.println("ID vuelo fallido: " + target.vuelo.getVuelo().getId());
-                        System.out.println("Salida vuelo fallido: " + target.vuelo.getVuelo().getHora_salida());
-                        System.out.println("Llegada vuelo fallido: " + target.vuelo.getVuelo().getHora_llegada());
+                        System.out.println("Salida vuelo fallido: " + target.vuelo.getSalida_real());
+                        System.out.println("Llegada vuelo fallido: " + target.vuelo.getLlegada_real());
                         System.out.println(target.vuelo.getVuelo().getAeropuerto_salida().getId());
                         System.out.println(target.vuelo.getVuelo().getAeropuerto_llegada().getId());
                         break;
                     }
-                    savePlan(target,envioActual);
+                    // savePlan(target,envioActual);
                     // AstarSearch.printPath(target);
                     AstarSearch.clearParents(listaNodos);
                     contEnvios++;
@@ -170,6 +178,20 @@ public class MainController {
                 i++;
             }
             result = listaNodos;
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
+
+    Hashtable<String, Aeropuerto> airportToHash(List<Aeropuerto> lista){
+        Hashtable<String, Aeropuerto> result = null;
+        try{
+            Hashtable<String, Aeropuerto> aeroHash = new Hashtable<>();
+            for (Aeropuerto aeropuerto : lista) {
+                aeroHash.put(aeropuerto.getCod_aeropuerto(), aeropuerto);
+            }
+            result = aeroHash;
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }
@@ -332,7 +354,7 @@ public class MainController {
                 }
             }
         }catch(Exception ex){
-            System.out.println();
+            System.out.println(ex.getMessage());
         }
     }
 

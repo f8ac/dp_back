@@ -23,7 +23,9 @@ public class AeropuertoController {
 
     @GetMapping(value = "/get/{id}")
     Aeropuerto get(@PathVariable int id){
-        return aeropuertoService.get(id);
+        Aeropuerto aeropuerto;
+        aeropuerto = aeropuertoService.get(id);
+        return aeropuerto;
     }
 
     @PostMapping(value = "/insert")
@@ -40,6 +42,12 @@ public class AeropuertoController {
     @PostMapping(value = "/get/codigo")
     Aeropuerto getByCodigo(@RequestBody Aeropuerto aeropuerto){
         return aeropuertoService.getByCodigo(aeropuerto);
+    }
+
+    @PostMapping(value = "/get/codigo/string")
+    Aeropuerto getByCodigo(@RequestBody String codigo){
+        Aeropuerto aeropuerto = aeropuertoService.getByCodigoString(codigo);
+        return aeropuerto;
     }
 
 

@@ -32,7 +32,9 @@ public class AeropuertoService {
 
 
     public Aeropuerto get(int id){
-        return daoAeropuerto.get(id);
+        Aeropuerto aeropuerto;
+        aeropuerto = daoAeropuerto.get(id);
+        return aeropuerto;
     }
 
 
@@ -124,6 +126,8 @@ public class AeropuertoService {
         return daoAeropuerto.getByCodigo(aeropuerto);
     }
 
-
+    public Aeropuerto getByCodigoString(String codigo){
+        return daoAeropuerto.getByCodigoString(codigo);
+    }
 
 }

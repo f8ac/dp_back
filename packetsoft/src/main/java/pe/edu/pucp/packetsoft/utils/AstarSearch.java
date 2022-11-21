@@ -29,7 +29,10 @@ public class AstarSearch {
                     return n;
                 }
                 for(AstarNode.Edge edge : n.neighbors){
-                    if( edge.vuelo.getVuelo().getCapacidad_utilizada() + envio.getCant_paquetes_total() > edge.vuelo.getVuelo().getCapacidad_total() 
+                    // if(edge.vuelo.getVuelo().getId() == 4741){
+                    //     int i = 0;
+                    // }
+                    if( edge.vuelo.getCap_util_real() + envio.getCant_paquetes_total() > edge.vuelo.getCap_tot_real() 
                         || edge.vuelo.getSalida_real().before(envio.getFecha_hora())){
                         // System.out.println("Salida de vuelo vs registro envio:" + edge.vuelo.getHora_salida() + envio.getFecha_hora());
                     }else{
@@ -74,8 +77,8 @@ public class AstarSearch {
         envio.getAero_origen().setCapacidad_utilizado(capAeroRegistro + envio.getCant_paquetes_total());
         while(n.parent != null){
             if(n.vuelo != null){
-                int cantidad_actual = n.vuelo.getVuelo().getCapacidad_utilizada();
-                n.vuelo.getVuelo().setCapacidad_utilizada(cantidad_actual + envio.getCant_paquetes_total());
+                int cantidad_actual = n.vuelo.getCap_util_real();
+                n.vuelo.setCap_util_real(cantidad_actual + envio.getCant_paquetes_total());
                 int idxVuelo = searchFlightReturnIndex( n.vuelo, listaVuelos);
                 listaVuelos.get(idxVuelo).getInventario().add(envio);
 
