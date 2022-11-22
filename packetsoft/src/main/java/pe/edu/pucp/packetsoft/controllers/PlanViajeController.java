@@ -101,4 +101,15 @@ public class PlanViajeController {
         }
         return result;
     }
+
+    @PostMapping(value = "/get/itinerario/envio")
+    List<VueloUtil> getItinerarioByEnvio(@RequestBody EnvioRet envio){
+        List<VueloUtil> result = null;
+        try{
+            result = planViajeService.getItinerarioByEnvio(envio);
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
 }

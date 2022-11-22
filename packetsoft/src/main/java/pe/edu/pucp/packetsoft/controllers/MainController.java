@@ -95,7 +95,7 @@ public class MainController {
             StopWatch watch = new  StopWatch();
 
             // create oos
-            ObjectOutputStream pdv = new ObjectOutputStream(new FileOutputStream("pdv"));
+            ObjectOutputStream pdv = new ObjectOutputStream(new FileOutputStream("pdv",true));
             
             watch.start();
             while(true){

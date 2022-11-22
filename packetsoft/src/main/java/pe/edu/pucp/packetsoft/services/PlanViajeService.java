@@ -96,4 +96,40 @@ public class PlanViajeService {
         }
         return result;
     }
+
+    public List<VueloUtil> getItinerarioByEnvio(EnvioRet envio) throws IOException, ClassNotFoundException{
+        List<VueloUtil>  result = null;
+        List<PlanViaje> listaParadas = new ArrayList<>();
+        ObjectInputStream in = new ObjectInputStream(new FileInputStream("pdv"));
+        try{
+            
+            Object aux = in.readObject();
+            PlanViaje pv;
+            int cont = 0;
+            while(aux!=null){
+                // System.out.print(cont+"|");
+                if(cont == 2865){
+                    System.err.println("owo");
+                }
+                if(aux instanceof PlanViaje){
+                    pv = (PlanViaje)aux;
+                    if(pv.getId_envio_ret().compareTo(envio.getId()) == 0){
+                        listaParadas.add(pv);
+                    }
+                }
+                aux = in.readObject();
+                cont++;
+            }
+            
+        }catch(IOException | ClassNotFoundException ex){
+            System.err.println("Se llego al final del archivo: "+ ex.getMessage());
+            in.close();
+            List<VueloUtil> itinerario = new ArrayList<VueloUtil>();
+            for (PlanViaje planViaje : listaParadas) {
+                itinerario.add(planViaje.getVuelo_util());
+            }
+            result = itinerario;
+        }
+        return result;
+    }
 }
