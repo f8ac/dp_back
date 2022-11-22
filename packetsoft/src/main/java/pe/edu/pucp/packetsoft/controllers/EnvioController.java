@@ -4,12 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
+import pe.edu.pucp.packetsoft.models.AeropuertoRet;
 import pe.edu.pucp.packetsoft.models.Envio;
+import pe.edu.pucp.packetsoft.models.EnvioRet;
 import pe.edu.pucp.packetsoft.services.AeropuertoService;
 import pe.edu.pucp.packetsoft.services.EnvioService;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -50,13 +53,14 @@ public class EnvioController {
     }
 
     @PostMapping(value = "/list/table")
-    List<Envio> main(@RequestBody Prm param){
-        List<Envio> result = null;
+    List<EnvioRet> listTable(@RequestBody Prm param){
+        List<EnvioRet> result = null;
         try{
             List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
             Hashtable<String, Aeropuerto> aeroHash = airportToHash(listaAeropuertos);
             List<Envio> listaEnvios = envioService.readFilesToLocal(param,aeroHash);
-            result = listaEnvios;
+            List<EnvioRet> listaEnviosRet = convertEnviosToEnviosRet(listaEnvios);
+            result = listaEnviosRet;
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }
@@ -75,6 +79,39 @@ public class EnvioController {
             System.err.println(ex.getMessage());
         }
         return result;
+    }
+
+    List<EnvioRet> convertEnviosToEnviosRet(List<Envio> listaEnvios){
+        List<EnvioRet> result = null;
+        try{
+            List<EnvioRet> listaEnviosRet = new ArrayList<>();
+            for (Envio envio : listaEnvios) {
+                EnvioRet envioRet = new EnvioRet();
+                copyNeededAttributesFromEnvio(envioRet,envio);
+                listaEnviosRet.add(envioRet);
+            }
+            result = listaEnviosRet;
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
+
+    void copyNeededAttributesFromEnvio(EnvioRet envioRet,Envio envio){
+        try{
+            envioRet.setCodigo_envio(envio.getCodigo_envio());
+            envioRet.setFecha_hora(envio.getFecha_hora());
+            //proceso especial con aeropuertos
+            AeropuertoRet aeroOrigen = new AeropuertoRet();
+            AeropuertoRet aeroDestino = new AeropuertoRet();
+            aeroOrigen.getAttributesFromAeropuerto(envio.getAero_origen());
+            aeroDestino.getAttributesFromAeropuerto(envio.getAero_destino());
+            envioRet.setAero_origen(aeroOrigen);
+            envioRet.setAero_destino(aeroDestino);
+            envioRet.setCant_paquetes_total(envio.getCant_paquetes_total());
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
     }
 
 }
