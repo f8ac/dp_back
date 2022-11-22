@@ -4,6 +4,7 @@ import java.util.List;
 
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Vuelo;
+import pe.edu.pucp.packetsoft.models.VueloUtil;
 
 public interface VueloDao {
     List<Vuelo> getAll();
@@ -14,4 +15,5 @@ public interface VueloDao {
     // Vuelo buscarVuelo1(int idinicio,int idfin, Calendar horaSalida, int paquetes);
     // Vuelo buscarVuelo2(int idinicio,int idfin, Calendar horaSalida, Calendar horaLlegada,int paquetes);
     List<Vuelo> getSortedFromTime(int hora, int minuto, int horaSimul);
+    VueloUtil insertUtil(VueloUtil vueloUtil);
 }

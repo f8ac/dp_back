@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import pe.edu.pucp.packetsoft.dao.AeropuertoDao;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
+import pe.edu.pucp.packetsoft.models.AeropuertoRet;
+
 import java.util.List;
 
 @Transactional
@@ -74,6 +76,18 @@ public class AeropuertoDaoImp implements AeropuertoDao {
         try {
             var hql = "from Aeropuerto as a where a.cod_aeropuerto = '" + codigo + "'";
             result = entityManager.createQuery(hql,Aeropuerto.class).getSingleResult();
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
+        return result;
+    }
+
+    @Transactional
+    @Override
+    public AeropuertoRet insertRet(AeropuertoRet aeropuertoRet) {
+        AeropuertoRet result = null;
+        try {
+            result = entityManager.merge(aeropuertoRet);
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
         }

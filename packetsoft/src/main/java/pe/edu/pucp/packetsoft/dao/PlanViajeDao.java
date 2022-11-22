@@ -13,4 +13,6 @@ public interface PlanViajeDao {
     public List<Envio> listDistinctEnvios();
     public PlanViaje insertPlan(PlanViaje plan);
     public void deleteAll();
+    public void truncTable();
+    public void insertList(List<PlanViaje>listaPlanes);
 }

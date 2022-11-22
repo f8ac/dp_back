@@ -99,7 +99,7 @@ public class EnvioController {
 
     void copyNeededAttributesFromEnvio(EnvioRet envioRet,Envio envio){
         try{
-            envioRet.setCodigo_envio(envio.getCodigo_envio());
+            envioRet.setId(envio.getCodigo_envio());
             envioRet.setFecha_hora(envio.getFecha_hora());
             //proceso especial con aeropuertos
             AeropuertoRet aeroOrigen = new AeropuertoRet();

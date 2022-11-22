@@ -1,5 +1,7 @@
 package pe.edu.pucp.packetsoft.controllers;
 
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -21,12 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Envio;
+import pe.edu.pucp.packetsoft.models.EnvioRet;
 import pe.edu.pucp.packetsoft.models.Movimiento;
 import pe.edu.pucp.packetsoft.models.PlanViaje;
 import pe.edu.pucp.packetsoft.models.Vuelo;
 import pe.edu.pucp.packetsoft.models.VueloRet;
 import pe.edu.pucp.packetsoft.models.VueloUtil;
 import pe.edu.pucp.packetsoft.services.AeropuertoService;
+import pe.edu.pucp.packetsoft.services.ContinenteService;
 import pe.edu.pucp.packetsoft.services.EnvioService;
 import pe.edu.pucp.packetsoft.services.PlanViajeService;
 import pe.edu.pucp.packetsoft.services.VueloService;
@@ -38,6 +42,8 @@ import pe.edu.pucp.packetsoft.utils.PaquetesComp;
 @RequestMapping("/main")
 @CrossOrigin
 public class MainController {
+    @Autowired
+    private ContinenteService continenteService;
     @Autowired
     private AeropuertoService aeropuertoService;
     @Autowired
@@ -51,6 +57,9 @@ public class MainController {
     List<VueloRet> main(@RequestBody Prm param){
         List<VueloRet> result = null;
         try{
+            //truncamos la tabla de planes de viaje
+            planViajeService.truncTable();
+
             // AEROPUERTOS
             List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
             List<AstarNode> listaNodos = airportsToNodes(listaAeropuertos);
@@ -81,7 +90,13 @@ public class MainController {
             int j = 0, contRows = 1, contEnvios = 0;
             Envio envioActual = new Envio();
 
+            List<PlanViaje> listaPlanes = new ArrayList<>();
+
             StopWatch watch = new  StopWatch();
+
+            // create oos
+            ObjectOutputStream pdv = new ObjectOutputStream(new FileOutputStream("pdv"));
+            
             watch.start();
             while(true){
 
@@ -134,7 +149,7 @@ public class MainController {
                         System.out.println(target.vuelo.getVuelo().getAeropuerto_llegada().getId());
                         break;
                     }
-                    // savePlan(target,envioActual);
+                    savePlan(target,envioActual,listaPlanes);
                     // AstarSearch.printPath(target);
                     AstarSearch.clearParents(listaNodos);
                     contEnvios++;
@@ -147,6 +162,16 @@ public class MainController {
                     curDate.add(Calendar.MINUTE, 1);
                 }
             }
+            // planViajeService.insertList(listaPlanes);
+            int i = 0;
+            for (PlanViaje planViaje : listaPlanes) {
+                // planViaje.setVuelo_util(vueloService.insertUtil(planViaje.getVuelo_util()));
+                // planViajeService.insert(planViaje);
+                pdv.writeObject(planViaje);
+                i++;
+            }
+            System.out.println(i+" entries written.");
+            pdv.close();
             watch.stop();
             System.out.print("Tiempo total para procesar "+contEnvios+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
             result = vuelosTomados(listaVuelosRetorno);
@@ -333,7 +358,7 @@ public class MainController {
         return result;
     }
 
-    void savePlan(AstarNode target, Envio envio){
+    void savePlan(AstarNode target, Envio envio, List<PlanViaje> listaPlanes){
         try{
             AstarNode n = target;
             if(n==null)
@@ -348,9 +373,13 @@ public class MainController {
             for(AstarNode flight : flights){
                 if(flight.vuelo != null){
                     PlanViaje nuevo = new PlanViaje();
-                    nuevo.setEnvio(envio);
+                    EnvioRet nuevoEnvioRet = new EnvioRet();
+                    nuevoEnvioRet.getAttributesFromEnvio(envio);
+                    // envioService.insertRet(nuevoEnvioRet);
+                    nuevo.setId_envio_ret(envio.getCodigo_envio());
                     nuevo.setVuelo_util(flight.vuelo);
-                    planViajeService.insertPlan(nuevo);
+                    listaPlanes.add(nuevo);
+                    // planViajeService.insert(nuevo);
                 }
             }
         }catch(Exception ex){
@@ -481,6 +510,19 @@ public class MainController {
 
                 firstDay.add(nuevo);
             }
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/setup")
+    void setup(){
+        try{
+            continenteService.insertTodos();
+            aeropuertoService.insertfile();
+            vueloService.insertfile2();
+            aeropuertoService.insertAll();
+            
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }

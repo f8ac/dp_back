@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import pe.edu.pucp.packetsoft.models.Envio;
+import pe.edu.pucp.packetsoft.models.EnvioRet;
 import pe.edu.pucp.packetsoft.models.PlanViaje;
 import pe.edu.pucp.packetsoft.models.PlanViajeRet;
 import pe.edu.pucp.packetsoft.models.VueloUtil;
@@ -53,8 +54,10 @@ public class PlanViajeController {
         try{
             List<PlanViaje> viajesXenvio = planViajeService.listByEnvio(envio);
             PlanViajeRet nuevoPlanViajeRet = new PlanViajeRet();
-            viajesXenvio.get(0).getEnvio();
-            nuevoPlanViajeRet.setEnvio(envio);
+            viajesXenvio.get(0).getId_envio_ret();
+            EnvioRet envioRet = new EnvioRet();
+            envioRet.getAttributesFromEnvio(envio);
+            nuevoPlanViajeRet.setEnvio(envioRet);
             List<VueloUtil> itinerario = new ArrayList<VueloUtil>();
             for (PlanViaje planViaje : viajesXenvio) {
                 itinerario.add(planViaje.getVuelo_util());
@@ -86,5 +89,16 @@ public class PlanViajeController {
     @DeleteMapping(value = "/delete/all")
     void deleteAll(){
         planViajeService.deleteAll();
+    }
+
+    @PostMapping(value = "/get/envio")
+    PlanViajeRet getByEnvio(@RequestBody EnvioRet envio){
+        PlanViajeRet result = null;
+        try{
+            result = planViajeService.getByEnvio(envio);
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
     }
 }

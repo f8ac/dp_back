@@ -89,7 +89,7 @@ public class PlanViajeDaoImp  implements PlanViajeDao{
         PlanViaje result = null;
         try{
             // buscar si ya existe el plan de viaje para este envio comparando el id del envio e id del vuelo
-            var hql = "from PlanViaje p where p.envio = " + plan.getEnvio().getId() + " and p.vuelo_util = " + plan.getVuelo_util().getId_aux();
+            var hql = "from PlanViaje p where p.id_envio_ret = '" + plan.getId_envio_ret() + "' and p.vuelo_util = " + plan.getVuelo_util().getId_aux();
             List<PlanViaje> listaPlanes = entityManager.createQuery(hql).getResultList();
             //si la lista tiene elementos, entonces ya existe el plan de viaje
             if(listaPlanes.size()==0 || listaPlanes == null){
@@ -119,6 +119,35 @@ public class PlanViajeDaoImp  implements PlanViajeDao{
             }
         }catch(Exception ex){ System.out.println(ex.getMessage()); }
         
+    }
+
+    @Transactional
+    @Override
+    public void truncTable() {
+        try{
+            String sql;
+            sql = "DROP TABLE IF EXISTS vuelo_x_plan";
+            entityManager.createNativeQuery(sql).executeUpdate();
+            sql = "TRUNCATE TABLE plan_viaje";
+            entityManager.createNativeQuery(sql).executeUpdate();
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+    }
+
+    @Transactional
+    @Override
+    public void insertList(List<PlanViaje> listaPlanes) {
+        try{
+            VueloUtil vueloUtil;
+            for (PlanViaje planViaje : listaPlanes) {
+                vueloUtil = entityManager.merge(planViaje.getVuelo_util());
+                planViaje.setVuelo_util(vueloUtil);
+                entityManager.merge(planViaje);
+            }
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
     }
     
 }

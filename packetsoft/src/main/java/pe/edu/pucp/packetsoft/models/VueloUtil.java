@@ -1,5 +1,6 @@
 package pe.edu.pucp.packetsoft.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -24,7 +25,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter @Getter
-public class VueloUtil extends BaseEntity{
+public class VueloUtil extends BaseEntity implements Serializable{
 
     @Column(name = "id_aux")
     private Integer id_aux;

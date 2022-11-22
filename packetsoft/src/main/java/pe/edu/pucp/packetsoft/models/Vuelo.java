@@ -1,4 +1,5 @@
 package pe.edu.pucp.packetsoft.models;
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -22,7 +23,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter @Setter
 
-public class Vuelo extends BaseEntity{
+public class Vuelo extends BaseEntity implements Serializable{
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_aeropuerto_salida")

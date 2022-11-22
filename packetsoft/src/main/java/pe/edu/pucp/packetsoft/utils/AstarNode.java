@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Envio;
-import pe.edu.pucp.packetsoft.models.Paquete;
 import pe.edu.pucp.packetsoft.models.Vuelo;
 import pe.edu.pucp.packetsoft.models.VueloUtil;
 
@@ -32,7 +31,6 @@ public class AstarNode implements Comparable<AstarNode> {
 
     public Aeropuerto aeropuerto;
     public VueloUtil vuelo; // solamente usado para la ruta resultado
-    public List<Paquete> inventario;
 
     public AstarNode(double h){
         this.h = h;

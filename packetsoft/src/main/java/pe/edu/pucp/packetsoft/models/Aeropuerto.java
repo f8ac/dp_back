@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,7 +25,7 @@ import javax.persistence.Table;
 @Getter
 @Setter
 
-public class Aeropuerto extends BaseEntity {
+public class Aeropuerto extends BaseEntity implements Serializable{
     @Column(name = "cod_aeropuerto")
     private String cod_aeropuerto;
     @Column(name = "nombre")

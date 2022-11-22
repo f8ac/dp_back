@@ -1,4 +1,6 @@
 package pe.edu.pucp.packetsoft.models;
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -18,7 +20,7 @@ import lombok.Setter;
 @Getter 
 @Setter
 
-public class Continente extends BaseEntity{
+public class Continente extends BaseEntity implements Serializable{
     
     @Column(name = "nombre")
     private String nombre;

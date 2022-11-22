@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import pe.edu.pucp.packetsoft.controllers.Prm;
 import pe.edu.pucp.packetsoft.dao.EnvioDao;
 import pe.edu.pucp.packetsoft.models.Envio;
+import pe.edu.pucp.packetsoft.models.EnvioRet;
 
 
 
@@ -103,6 +104,18 @@ public class EnvioDaoImp implements EnvioDao {
                 .setParameter("start"   , calInicio.getTime()   , TemporalType.DATE)
                 .setParameter("end"     , calFin.getTime()      , TemporalType.DATE)
                 .getResultList();
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
+
+    @Transactional
+    @Override
+    public EnvioRet insertRet(EnvioRet envio){
+        EnvioRet result = null;
+        try{
+            result = entityManager.merge(envio);
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }

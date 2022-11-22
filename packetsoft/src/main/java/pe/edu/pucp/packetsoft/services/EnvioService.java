@@ -23,6 +23,7 @@ import pe.edu.pucp.packetsoft.controllers.Prm;
 import pe.edu.pucp.packetsoft.dao.EnvioDao;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Envio;
+import pe.edu.pucp.packetsoft.models.EnvioRet;
 
 
 @Service
@@ -231,5 +232,9 @@ public class EnvioService {
             System.err.println(ex.getMessage());
         }
         return result;
+    }
+
+    public EnvioRet insertRet(EnvioRet envioRet){
+        return daoEnvio.insertRet(envioRet);
     }
 }

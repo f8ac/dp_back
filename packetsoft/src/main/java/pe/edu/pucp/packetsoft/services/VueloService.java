@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import pe.edu.pucp.packetsoft.dao.VueloDao;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Vuelo;
+import pe.edu.pucp.packetsoft.models.VueloUtil;
 
 @Service
 public class VueloService {
@@ -313,5 +314,9 @@ public class VueloService {
             System.err.println(ex.getMessage());
         }
         return result;
+    }
+
+    public VueloUtil insertUtil(VueloUtil vueloUtil){
+        return daoEmpresa.insertUtil(vueloUtil);
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import pe.edu.pucp.packetsoft.dao.VueloDao;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Vuelo;
+import pe.edu.pucp.packetsoft.models.VueloUtil;
 
 @Transactional
 @Repository
@@ -178,6 +179,18 @@ public class VueloDaoImp implements VueloDao{
             result = listaFiltrada;
         }catch(Exception ex){
             System.err.println(ex.getMessage());
+        }
+        return result;
+    }
+
+    @Override
+    public VueloUtil insertUtil(VueloUtil vueloUtil) {
+        VueloUtil result = null;
+        try {
+            result = entityManager.merge(vueloUtil);
+        }
+        catch (Exception exception){
+            System.out.println(exception.getMessage());
         }
         return result;
     }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import pe.edu.pucp.packetsoft.dao.AeropuertoDao;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
+import pe.edu.pucp.packetsoft.models.AeropuertoRet;
 import pe.edu.pucp.packetsoft.models.Continente;
 
 import java.io.BufferedReader;
@@ -128,6 +129,23 @@ public class AeropuertoService {
 
     public Aeropuerto getByCodigoString(String codigo){
         return daoAeropuerto.getByCodigoString(codigo);
+    }
+
+    public AeropuertoRet insertRet(AeropuertoRet aeropuertoRet){
+        return daoAeropuerto.insertRet(aeropuertoRet);
+    }
+
+    public void insertAll(){
+        try{
+            List<Aeropuerto> listAeros = daoAeropuerto.getAll();
+            for (Aeropuerto aeropuerto : listAeros) {
+                AeropuertoRet aeroRet = new AeropuertoRet();
+                aeroRet.getAttributesFromAeropuerto(aeropuerto);
+                daoAeropuerto.insertRet(aeroRet);
+            }
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
     }
 
 }

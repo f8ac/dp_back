@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
+import pe.edu.pucp.packetsoft.models.AeropuertoRet;
 import pe.edu.pucp.packetsoft.services.AeropuertoService;
 
 import java.io.IOException;
@@ -48,6 +49,16 @@ public class AeropuertoController {
     Aeropuerto getByCodigo(@RequestBody String codigo){
         Aeropuerto aeropuerto = aeropuertoService.getByCodigoString(codigo);
         return aeropuerto;
+    }
+
+    @PostMapping(value = "ret/insert")
+    AeropuertoRet insertRet(@RequestBody AeropuertoRet aeropuertoRet){
+        return aeropuertoService.insertRet(aeropuertoRet);
+    }
+
+    @PostMapping(value = "/ret/insert/all")
+    public void insertAll(){
+        aeropuertoService.insertAll();
     }
 
 
