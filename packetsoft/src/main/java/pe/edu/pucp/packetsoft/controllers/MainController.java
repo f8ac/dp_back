@@ -97,6 +97,7 @@ public class MainController {
             // create oos
             ObjectOutputStream pdv = new ObjectOutputStream(new FileOutputStream("pdv",true));
             
+            Boolean colapso = false;
             watch.start();
             while(true){
 
@@ -147,6 +148,7 @@ public class MainController {
                         System.out.println("Llegada vuelo fallido: " + target.vuelo.getLlegada_real());
                         System.out.println(target.vuelo.getVuelo().getAeropuerto_salida().getId());
                         System.out.println(target.vuelo.getVuelo().getAeropuerto_llegada().getId());
+                        colapso = true;
                         break;
                     }
                     savePlan(target,envioActual,listaPlanes);
@@ -175,6 +177,10 @@ public class MainController {
             watch.stop();
             System.out.print("Tiempo total para procesar "+contEnvios+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
             result = vuelosTomados(listaVuelosRetorno);
+            if(colapso){
+                VueloRet vueloColapso = new VueloRet();
+                vueloColapso.setColapso(true);
+            }
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }

@@ -12,4 +12,5 @@ import lombok.Setter;
 public class VueloRet{
     private VueloUtil vuelo_util;
     private List<Envio> inventario;
+    private Boolean colapso;
 }
