@@ -122,6 +122,7 @@ public class PlanViajeService {
             }
             
         }catch(IOException | ClassNotFoundException ex){
+            System.err.println(ex.getMessage());
             System.err.println("Se llego al final del archivo: "+ ex.getMessage());
             in.close();
             List<VueloUtil> itinerario = new ArrayList<VueloUtil>();

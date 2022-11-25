@@ -3,11 +3,13 @@ package pe.edu.pucp.packetsoft.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import pe.edu.pucp.packetsoft.PacketsoftApplication;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.AeropuertoRet;
 import pe.edu.pucp.packetsoft.services.AeropuertoService;
 
 import java.io.IOException;
+// import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -59,6 +61,17 @@ public class AeropuertoController {
     @PostMapping(value = "/ret/insert/all")
     public void insertAll(){
         aeropuertoService.insertAll();
+    }
+
+    @PostMapping(value = "/load")
+    void load(){
+        List<Aeropuerto> listaAeropuertos;
+        try{
+            listaAeropuertos = aeropuertoService.getAll();
+            PacketsoftApplication.listaAeropuertos = listaAeropuertos;
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
     }
 
 

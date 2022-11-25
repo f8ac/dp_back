@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import pe.edu.pucp.packetsoft.PacketsoftApplication;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.EnvioRet;
@@ -36,7 +36,6 @@ import pe.edu.pucp.packetsoft.services.PlanViajeService;
 import pe.edu.pucp.packetsoft.services.VueloService;
 import pe.edu.pucp.packetsoft.utils.AstarNode;
 import pe.edu.pucp.packetsoft.utils.AstarSearch;
-import pe.edu.pucp.packetsoft.utils.PaquetesComp;
 
 @RestController
 @RequestMapping("/main")
@@ -61,13 +60,16 @@ public class MainController {
             planViajeService.truncTable();
 
             // AEROPUERTOS
-            List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
-            List<AstarNode> listaNodos = airportsToNodes(listaAeropuertos);
-            Hashtable<String, Aeropuerto> aeroHash = airportToHash(listaAeropuertos);
+            // List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
+            if(PacketsoftApplication.listaAeropuertos.size() == 0){
+                PacketsoftApplication.listaAeropuertos = aeropuertoService.getAll();
+            }
+            List<AstarNode> listaNodos = airportsToNodes(PacketsoftApplication.listaAeropuertos);
+            Hashtable<String, Aeropuerto> aeroHash = airportToHash(PacketsoftApplication.listaAeropuertos);
 
             //creamos una linked list que controle los paquetes que tienen que ser liberados
-            Comparator<Movimiento> comPaquetes = new PaquetesComp();
-            PriorityQueue<Movimiento> colaPaquetes = new PriorityQueue<Movimiento>(comPaquetes);
+            // Comparator<Movimiento> comPaquetes = new PaquetesComp();
+            // PriorityQueue<Movimiento> colaPaquetes = new PriorityQueue<Movimiento>(comPaquetes);
             
             // VUELOS / VERTICES 
             // creamos una lista de vertices a partir de la fecha que vamos a simular
@@ -98,12 +100,14 @@ public class MainController {
             ObjectOutputStream pdv = new ObjectOutputStream(new FileOutputStream("pdv",true));
             
             Boolean colapso = false;
+
+            Envio envioColapsado = new Envio();
             watch.start();
             while(true){
 
-                attendQueue(colaPaquetes, curDate);
+                attendQueue(PacketsoftApplication.colaPaquetes, curDate);
 
-                envioActual = listaEnvios.get(j);
+                envioColapsado = envioActual = listaEnvios.get(j);
 
                 // if(contRows == 5912){
                 //     int x = 1;
@@ -140,7 +144,7 @@ public class MainController {
                         System.out.print(">Ejecuta" + "["+contEnvios+"]");
                     }
                     AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino), envioActual);
-                    if(AstarSearch.restaAlmacenamiento(target, envioActual, listaVuelosRetorno, colaPaquetes)){
+                    if(AstarSearch.restaAlmacenamiento(target, envioActual, listaVuelosRetorno, PacketsoftApplication.colaPaquetes)){
                         System.out.println("COLAPSO: el paquete no ha llegado al aeropuerto a tiempo.");
                         System.out.println("ID envio fallido: " + envioActual.getId());
                         System.out.println("ID vuelo fallido: " + target.vuelo.getVuelo().getId());
@@ -148,6 +152,7 @@ public class MainController {
                         System.out.println("Llegada vuelo fallido: " + target.vuelo.getLlegada_real());
                         System.out.println(target.vuelo.getVuelo().getAeropuerto_salida().getId());
                         System.out.println(target.vuelo.getVuelo().getAeropuerto_llegada().getId());
+                        envioColapsado = envioActual;
                         colapso = true;
                         break;
                     }
@@ -164,6 +169,8 @@ public class MainController {
                     curDate.add(Calendar.MINUTE, 1);
                 }
             }
+
+
             // planViajeService.insertList(listaPlanes);
             int i = 0;
             for (PlanViaje planViaje : listaPlanes) {
@@ -177,10 +184,18 @@ public class MainController {
             watch.stop();
             System.out.print("Tiempo total para procesar "+contEnvios+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
             result = vuelosTomados(listaVuelosRetorno);
-            if(colapso){
-                VueloRet vueloColapso = new VueloRet();
-                vueloColapso.setColapso(true);
-            }
+            // if(colapso){
+            //     VueloRet vueloColapso = new VueloRet();
+            //     vueloColapso.setColapso(true);
+            //     result.add(vueloColapso);
+            // }
+            VueloRet vueloColapso = new VueloRet();
+            PacketsoftApplication.envioCol = envioColapsado;
+            vueloColapso.setColapso(envioColapsado.getCodigo_envio()+","+new java.sql.Timestamp(envioColapsado.getFecha_hora().getTime()).toString());
+            // for (Aeropuerto ap : listaAeropuertos) {
+            //     aeropuertoService.update(ap);
+            // }
+            result.add(vueloColapso);
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }
@@ -260,8 +275,8 @@ public class MainController {
                 vueloRetorno.setVuelo_util(vuelo);
                 listaVuelosRetorno.add(vueloRetorno);
                 // inicializar el inventario vacio
-                List<Envio> inventario = new ArrayList<Envio>();
-                vueloRetorno.setInventario(inventario);
+                // List<Envio> inventario = new ArrayList<Envio>();
+                // vueloRetorno.setInventario(inventario);
             }
             result = listaVuelosRetorno;
         }catch(Exception ex){
@@ -320,7 +335,7 @@ public class MainController {
         try{
             result = new ArrayList<VueloRet>();
             for (VueloRet vueloRet : listaVuelos) {
-                if(!vueloRet.getInventario().isEmpty()){
+                if(vueloRet.getVuelo_util().getCap_util_real()>0){
                     result.add(vueloRet);
                 }
             }
@@ -533,6 +548,26 @@ public class MainController {
             System.err.println(ex.getMessage());
         }
     }
+
+    @PostMapping(value = "/reset")
+    Boolean reset(){
+        Boolean result = null;
+        try{
+            //resetear la cola de movimientos
+            PacketsoftApplication.colaPaquetes = null;
+            PacketsoftApplication.colaPaquetes = new PriorityQueue<>(PacketsoftApplication.comPaquetes);
+            //setear todos los aeropuertos a cero
+            for (Aeropuerto aeropuerto : PacketsoftApplication.listaAeropuertos) {
+                aeropuerto.setCapacidad_utilizado(0);
+            }
+            PlanViajeController.deletePDV();
+        }catch(Exception ex){   
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
+
+    // @PostMapping(value = "/")
 }
 
 

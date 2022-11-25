@@ -1,11 +1,21 @@
 package pe.edu.pucp.packetsoft;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.PriorityQueue;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import pe.edu.pucp.packetsoft.models.Aeropuerto;
+import pe.edu.pucp.packetsoft.models.Envio;
+import pe.edu.pucp.packetsoft.models.Movimiento;
+import pe.edu.pucp.packetsoft.utils.PaquetesComp;
 
 // import pe.edu.pucp.packetsoft.utils.AstarNode;
 // import pe.edu.pucp.packetsoft.utils.AstarSearch;
@@ -14,8 +24,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableCaching
 public class PacketsoftApplication {
 
+    public static List<Aeropuerto> listaAeropuertos = new ArrayList<>();
+    public static Comparator<Movimiento> comPaquetes = new PaquetesComp();
+    public static Envio envioCol = new Envio();
+    public static PriorityQueue<Movimiento>colaPaquetes = new PriorityQueue<Movimiento>(comPaquetes);
 	public static void main(String[] args) {
-
+        
 		SpringApplication.run(PacketsoftApplication.class, args);
 
     // SAMPLE ASTAR

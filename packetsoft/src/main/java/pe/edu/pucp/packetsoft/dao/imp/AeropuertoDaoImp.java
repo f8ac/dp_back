@@ -94,4 +94,16 @@ public class AeropuertoDaoImp implements AeropuertoDao {
         return result;
     }
 
+    @Transactional
+    @Override
+    public Aeropuerto update(Aeropuerto ap) {
+        Aeropuerto result = null;
+        try{
+            result = entityManager.merge(ap);
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
+
 }

@@ -79,8 +79,8 @@ public class AstarSearch {
             if(n.vuelo != null){
                 int cantidad_actual = n.vuelo.getCap_util_real();
                 n.vuelo.setCap_util_real(cantidad_actual + envio.getCant_paquetes_total());
-                int idxVuelo = searchFlightReturnIndex( n.vuelo, listaVuelos);
-                listaVuelos.get(idxVuelo).getInventario().add(envio);
+                // int idxVuelo = searchFlightReturnIndex( n.vuelo, listaVuelos);
+                // listaVuelos.get(idxVuelo).getInventario().add(envio);
 
                 // se tiene que guardar la informacion del envio, su entrada y su salida
                 // de un aeropuerto en una cola, cuando el cronometro llegue a la hora

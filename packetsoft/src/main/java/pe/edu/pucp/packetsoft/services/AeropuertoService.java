@@ -148,4 +148,8 @@ public class AeropuertoService {
         }
     }
 
+    public Aeropuerto update(Aeropuerto ap){
+        return daoAeropuerto.update(ap);
+    }
+
 }

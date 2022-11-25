@@ -168,6 +168,7 @@ public class EnvioService {
                 calendarioSalida.set(Calendar.DAY_OF_MONTH, Integer.parseInt( data[1].substring(6,8) ));
                 calendarioSalida.set(Calendar.HOUR_OF_DAY,  Integer.parseInt( data[2].substring(0,2) ));
                 calendarioSalida.set(Calendar.MINUTE,       Integer.parseInt( data[2].substring(3,5) ));
+                calendarioSalida.set(Calendar.SECOND,       0);
                 calendarioSalida.add(Calendar.HOUR_OF_DAY,  aeroSalidaDefinido.getNum_zona_horaria().intValue()*-1);
                 // System.err.print(".");
                 // nLine++;

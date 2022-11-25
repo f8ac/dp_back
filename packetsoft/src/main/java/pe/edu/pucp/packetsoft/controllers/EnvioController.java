@@ -3,6 +3,7 @@ package pe.edu.pucp.packetsoft.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import pe.edu.pucp.packetsoft.PacketsoftApplication;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.AeropuertoRet;
 import pe.edu.pucp.packetsoft.models.Envio;
@@ -112,6 +113,17 @@ public class EnvioController {
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }
+    }
+
+    @PostMapping(value = "/get/colapso")
+    Envio getColapso(){
+        Envio result = null;
+        try{
+            result = PacketsoftApplication.envioCol;
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
     }
 
 }

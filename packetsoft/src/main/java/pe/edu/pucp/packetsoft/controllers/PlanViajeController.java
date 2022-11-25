@@ -1,5 +1,6 @@
 package pe.edu.pucp.packetsoft.controllers;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,5 +112,17 @@ public class PlanViajeController {
             System.err.println(ex.getMessage());
         }
         return result;
+    }
+
+    @PostMapping(value = "/delete/pdv")
+    public static void deletePDV(){
+        try{
+            File pdv = new File("pdv");
+            if(pdv.delete()){
+                System.out.println("Journey map deleted.");
+            }
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
     }
 }

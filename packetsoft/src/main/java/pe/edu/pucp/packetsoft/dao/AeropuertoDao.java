@@ -11,4 +11,5 @@ public interface AeropuertoDao {
     Aeropuerto getByCodigo(Aeropuerto aeropuerto);
     Aeropuerto getByCodigoString(String codigo);
     AeropuertoRet insertRet(AeropuertoRet aeropuertoRet);
+    Aeropuerto update(Aeropuerto ap);
 }
