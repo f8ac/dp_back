@@ -48,7 +48,7 @@ public class VueloService {
         int mes = Calendar.AUGUST, dia = 2, anio = 2022;
         for (int i = 0; i < 10; i++) {
             String line="";
-            BufferedReader br = new BufferedReader(new FileReader("src/main/resources/vuelosv02.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("src/main/resources/vuelosv03.txt"));
             while((line=br.readLine()) != null) {
                 String [] data=line.split("-"); // separa las palabras en un array
 
@@ -269,14 +269,15 @@ public class VueloService {
                         tiempo_vuelo_minutos+=1440;
                     }
                     vuelo.setInternacional(true);
+                    vuelo.setCapacidad_total(400);
                 }else{
                     vuelo.setInternacional(false);
+                    vuelo.setCapacidad_total(300);
                 }
                 vuelo.setTiempo_vuelo_minutos((int)tiempo_vuelo_minutos);
                 vuelo.setHora_salida(calendarioSalida.getTime());
                 vuelo.setHora_llegada(calendarioLlegada.getTime());
                 vuelo.setCapacidad_utilizada(0);
-                vuelo.setCapacidad_total(100);
                 vuelo.setAeropuerto_salida(aeroSalidaDefinido);
                 vuelo.setAeropuerto_llegada(aeroLlegadaDefinido);
                 insert(vuelo);

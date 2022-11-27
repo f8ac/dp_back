@@ -31,7 +31,6 @@ import pe.edu.pucp.packetsoft.models.VueloUtil;
 import pe.edu.pucp.packetsoft.services.AeropuertoService;
 import pe.edu.pucp.packetsoft.services.ContinenteService;
 import pe.edu.pucp.packetsoft.services.EnvioService;
-import pe.edu.pucp.packetsoft.services.PlanViajeService;
 import pe.edu.pucp.packetsoft.services.VueloService;
 import pe.edu.pucp.packetsoft.utils.AstarNode;
 import pe.edu.pucp.packetsoft.utils.AstarSearch;
@@ -48,8 +47,6 @@ public class MainController {
     private EnvioService envioService;
     @Autowired
     private VueloService vueloService;
-    @Autowired 
-    private PlanViajeService planViajeService;
 
     @PostMapping(value = "/main")
     List<VueloRet> main(@RequestBody Prm param){
@@ -77,10 +74,8 @@ public class MainController {
             // EL MAPEO ESTA TERMINADO ================================================================================
             //OBTENEMOS LOS ENVIOS ORDENADOS POR FECHA
             // List<Envio> listaEnvios = envioService.listCertainHoursFromDatetime(param);
-            // TODO: use the loaded flights
-            if(PacketsoftApplication.neededEnvios.size() == 0){
-                PacketsoftApplication.neededEnvios = envioService.readFilesToLocalWithParam(param,PacketsoftApplication.aeroHash);
-            }
+            PacketsoftApplication.neededEnvios = envioService.readFilesToLocalWithParam(param,PacketsoftApplication.aeroHash);
+
             
             // List<Envio> listaEnvios = envioService.copyNeededEnvios(param);
 
@@ -149,7 +144,7 @@ public class MainController {
                     AstarNode target = AstarSearch.aStar(listaNodos.get(origen), listaNodos.get(destino), envioActual);
                     if(AstarSearch.restaAlmacenamiento(target, envioActual, listaVuelosRetorno, PacketsoftApplication.colaPaquetes)){
                         System.out.println("COLAPSO: el paquete no ha llegado al aeropuerto a tiempo.");
-                        System.out.println("ID envio fallido: " + envioActual.getId());
+                        System.out.println("ID envio fallido: " + envioActual.getCodigo_envio());
                         System.out.println("ID vuelo fallido: " + target.vuelo.getVuelo().getId());
                         System.out.println("Salida vuelo fallido: " + target.vuelo.getSalida_real());
                         System.out.println("Llegada vuelo fallido: " + target.vuelo.getLlegada_real());
@@ -192,13 +187,8 @@ public class MainController {
                 vueloColapso.setColapso(envioColapsado.getCodigo_envio()+","+new java.sql.Timestamp(envioColapsado.getFecha_hora().getTime()).toString());
                 result.add(vueloColapso);
             }
-            // VueloRet vueloColapso = new VueloRet();
-            // PacketsoftApplication.envioCol = envioColapsado;
-            // vueloColapso.setColapso(envioColapsado.getCodigo_envio()+","+new java.sql.Timestamp(envioColapsado.getFecha_hora().getTime()).toString());
-            // for (Aeropuerto ap : listaAeropuertos) {
-            //     aeropuertoService.update(ap);
-            // }
-            // result.add(vueloColapso);
+            PacketsoftApplication.enviosNuevos = false;
+            PacketsoftApplication.neededEnvios = null;
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }
@@ -500,6 +490,10 @@ public class MainController {
 
                 calLlegada.add(Calendar.DATE, (int)diff);
 
+                if(calLlegada.before(calSalida)){
+                    calLlegada.add(Calendar.DATE,1);
+                }
+
                 vuelo.setLlegada_real(calLlegada.getTime());
                 vuelo.setSalida_real(calSalida.getTime());                
             }
@@ -551,7 +545,10 @@ public class MainController {
             for (Aeropuerto aeropuerto : PacketsoftApplication.listaAeropuertos) {
                 aeropuerto.setCapacidad_utilizado(0);
             }
+            //
+            PacketsoftApplication.neededEnvios = null;
             PlanViajeController.deletePDV();
+            result = true;
         }catch(Exception ex){   
             System.err.println(ex.getMessage());
         }
@@ -565,6 +562,19 @@ public class MainController {
             aeropuertoService.load();
             // envioService.load();
             result = "Load Successful.";
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
+
+    @PostMapping(value = "/reset/envios")
+    Boolean resetEnvios(){
+        Boolean result = false;
+        try{
+            PacketsoftApplication.neededEnvios = null;
+            PacketsoftApplication.enviosNuevos = false;
+            result = true;
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }

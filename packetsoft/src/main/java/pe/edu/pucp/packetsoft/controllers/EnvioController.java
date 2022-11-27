@@ -58,7 +58,10 @@ public class EnvioController {
             // List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
             // Hashtable<String, Aeropuerto> aeroHash = airportToHash(listaAeropuertos);
             // need to fix: ask for envios in a certain date
-            PacketsoftApplication.neededEnvios = envioService.readFilesToLocalWithParam(param,PacketsoftApplication.aeroHash);
+            if(!PacketsoftApplication.enviosNuevos){
+                PacketsoftApplication.neededEnvios = envioService.readFilesToLocalWithParam(param,PacketsoftApplication.aeroHash);
+                PacketsoftApplication.enviosNuevos = true;
+            }
             // PacketsoftApplication.neededEnvios = envioService.copyNeededEnvios(param);
             List<EnvioRet> listaEnviosRet = convertEnviosToEnviosRet(PacketsoftApplication.neededEnvios);
             result = listaEnviosRet;

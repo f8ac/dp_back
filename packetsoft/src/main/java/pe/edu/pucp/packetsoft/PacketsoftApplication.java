@@ -32,6 +32,7 @@ public class PacketsoftApplication {
     public static PriorityQueue<Movimiento>colaPaquetes = new PriorityQueue<Movimiento>(comPaquetes);
     public static List<Envio> listaEnvios = new ArrayList<>();
     public static List<Envio> neededEnvios = new ArrayList<>();
+    public static Boolean enviosNuevos = false;
 	public static void main(String[] args) {
         
 		SpringApplication.run(PacketsoftApplication.class, args);
