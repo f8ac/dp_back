@@ -184,18 +184,18 @@ public class MainController {
             watch.stop();
             System.out.print("Tiempo total para procesar "+contEnvios+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
             result = vuelosTomados(listaVuelosRetorno);
-            // if(colapso){
-            //     VueloRet vueloColapso = new VueloRet();
-            //     vueloColapso.setColapso(true);
-            //     result.add(vueloColapso);
-            // }
-            VueloRet vueloColapso = new VueloRet();
-            PacketsoftApplication.envioCol = envioColapsado;
-            vueloColapso.setColapso(envioColapsado.getCodigo_envio()+","+new java.sql.Timestamp(envioColapsado.getFecha_hora().getTime()).toString());
+            if(colapso){
+                VueloRet vueloColapso = new VueloRet();
+                vueloColapso.setColapso(envioColapsado.getCodigo_envio()+","+new java.sql.Timestamp(envioColapsado.getFecha_hora().getTime()).toString());
+                result.add(vueloColapso);
+            }
+            // VueloRet vueloColapso = new VueloRet();
+            // PacketsoftApplication.envioCol = envioColapsado;
+            // vueloColapso.setColapso(envioColapsado.getCodigo_envio()+","+new java.sql.Timestamp(envioColapsado.getFecha_hora().getTime()).toString());
             // for (Aeropuerto ap : listaAeropuertos) {
             //     aeropuertoService.update(ap);
             // }
-            result.add(vueloColapso);
+            // result.add(vueloColapso);
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }
