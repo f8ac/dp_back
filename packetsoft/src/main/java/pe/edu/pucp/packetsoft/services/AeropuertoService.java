@@ -3,6 +3,8 @@ package pe.edu.pucp.packetsoft.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pe.edu.pucp.packetsoft.PacketsoftApplication;
+import pe.edu.pucp.packetsoft.controllers.AeropuertoController;
 import pe.edu.pucp.packetsoft.dao.AeropuertoDao;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.AeropuertoRet;
@@ -150,6 +152,17 @@ public class AeropuertoService {
 
     public Aeropuerto update(Aeropuerto ap){
         return daoAeropuerto.update(ap);
+    }
+
+    public void load(){
+        List<Aeropuerto> listaAeropuertos;
+        try{
+            listaAeropuertos = daoAeropuerto.getAll();
+            PacketsoftApplication.listaAeropuertos = listaAeropuertos;
+            PacketsoftApplication.aeroHash = AeropuertoController.airportToHash(listaAeropuertos);
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
     }
 
 }

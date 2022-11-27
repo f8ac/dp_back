@@ -8,7 +8,6 @@ import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.AeropuertoRet;
 import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.EnvioRet;
-import pe.edu.pucp.packetsoft.services.AeropuertoService;
 import pe.edu.pucp.packetsoft.services.EnvioService;
 
 import java.io.IOException;
@@ -23,8 +22,7 @@ import java.util.List;
 public class EnvioController {
     @Autowired
     private EnvioService envioService;
-    @Autowired
-    private AeropuertoService aeropuertoService;
+
     
     @GetMapping(value = "/list")
     List<Envio> getAll(){
@@ -57,10 +55,12 @@ public class EnvioController {
     List<EnvioRet> listTable(@RequestBody Prm param){
         List<EnvioRet> result = null;
         try{
-            List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
-            Hashtable<String, Aeropuerto> aeroHash = airportToHash(listaAeropuertos);
-            List<Envio> listaEnvios = envioService.readFilesToLocal(param,aeroHash);
-            List<EnvioRet> listaEnviosRet = convertEnviosToEnviosRet(listaEnvios);
+            // List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
+            // Hashtable<String, Aeropuerto> aeroHash = airportToHash(listaAeropuertos);
+            // need to fix: ask for envios in a certain date
+            PacketsoftApplication.neededEnvios = envioService.readFilesToLocalWithParam(param,PacketsoftApplication.aeroHash);
+            // PacketsoftApplication.neededEnvios = envioService.copyNeededEnvios(param);
+            List<EnvioRet> listaEnviosRet = convertEnviosToEnviosRet(PacketsoftApplication.neededEnvios);
             result = listaEnviosRet;
         }catch(Exception ex){
             System.err.println(ex.getMessage());
@@ -102,6 +102,7 @@ public class EnvioController {
         try{
             envioRet.setId(envio.getCodigo_envio());
             envioRet.setFecha_hora(envio.getFecha_hora());
+            // envioRet.getFecha_hora().settime
             //proceso especial con aeropuertos
             AeropuertoRet aeroOrigen = new AeropuertoRet();
             AeropuertoRet aeroDestino = new AeropuertoRet();
@@ -126,4 +127,26 @@ public class EnvioController {
         return result;
     }
 
+    @PostMapping(value = "/load")
+    String load(){
+        String result = null;
+        try{
+            result = envioService.load();
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
+
+
+    @PostMapping(value = "/load/needed")
+    String loadNeeded(Prm param){
+        String result = null;
+        try{
+            result = envioService.loadNeeded(param);
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }   
 }

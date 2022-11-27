@@ -3,12 +3,12 @@ package pe.edu.pucp.packetsoft.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import pe.edu.pucp.packetsoft.PacketsoftApplication;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.AeropuertoRet;
 import pe.edu.pucp.packetsoft.services.AeropuertoService;
 
 import java.io.IOException;
+import java.util.Hashtable;
 // import java.util.ArrayList;
 import java.util.List;
 
@@ -65,14 +65,21 @@ public class AeropuertoController {
 
     @PostMapping(value = "/load")
     void load(){
-        List<Aeropuerto> listaAeropuertos;
+        aeropuertoService.load();
+    }
+
+    public static Hashtable<String, Aeropuerto> airportToHash(List<Aeropuerto> lista){
+        Hashtable<String, Aeropuerto> result = null;
         try{
-            listaAeropuertos = aeropuertoService.getAll();
-            PacketsoftApplication.listaAeropuertos = listaAeropuertos;
+            Hashtable<String, Aeropuerto> aeroHash = new Hashtable<>();
+            for (Aeropuerto aeropuerto : lista) {
+                aeroHash.put(aeropuerto.getCod_aeropuerto(), aeropuerto);
+            }
+            result = aeroHash;
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }
+        return result;
     }
-
 
 }

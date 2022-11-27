@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.TimeUnit;
@@ -57,7 +56,7 @@ public class MainController {
         List<VueloRet> result = null;
         try{
             //truncamos la tabla de planes de viaje
-            planViajeService.truncTable();
+            // planViajeService.truncTable();
 
             // AEROPUERTOS
             // List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
@@ -65,7 +64,6 @@ public class MainController {
                 PacketsoftApplication.listaAeropuertos = aeropuertoService.getAll();
             }
             List<AstarNode> listaNodos = airportsToNodes(PacketsoftApplication.listaAeropuertos);
-            Hashtable<String, Aeropuerto> aeroHash = airportToHash(PacketsoftApplication.listaAeropuertos);
 
             //creamos una linked list que controle los paquetes que tienen que ser liberados
             // Comparator<Movimiento> comPaquetes = new PaquetesComp();
@@ -79,7 +77,12 @@ public class MainController {
             // EL MAPEO ESTA TERMINADO ================================================================================
             //OBTENEMOS LOS ENVIOS ORDENADOS POR FECHA
             // List<Envio> listaEnvios = envioService.listCertainHoursFromDatetime(param);
-            List<Envio> listaEnvios = envioService.readFilesToLocal(param,aeroHash);
+            // TODO: use the loaded flights
+            if(PacketsoftApplication.neededEnvios.size() == 0){
+                PacketsoftApplication.neededEnvios = envioService.readFilesToLocalWithParam(param,PacketsoftApplication.aeroHash);
+            }
+            
+            // List<Envio> listaEnvios = envioService.copyNeededEnvios(param);
 
             Calendar calInicio = Calendar.getInstance();
             Calendar calFin = Calendar.getInstance();
@@ -107,7 +110,7 @@ public class MainController {
 
                 attendQueue(PacketsoftApplication.colaPaquetes, curDate);
 
-                envioColapsado = envioActual = listaEnvios.get(j);
+                envioColapsado = envioActual = PacketsoftApplication.neededEnvios.get(j);
 
                 // if(contRows == 5912){
                 //     int x = 1;
@@ -163,9 +166,9 @@ public class MainController {
                     j++;
                 }
                 contRows++;
-                if(j >= listaEnvios.size()){
+                if(j >= PacketsoftApplication.neededEnvios.size()){
                     break;
-                }else if(!sameDateTime(curDate.getTime(), listaEnvios.get(j).getFecha_hora())){
+                }else if(!sameDateTime(curDate.getTime(), PacketsoftApplication.neededEnvios.get(j).getFecha_hora())){
                     curDate.add(Calendar.MINUTE, 1);
                 }
             }
@@ -230,19 +233,7 @@ public class MainController {
         return result;
     }
 
-    Hashtable<String, Aeropuerto> airportToHash(List<Aeropuerto> lista){
-        Hashtable<String, Aeropuerto> result = null;
-        try{
-            Hashtable<String, Aeropuerto> aeroHash = new Hashtable<>();
-            for (Aeropuerto aeropuerto : lista) {
-                aeroHash.put(aeropuerto.getCod_aeropuerto(), aeropuerto);
-            }
-            result = aeroHash;
-        }catch(Exception ex){
-            System.err.println(ex.getMessage());
-        }
-        return result;
-    }
+
 
     List<VueloRet> processFlights(List<VueloUtil> listaVuelos, List<AstarNode> listaNodos, Prm param){
         List<VueloRet> result = null;
@@ -567,7 +558,18 @@ public class MainController {
         return result;
     }
 
-    // @PostMapping(value = "/")
+    @PostMapping(value = "/load")
+    String load(){
+        String result = null;
+        try{
+            aeropuertoService.load();
+            // envioService.load();
+            result = "Load Successful.";
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
 }
 
 

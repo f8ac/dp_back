@@ -65,6 +65,7 @@ public class AstarSearch {
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }
+        System.out.println("PATH NOT FOUND.");
         return null;
     }
 
