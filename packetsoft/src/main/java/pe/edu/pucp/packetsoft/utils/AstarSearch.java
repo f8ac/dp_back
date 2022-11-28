@@ -31,9 +31,9 @@ public class AstarSearch {
                     return n;
                 }
                 for(AstarNode.Edge edge : n.neighbors){
-                    if(edge.vuelo.getVuelo().getId() == 763){
-                        int i = 0;
-                    }
+                    // if(edge.vuelo.getVuelo().getId() == 763){
+                    //     int i = 0;
+                    // }
                     if( edge.vuelo.getCap_util_real() + envio.getCant_paquetes_total() > edge.vuelo.getCap_tot_real() 
                         || edge.vuelo.getSalida_real().before(envio.getFecha_hora())){
                         // System.out.println("Salida de vuelo vs registro envio:" + edge.vuelo.getHora_salida() + envio.getFecha_hora());

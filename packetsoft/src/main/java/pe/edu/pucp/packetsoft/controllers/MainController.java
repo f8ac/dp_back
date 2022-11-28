@@ -104,9 +104,9 @@ public class MainController {
             while(true){
                 attendQueue(PacketsoftApplication.colaPaquetes, curDate);
                 envioColapsado = envioActual = PacketsoftApplication.neededEnvios.get(j);
-                if(contRows == 2027){
-                    int x = 1;
-                }
+                // if(contRows == 2027){
+                //     int x = 1;
+                // }
                 if(param.debug){
                     System.out.print("\n"+contRows+") "+curDate.getTime()+" "+envioActual.getCodigo_envio()+" "+envioActual.getFecha_hora() + " ");
                 }
