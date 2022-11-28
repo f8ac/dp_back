@@ -102,15 +102,11 @@ public class MainController {
             Envio envioColapsado = new Envio();
             watch.start();
             while(true){
-
                 attendQueue(PacketsoftApplication.colaPaquetes, curDate);
-
                 envioColapsado = envioActual = PacketsoftApplication.neededEnvios.get(j);
-
-                // if(contRows == 5912){
-                //     int x = 1;
-                // }
-
+                if(contRows == 2027){
+                    int x = 1;
+                }
                 if(param.debug){
                     System.out.print("\n"+contRows+") "+curDate.getTime()+" "+envioActual.getCodigo_envio()+" "+envioActual.getFecha_hora() + " ");
                 }
@@ -125,9 +121,6 @@ public class MainController {
                     contRows++;
                     continue;
                 }
-
-                
-
                 if(sameDateTime(curDate.getTime() ,envioActual.getFecha_hora())){
                     if(esIntercontinental(envioActual))
                         envioActual.setIntercontinental(true);

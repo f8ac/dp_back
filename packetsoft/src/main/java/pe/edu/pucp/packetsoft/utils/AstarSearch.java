@@ -12,6 +12,7 @@ import pe.edu.pucp.packetsoft.models.Movimiento;
 // import pe.edu.pucp.packetsoft.models.Vuelo;
 import pe.edu.pucp.packetsoft.models.VueloRet;
 import pe.edu.pucp.packetsoft.models.VueloUtil;
+import pe.edu.pucp.packetsoft.utils.AstarNode.Edge;
 
 public class AstarSearch {
     public static AstarNode aStar(AstarNode start, AstarNode target,Envio envio){
@@ -24,20 +25,22 @@ public class AstarSearch {
         
             while(!openList.isEmpty()){
                 AstarNode n = openList.peek();
-                if(n == target){
+                if(n == target ){
                     // System.out.print("$");
+                    start.parent = null;
                     return n;
                 }
                 for(AstarNode.Edge edge : n.neighbors){
-                    // if(edge.vuelo.getVuelo().getId() == 4741){
-                    //     int i = 0;
-                    // }
+                    if(edge.vuelo.getVuelo().getId() == 763){
+                        int i = 0;
+                    }
                     if( edge.vuelo.getCap_util_real() + envio.getCant_paquetes_total() > edge.vuelo.getCap_tot_real() 
                         || edge.vuelo.getSalida_real().before(envio.getFecha_hora())){
                         // System.out.println("Salida de vuelo vs registro envio:" + edge.vuelo.getHora_salida() + envio.getFecha_hora());
                     }else{
                         AstarNode m = edge.node;
-                        double totalWeight = n.g + edge.weight;
+                        // double totalWeight = n.g + edge.weight;// + inTime(edge,target);
+                        double totalWeight = n.g + inTime(edge, envio);
                         if(!openList.contains(m) && !closedList.contains(m)){
                             m.parent = n;
                             m.vuelo = edge.vuelo;
@@ -192,6 +195,8 @@ public class AstarSearch {
         for (AstarNode astarNode : lista) {
             astarNode.parent = null;
             astarNode.vuelo = null;
+            astarNode.f = Double.MAX_VALUE;
+            astarNode.g = 0;
         }
     }
 
@@ -223,5 +228,18 @@ public class AstarSearch {
             System.err.println(ex.getMessage());
         }
         return result;
+    }
+
+    static double inTime(Edge edge, Envio envio){
+        int horasAgregadas = 0;
+        if(envio.getIntercontinental()){
+            horasAgregadas = 48;
+        }else{
+            horasAgregadas = 24;
+        }
+        if(edge.vuelo.getLlegada_real().after(addHoursToDate(envio.getFecha_hora(), horasAgregadas))){
+            edge.weight += 10000;
+        }
+        return (double)edge.weight;
     }
 }

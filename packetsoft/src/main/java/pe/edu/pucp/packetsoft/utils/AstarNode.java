@@ -25,7 +25,7 @@ public class AstarNode implements Comparable<AstarNode> {
 
     // Evaluation functions
     public double f = Double.MAX_VALUE;
-    public double g = Double.MAX_VALUE;
+    public double g = 0;
     // Hardcoded heuristic
     public double h; 
 
@@ -76,26 +76,35 @@ public class AstarNode implements Comparable<AstarNode> {
     }
 
     public double calculateHeuristic(AstarNode target, Envio envio,Edge edge){
-        int tiempoRestante  = compareTimes(edge.vuelo.getVuelo().getHora_salida(),envio.getFecha_hora());
-        // this.h = (double)tiempoRestante;
-        if(tiempoRestante < 0){
-            this.h = Double.MAX_VALUE;
-            // System.out.print(".");
-        }
-        // else if(fueraDePlazo(edge.vuelo,envio)){
-        //     this.h = Double.MAX_VALUE;
-        // }
-        else{
-            if(edge.vuelo.getVuelo().getCapacidad_total() == edge.vuelo.getVuelo().getCapacidad_utilizada()){
-                System.err.println("El vuelo ya no admite más paquetes");
-                this.h = Double.MAX_VALUE;
-            }else{
-                this.h = tiempoRestante;
-                // System.out.print("*");
-            }
+        
+        return Math.abs(edge.vuelo.getVuelo().getAeropuerto_salida().getLatitud() - target.getAeropuerto().getLatitud());
+        // int tiempoRestante  = compareTimes(edge.vuelo.getVuelo().getHora_salida(),envio.getFecha_hora());
+        // // this.h = (double)tiempoRestante;
+        // if(tiempoRestante < 0){
+        //     edge.weight += 1000000;
+        //     // System.out.print(".");
+        // }else{
+        //     if(edge.vuelo.getVuelo().getCapacidad_total() == edge.vuelo.getVuelo().getCapacidad_utilizada()){
+        //         System.err.println("El vuelo ya no admite más paquetes");
+        //         edge.weight += 1000000;
+        //     }else{
+        //         this.h = tiempoRestante;
+        //         // System.out.print("*");
+        //     }
+        //     int horasAgregadas = 0;
+        //     if(envio.getIntercontinental()){
+        //         horasAgregadas = 48;
+        //     }else{
+        //         horasAgregadas = 24;
+        //     }
+        //     if(edge.vuelo.getLlegada_real().after(addHoursToDate(envio.getFecha_hora(),horasAgregadas))){
+        //         this.h = 1000000;
+        //     }else{
+        //         this.h = 0;
+        //     }
             
-        }
-        return this.h;
+        // }
+        // return 0;
     }
 
     public static Boolean fueraDePlazo(Vuelo vuelo,Envio envio){
