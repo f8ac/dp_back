@@ -1,6 +1,7 @@
 package pe.edu.pucp.packetsoft;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
@@ -16,6 +17,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Envio;
 import pe.edu.pucp.packetsoft.models.Movimiento;
+import pe.edu.pucp.packetsoft.models.Vuelo;
+import pe.edu.pucp.packetsoft.models.VueloUtil;
 import pe.edu.pucp.packetsoft.utils.PaquetesComp;
 
 // import pe.edu.pucp.packetsoft.utils.AstarNode;
@@ -25,14 +28,18 @@ import pe.edu.pucp.packetsoft.utils.PaquetesComp;
 @EnableCaching
 public class PacketsoftApplication {
 
-    public static List<Aeropuerto> listaAeropuertos = new ArrayList<>();
+    public static List<Aeropuerto> listaAeropuertos     = new ArrayList<>();
     public static Hashtable<String,Aeropuerto> aeroHash = new Hashtable<>();
-    public static Comparator<Movimiento> comPaquetes = new PaquetesComp();
-    public static Envio envioCol = new Envio();
+    public static Comparator<Movimiento> comPaquetes    = new PaquetesComp();
+    public static Envio envioCol                        = new Envio();
     public static PriorityQueue<Movimiento>colaPaquetes = new PriorityQueue<Movimiento>(comPaquetes);
-    public static List<Envio> listaEnvios = new ArrayList<>();
-    public static List<Envio> neededEnvios = new ArrayList<>();
-    public static Boolean enviosNuevos = false;
+    public static List<Envio> listaEnvios               = new ArrayList<>();
+    public static List<Envio> neededEnvios              = new ArrayList<>();
+    public static Boolean enviosNuevos                  = false;
+    public static List<Vuelo> listaVuelos               = new ArrayList<>();
+    public static List<VueloUtil> listaVuelosUtil       = new ArrayList<>();
+    public static List<Calendar> loadedFlightDays       = new ArrayList<>();
+    public static Boolean firstRun                      = true;
 	public static void main(String[] args) {
         
 		SpringApplication.run(PacketsoftApplication.class, args);

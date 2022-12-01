@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import pe.edu.pucp.packetsoft.PacketsoftApplication;
 import pe.edu.pucp.packetsoft.dao.VueloDao;
 import pe.edu.pucp.packetsoft.models.Aeropuerto;
 import pe.edu.pucp.packetsoft.models.Vuelo;
@@ -319,6 +320,15 @@ public class VueloService {
 
     public VueloUtil insertUtil(VueloUtil vueloUtil){
         return daoEmpresa.insertUtil(vueloUtil);
+    }
+
+    public void load(){
+        try{
+            PacketsoftApplication.listaVuelos = getAll();
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        
     }
 
     

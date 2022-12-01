@@ -202,7 +202,7 @@ public class EnvioService {
         return result;
     }
 
-    Boolean inTimeInterval(Date datetime, Prm param){
+    public Boolean inTimeInterval(Date datetime, Prm param){
         Boolean result = null;
         try{
             Calendar calInicio = Calendar.getInstance();

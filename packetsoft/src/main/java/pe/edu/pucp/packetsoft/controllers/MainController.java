@@ -52,30 +52,23 @@ public class MainController {
     List<VueloRet> main(@RequestBody Prm param){
         List<VueloRet> result = null;
         try{
-            //truncamos la tabla de planes de viaje
-            // planViajeService.truncTable();
-
             // AEROPUERTOS
             // List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
             if(PacketsoftApplication.listaAeropuertos.size() == 0){
                 PacketsoftApplication.listaAeropuertos = aeropuertoService.getAll();
             }
             List<AstarNode> listaNodos = airportsToNodes(PacketsoftApplication.listaAeropuertos);
-
-            //creamos una linked list que controle los paquetes que tienen que ser liberados
-            // Comparator<Movimiento> comPaquetes = new PaquetesComp();
-            // PriorityQueue<Movimiento> colaPaquetes = new PriorityQueue<Movimiento>(comPaquetes);
             
             // VUELOS / VERTICES 
             // creamos una lista de vertices a partir de la fecha que vamos a simular
-            List<VueloUtil> listaVuelos = flightsForTodayAndTomorrow(param);
-            List<VueloRet> listaVuelosRetorno = processFlights(listaVuelos, listaNodos, param);
+            
+            PacketsoftApplication.listaVuelosUtil = flightsForTodayAndTomorrow(param);
+            List<VueloRet> listaVuelosRetorno = processFlights(PacketsoftApplication.listaVuelosUtil, listaNodos, param);
             
             // EL MAPEO ESTA TERMINADO ================================================================================
             //OBTENEMOS LOS ENVIOS ORDENADOS POR FECHA
             // List<Envio> listaEnvios = envioService.listCertainHoursFromDatetime(param);
             PacketsoftApplication.neededEnvios = envioService.readFilesToLocalWithParam(param,PacketsoftApplication.aeroHash);
-
             
             // List<Envio> listaEnvios = envioService.copyNeededEnvios(param);
 
@@ -174,7 +167,7 @@ public class MainController {
             pdv.close();
             watch.stop();
             System.out.print("Tiempo total para procesar "+contEnvios+" envios: "+watch.getTotalTimeMillis()+" milisegundos.");
-            result = vuelosTomados(listaVuelosRetorno);
+            result = vuelosTomados(listaVuelosRetorno,param);
             if(colapso){
                 VueloRet vueloColapso = new VueloRet();
                 vueloColapso.setColapso(envioColapsado.getCodigo_envio()+","+new java.sql.Timestamp(envioColapsado.getFecha_hora().getTime()).toString());
@@ -234,12 +227,13 @@ public class MainController {
                 }
                 int cap; 
                 if(vuelo.getVuelo().getAeropuerto_salida().getContinente().getId() == vuelo.getVuelo().getAeropuerto_llegada().getContinente().getId()){
-                    if(vuelo.getVuelo().getAeropuerto_salida().getContinente().getId() == 1)
-                        cap = 250;
-                    else
-                        cap = 300;
+                    // if(vuelo.getVuelo().getAeropuerto_salida().getContinente().getId() == 1)
+                    //     cap = 250;
+                    // else
+                    //     cap = 300;
+                    cap = 300;
                 }else
-                    cap = 350;
+                    cap = 400;
                 vuelo.setCap_tot_real(cap);
                 int costo = vuelo.getVuelo().getTiempo_vuelo_minutos();
                 // System.out.println(">"+iOrigen);
@@ -304,12 +298,12 @@ public class MainController {
         return -1;
     }
 
-    List<VueloRet> vuelosTomados(List<VueloRet> listaVuelos){
+    List<VueloRet> vuelosTomados(List<VueloRet> listaVuelos, Prm param){
         List<VueloRet> result = null;
         try{
             result = new ArrayList<VueloRet>();
             for (VueloRet vueloRet : listaVuelos) {
-                if(vueloRet.getVuelo_util().getCap_util_real()>0){
+                if(vueloRet.getVuelo_util().getCap_util_real()>0 && envioService.inTimeInterval(vueloRet.getVuelo_util().getSalida_real(), param)){
                     result.add(vueloRet);
                 }
             }
@@ -385,45 +379,70 @@ public class MainController {
     List<VueloUtil> flightsForTodayAndTomorrow(Prm param){
         List<VueloUtil> result = null;
         try{
+            if(!PacketsoftApplication.firstRun && PacketsoftApplication.listaAeropuertos.size()>0){
+                //now we must check if we have enough flights for today and tomorrow
+                //but we must not repeat flights
+                
+                //so first we check if date in param is after the first date in the register
+                //if that is that case we add one day to the list and remove the first day
+                Calendar paramDate = Calendar.getInstance();
+                paramDate.set(Calendar.YEAR,            param.anio);
+                paramDate.set(Calendar.MONTH,           param.mes-1);
+                paramDate.set(Calendar.DAY_OF_MONTH,    param.dia);
+                paramDate.set(Calendar.HOUR_OF_DAY, 0);
+                paramDate.set(Calendar.MINUTE,      0);
+                paramDate.set(Calendar.SECOND,      0);
+                if(paramDate.after(PacketsoftApplication.loadedFlightDays.get(0))){
+                    paramDate.add(Calendar.DATE, 1); //we set the new day to add
+                    //now we remove the days of the obsolete day
+                    int sizeListaVuelos = PacketsoftApplication.listaVuelos.size();
+                    for (int i = 0; i < sizeListaVuelos; i++) {
+                        PacketsoftApplication.listaVuelosUtil.remove(0);
+                    }
+                    //now we add the new list of flights
+                    List<VueloUtil> newDay = new ArrayList<>();
+                    setAttributesVueloUtil(newDay, PacketsoftApplication.listaVuelos, sizeListaVuelos);
+                    setDepartureAndArrivalDates(newDay, paramDate);
+                    PacketsoftApplication.listaVuelosUtil.addAll(newDay);
 
-            //get all flights
-            List<Vuelo> flights = vueloService.getAll();
-            flights.get(0).setCapacidad_utilizada(123);
-
-            //create two local lists 
-            List<VueloUtil> firstDay = new ArrayList<>();
-            List<VueloUtil> secondDay = new ArrayList<>();
-
-            //copy attributes to local declared classes two times
-            // copyListButOnlyAttributes(firstDay, flights, 0);
-            // copyListButOnlyAttributes(secondDay, flights, firstDay.size());
-
-            //set data for vueloutil
-            setAttributesVueloUtil(firstDay, flights, 0);
-            setAttributesVueloUtil(secondDay, flights, firstDay.size());
-
-            //set the time on the lists for today and tomorrow respectively
-            Calendar calFirstDay = Calendar.getInstance();
-
-            calFirstDay.set(Calendar.YEAR, param.anio);
-            calFirstDay.set(Calendar.MONTH, param.mes-1);
-            calFirstDay.set(Calendar.DAY_OF_MONTH, param.dia);
-            setDepartureAndArrivalDates(firstDay,calFirstDay);
-
-            calFirstDay.add(Calendar.DATE,1);
-            setDepartureAndArrivalDates(secondDay,calFirstDay);
-
-            //join the lists in only one list
-            List<VueloUtil> joinedLists = firstDay;
-            joinedLists.addAll(secondDay);
-
-            //return the joined list
-
-            result = joinedLists;
-
-            //###################################################################            
-            // result = vuelosNHoras;
-
+                    //modify the list
+                    PacketsoftApplication.loadedFlightDays.remove(0);
+                    paramDate.add(Calendar.MINUTE, 1);
+                    PacketsoftApplication.loadedFlightDays.add(paramDate);
+                }
+                
+                result = PacketsoftApplication.listaVuelosUtil;
+            }else{
+                //get all flights
+                List<Vuelo> flights = PacketsoftApplication.listaVuelos;
+                // flights.get(0).setCapacidad_utilizada(123);
+                //create two local lists 
+                List<VueloUtil> firstDay    = new ArrayList<>();
+                List<VueloUtil> secondDay   = new ArrayList<>();
+                //set data for vueloutil
+                setAttributesVueloUtil(firstDay, flights, 0);
+                setAttributesVueloUtil(secondDay, flights, firstDay.size());
+                //set the time on the lists for today and tomorrow respectively
+                Calendar calFirstDay = Calendar.getInstance();
+                calFirstDay.set(Calendar.YEAR, param.anio);
+                calFirstDay.set(Calendar.MONTH, param.mes-1);
+                calFirstDay.set(Calendar.DAY_OF_MONTH, param.dia);
+                setDepartureAndArrivalDates(firstDay,calFirstDay);
+                //put date in the register
+                PacketsoftApplication.loadedFlightDays.add(calFirstDay);
+                Calendar calSecondDate = Calendar.getInstance();
+                calSecondDate.setTime(calFirstDay.getTime());
+                calSecondDate.add(Calendar.DATE,1);
+                setDepartureAndArrivalDates(secondDay,calSecondDate);
+                //put date in the register
+                PacketsoftApplication.loadedFlightDays.add(calSecondDate);
+                //join the lists in only one list
+                List<VueloUtil> joinedLists = firstDay;
+                joinedLists.addAll(secondDay);
+                PacketsoftApplication.firstRun = false;
+                //return the joined list
+                result = joinedLists;
+            }
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }
@@ -534,6 +553,8 @@ public class MainController {
             //resetear la cola de movimientos
             PacketsoftApplication.colaPaquetes = null;
             PacketsoftApplication.colaPaquetes = new PriorityQueue<>(PacketsoftApplication.comPaquetes);
+            PacketsoftApplication.listaVuelosUtil = null;
+            PacketsoftApplication.firstRun = true;
             //setear todos los aeropuertos a cero
             for (Aeropuerto aeropuerto : PacketsoftApplication.listaAeropuertos) {
                 aeropuerto.setCapacidad_utilizado(0);
@@ -554,6 +575,7 @@ public class MainController {
         try{
             aeropuertoService.load();
             // envioService.load();
+            vueloService.load();
             result = "Load Successful.";
         }catch(Exception ex){
             System.err.println(ex.getMessage());
