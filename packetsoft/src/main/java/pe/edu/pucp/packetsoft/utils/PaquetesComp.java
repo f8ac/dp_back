@@ -10,7 +10,7 @@ public class PaquetesComp implements Comparator<Movimiento>{
     public int compare(Movimiento arg0, Movimiento arg1) {
         int result = 0;
         try{
-            if(arg0.getFecha().before(arg1.getFecha())){
+            if(arg0.getFecha().after(arg1.getFecha())){
                 result = 1;
             }else{
                 result = -1;

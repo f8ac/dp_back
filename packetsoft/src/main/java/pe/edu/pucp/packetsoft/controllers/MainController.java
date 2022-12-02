@@ -95,11 +95,11 @@ public class MainController {
             Envio envioColapsado = new Envio();
             watch.start();
             while(true){
-                attendQueue(PacketsoftApplication.colaPaquetes, curDate);
+                attendQueue(PacketsoftApplication.colaPaquetes, curDate, param);
                 envioColapsado = envioActual = PacketsoftApplication.neededEnvios.get(j);
-                // if(contRows == 2027){
-                //     int x = 1;
-                // }
+                if(contRows == 52){
+                    int x = 1;
+                }
                 if(param.debug){
                     System.out.print("\n"+contRows+") "+curDate.getTime()+" "+envioActual.getCodigo_envio()+" "+envioActual.getFecha_hora() + " ");
                 }
@@ -131,6 +131,8 @@ public class MainController {
                     if(AstarSearch.restaAlmacenamiento(target, envioActual, listaVuelosRetorno, PacketsoftApplication.colaPaquetes)){
                         System.out.println("COLAPSO: el paquete no ha llegado al aeropuerto a tiempo.");
                         System.out.println("ID envio fallido: " + envioActual.getCodigo_envio());
+                        System.out.println("Salida de Envio fallido: " + envioActual.getFecha_hora());
+                        System.out.println("Intercontinental: " + envioActual.getIntercontinental());
                         System.out.println("ID vuelo fallido: " + target.vuelo.getVuelo().getId());
                         System.out.println("Salida vuelo fallido: " + target.vuelo.getSalida_real());
                         System.out.println("Llegada vuelo fallido: " + target.vuelo.getLlegada_real());
@@ -172,6 +174,7 @@ public class MainController {
                 VueloRet vueloColapso = new VueloRet();
                 vueloColapso.setColapso(envioColapsado.getCodigo_envio()+","+new java.sql.Timestamp(envioColapsado.getFecha_hora().getTime()).toString());
                 result.add(vueloColapso);
+                PacketsoftApplication.envioCol = envioColapsado;
             }
             PacketsoftApplication.enviosNuevos = false;
             PacketsoftApplication.neededEnvios = null;
@@ -313,7 +316,7 @@ public class MainController {
         return result;
     }
 
-    void attendQueue(PriorityQueue<Movimiento> colaPaquetes, Calendar curDate){
+    void attendQueue(PriorityQueue<Movimiento> colaPaquetes, Calendar curDate, Prm param){
         try{
             while(true){
                 if(sameDateTime(curDate.getTime(), colaPaquetes.peek().getFecha()) ){
@@ -321,6 +324,13 @@ public class MainController {
                     Aeropuerto aeropuerto = curMov.getAeropuerto();
                     int curCap = aeropuerto.getCapacidad_utilizado();
                     aeropuerto.setCapacidad_utilizado(curCap + curMov.getEnvio().getCant_paquetes_total() * curMov.getOperacion());
+                    if(param.debug){
+                        System.err.println("ATTEND");
+                        System.err.println("AEROPUERTO: "   +aeropuerto.getCod_aeropuerto());
+                        System.err.println("CAP ACTUAL: "   +curCap);
+                        System.err.println("OPERACION: "    +(curMov.getOperacion()*curMov.getEnvio().getCant_paquetes_total()));
+                        System.err.println("CAP NUEVA CAP"  +aeropuerto.getCapacidad_utilizado());
+                    }
                 }else{
                     break;
                 }
