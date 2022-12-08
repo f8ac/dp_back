@@ -52,22 +52,21 @@ public class EnvioController {
     }
 
     @PostMapping(value = "/list/table")
-    List<EnvioRet> listTable(@RequestBody Prm param){
+    public List<EnvioRet> listTable(@RequestBody Prm param){
         List<EnvioRet> result = null;
         try{
             // List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
             // Hashtable<String, Aeropuerto> aeroHash = airportToHash(listaAeropuertos);
             // need to fix: ask for envios in a certain date
-            if(!PacketsoftApplication.enviosNuevos){
-                PacketsoftApplication.neededEnvios = envioService.readFilesToLocalWithParam(param,PacketsoftApplication.aeroHash);
-                PacketsoftApplication.enviosNuevos = true;
-            }
+            List<Envio> neededEnvios;
+                neededEnvios = envioService.readFilesToLocalWithParam(param,PacketsoftApplication.aeroHash);
             // PacketsoftApplication.neededEnvios = envioService.copyNeededEnvios(param);
-            List<EnvioRet> listaEnviosRet = convertEnviosToEnviosRet(PacketsoftApplication.neededEnvios);
+            List<EnvioRet> listaEnviosRet = convertEnviosToEnviosRet(neededEnvios);
             result = listaEnviosRet;
         }catch(Exception ex){
             System.err.println(ex.getMessage());
         }
+        System.out.println("Table consulted.");
         return result;
     }
 

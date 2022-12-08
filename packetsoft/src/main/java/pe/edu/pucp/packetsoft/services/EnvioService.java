@@ -123,17 +123,21 @@ public class EnvioService {
             List<Envio> listaEnvios = new ArrayList<>();
             for (int i = 0; i < listOfFiles.length; i++) { // lee los archivos de la ruta carpeta
                 if (listOfFiles[i].isFile()) {
-                    System.out.print("\nFile " + listOfFiles[i].getName());
+                    if(param.debug){
+                        System.out.print("\nFile " + listOfFiles[i].getName());
+                    }
+                    System.out.print(".");
                     listaEnvios.addAll(readFileToLocalWithParam(listOfFiles[i].getName(), rutaFolder, param, aeroHash));
                 }
             }
+            System.out.print("\n");
             //una vez obtenida la lista de envios toca ordenar por fecha
             Collections.sort(listaEnvios, new Comparator<Envio>(){
                 public int compare(Envio envio1,Envio envio2){
                     return envio1.getFecha_hora().compareTo(envio2.getFecha_hora());
                 }
             });
-
+            System.out.println("Archivos de envios leidos y ordenados.");
             result = listaEnvios;
 
         }catch(Exception ex){

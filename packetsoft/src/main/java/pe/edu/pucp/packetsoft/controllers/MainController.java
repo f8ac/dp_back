@@ -76,7 +76,7 @@ public class MainController {
             Calendar calFin = Calendar.getInstance();
             setStartAndStopCalendars(calInicio,calFin,param);
 
-            System.out.println("Inicio: "+calInicio.getTime()+", Final: "+calFin.getTime());
+            System.out.println("\nInicio: "+calInicio.getTime()+", Final: "+calFin.getTime());
             
             Calendar curDate = Calendar.getInstance();
             curDate.setTime(calInicio.getTime());
@@ -97,9 +97,9 @@ public class MainController {
             while(true){
                 attendQueue(PacketsoftApplication.colaPaquetes, curDate, param);
                 envioColapsado = envioActual = PacketsoftApplication.neededEnvios.get(j);
-                if(contRows == 52){
-                    int x = 1;
-                }
+                // if(contRows == 52){
+                //     int x = 1;
+                // }
                 if(param.debug){
                     System.out.print("\n"+contRows+") "+curDate.getTime()+" "+envioActual.getCodigo_envio()+" "+envioActual.getFecha_hora() + " ");
                 }
@@ -560,18 +560,36 @@ public class MainController {
     Boolean reset(){
         Boolean result = null;
         try{
+            System.out.println("Inicio del reset.");
             //resetear la cola de movimientos
             PacketsoftApplication.colaPaquetes = null;
             PacketsoftApplication.colaPaquetes = new PriorityQueue<>(PacketsoftApplication.comPaquetes);
+            System.out.println("Cola de paquetes nulleada e reiniciada.");
             PacketsoftApplication.listaVuelosUtil = null;
+            System.out.println("Lista de VuelosUtil nulleado.");
             PacketsoftApplication.firstRun = true;
+            System.out.println("First run set.");
             //setear todos los aeropuertos a cero
             for (Aeropuerto aeropuerto : PacketsoftApplication.listaAeropuertos) {
                 aeropuerto.setCapacidad_utilizado(0);
             }
             //
+            System.out.println("Capacidad de aeropuertos a cero.");
             PacketsoftApplication.neededEnvios = null;
+            System.out.println("Envios necesitados nulleados.");
             PlanViajeController.deletePDV();
+
+            //
+            PacketsoftApplication.envioCol          = new Envio();
+            PacketsoftApplication.colaPaquetes      = new PriorityQueue<Movimiento>(PacketsoftApplication.comPaquetes);
+            PacketsoftApplication.listaEnvios       = new ArrayList<>();
+            PacketsoftApplication.neededEnvios      = new ArrayList<>();
+            PacketsoftApplication.enviosNuevos      = false;
+            PacketsoftApplication.listaVuelos       = new ArrayList<>();
+            PacketsoftApplication.listaVuelosUtil   = new ArrayList<>();
+            PacketsoftApplication.loadedFlightDays  = new ArrayList<>();
+            PacketsoftApplication.firstRun          = true;
+
             result = true;
         }catch(Exception ex){   
             System.err.println(ex.getMessage());
@@ -604,6 +622,54 @@ public class MainController {
             System.err.println(ex.getMessage());
         }
         return result;
+    }
+
+    @PostMapping(value = "/simul")
+    void simul(@RequestBody Prm param){
+        try{
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR           , param.anio);
+            cal.set(Calendar.MONTH          , param.mes-1);
+            cal.set(Calendar.DAY_OF_MONTH   , param.dia);
+            cal.set(Calendar.HOUR_OF_DAY    , param.hora);
+            cal.set(Calendar.MINUTE         , param.minuto);
+            cal.set(Calendar.SECOND         , param.segundo);
+
+            Calendar inicio = Calendar.getInstance();
+            Calendar fin = Calendar.getInstance();
+            fin.setTime(inicio.getTime());
+
+            List<VueloRet> result;
+            reset();
+            load();
+            StopWatch start = new  StopWatch();
+            // StopWatch stop = new  StopWatch();
+            while(true){
+                start.start();
+                // envioService.table
+                result = main(param);
+                start.stop();
+                System.out.println("Duracion de main: "+start.getTotalTimeSeconds() +" segundos.");
+                if(result.get(result.size()-1).getColapso() != null || result.isEmpty() || result == null){
+                    break;
+                }
+                cal.add(Calendar.HOUR_OF_DAY, param.horaSimul);
+                param.mes  = cal.get(Calendar.MONTH)+1;
+                param.dia  = cal.get(Calendar.DAY_OF_MONTH);
+                param.hora = cal.get(Calendar.HOUR_OF_DAY);
+                param.anio = cal.get(Calendar.YEAR);
+            }
+
+            fin.set(Calendar.YEAR, param.anio);
+            fin.set(Calendar.MONTH, param.mes);
+            fin.set(Calendar.DAY_OF_MONTH, param.dia);
+            fin.set(Calendar.HOUR_OF_DAY, param.hora);
+
+            System.out.println("Inicio de simulacion: "+inicio.getTime()+"\nFin: "+fin.getTime());
+
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
     }
 }
 
