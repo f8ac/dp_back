@@ -70,6 +70,25 @@ public class EnvioController {
         return result;
     }
 
+    @PostMapping(value = "/table/report")
+    public List<EnvioRet> listTable(@RequestBody Interval param){
+        List<EnvioRet> result = null;
+        try{
+            // List<Aeropuerto> listaAeropuertos = aeropuertoService.getAll();
+            // Hashtable<String, Aeropuerto> aeroHash = airportToHash(listaAeropuertos);
+            // need to fix: ask for envios in a certain date
+            List<Envio> neededEnvios;
+                neededEnvios = envioService.readFilesToLocalWithInterval(param,PacketsoftApplication.aeroHash);
+            // PacketsoftApplication.neededEnvios = envioService.copyNeededEnvios(param);
+            List<EnvioRet> listaEnviosRet = convertEnviosToEnviosRet(neededEnvios);
+            result = listaEnviosRet;
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        System.out.println("Table consulted.");
+        return result;
+    }
+
     Hashtable<String, Aeropuerto> airportToHash(List<Aeropuerto> lista){
         Hashtable<String, Aeropuerto> result = null;
         try{

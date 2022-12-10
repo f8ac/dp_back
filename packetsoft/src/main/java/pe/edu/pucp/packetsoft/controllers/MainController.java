@@ -186,7 +186,7 @@ public class MainController {
 
     // END OF MAIN ===================================================================================================================
 
-    List<AstarNode> airportsToNodes(List<Aeropuerto> listaAeropuertos){
+    public static List<AstarNode> airportsToNodes(List<Aeropuerto> listaAeropuertos){
         List<AstarNode> result = null;
         try{
             List<AstarNode> listaNodos = Arrays.asList(new AstarNode[listaAeropuertos.size()]);
@@ -214,7 +214,7 @@ public class MainController {
 
 
 
-    List<VueloRet> processFlights(List<VueloUtil> listaVuelos, List<AstarNode> listaNodos, Prm param){
+    public static List<VueloRet> processFlights(List<VueloUtil> listaVuelos, List<AstarNode> listaNodos, Prm param){
         List<VueloRet> result = null;
         try{
             List<VueloRet> listaVuelosRetorno = new ArrayList<VueloRet>();
@@ -256,7 +256,7 @@ public class MainController {
         return result;
     }
 
-    void setStartAndStopCalendars(Calendar calInicio, Calendar calFin, Prm param){
+    public static void setStartAndStopCalendars(Calendar calInicio, Calendar calFin, Prm param){
         try{
             calInicio.set(param.anio, param.mes-1, param.dia, param.hora, param.minuto, param.segundo);
             // if(param.diaSimul != 0){
@@ -279,7 +279,7 @@ public class MainController {
         }
     }
 
-    Boolean esIntercontinental(Envio envio){
+    public static Boolean esIntercontinental(Envio envio){
         Boolean result = null;
         try{
             if(envio.getAero_destino().getContinente().getId() == envio.getAero_origen().getContinente().getId()){
@@ -292,7 +292,7 @@ public class MainController {
         return result;
     }
 
-    int indexNodoAeropuerto(List<AstarNode> listaNodos,Aeropuerto aeropuerto){
+    public static int indexNodoAeropuerto(List<AstarNode> listaNodos,Aeropuerto aeropuerto){
         int i = 0;
         for (AstarNode astarNode : listaNodos) {
             if(astarNode.aeropuerto.getId() == aeropuerto.getId()){return i;}
@@ -301,12 +301,12 @@ public class MainController {
         return -1;
     }
 
-    List<VueloRet> vuelosTomados(List<VueloRet> listaVuelos, Prm param){
+    public static List<VueloRet> vuelosTomados(List<VueloRet> listaVuelos, Prm param){
         List<VueloRet> result = null;
         try{
             result = new ArrayList<VueloRet>();
             for (VueloRet vueloRet : listaVuelos) {
-                if(vueloRet.getVuelo_util().getCap_util_real()>0 && envioService.inTimeInterval(vueloRet.getVuelo_util().getSalida_real(), param)){
+                if(vueloRet.getVuelo_util().getCap_util_real()>0 && inTimeInterval(vueloRet.getVuelo_util().getSalida_real(), param)){
                     result.add(vueloRet);
                 }
             }
@@ -316,7 +316,31 @@ public class MainController {
         return result;
     }
 
-    void attendQueue(PriorityQueue<Movimiento> colaPaquetes, Calendar curDate, Prm param){
+    public static Boolean inTimeInterval(Date datetime, Prm param){
+        Boolean result = null;
+        try{
+            Calendar calInicio = Calendar.getInstance();
+            calInicio.set(Calendar.YEAR         ,param.anio);
+            calInicio.set(Calendar.MONTH        ,param.mes-1);
+            calInicio.set(Calendar.DAY_OF_MONTH ,param.dia);
+            calInicio.set(Calendar.HOUR_OF_DAY  ,param.hora);
+            calInicio.set(Calendar.MINUTE       ,param.minuto);
+
+            Calendar calFin = Calendar.getInstance();
+            calFin.setTime(calInicio.getTime());
+            calFin.add(Calendar.HOUR_OF_DAY , param.horaSimul);
+            calFin.add(Calendar.MINUTE      , param.minSimul);
+            result = false;
+            if(datetime.before(calFin.getTime()) && datetime.after(calInicio.getTime())){
+                result = true;
+            }
+        }catch(Exception ex){
+            System.err.println(ex.getMessage());
+        }
+        return result;
+    }
+
+    public static void attendQueue(PriorityQueue<Movimiento> colaPaquetes, Calendar curDate, Prm param){
         try{
             while(true){
                 if(sameDateTime(curDate.getTime(), colaPaquetes.peek().getFecha()) ){
@@ -342,7 +366,7 @@ public class MainController {
     }                           
 
     @SuppressWarnings({"deprecation"})
-    Boolean sameDateTime(Date a,Date b){
+    public static Boolean sameDateTime(Date a,Date b){
         Boolean result = null;
         try{
             result =       a.getYear()      == b.getYear() 
@@ -357,7 +381,7 @@ public class MainController {
         return result;
     }
 
-    void savePlan(AstarNode target, Envio envio, List<PlanViaje> listaPlanes){
+    public static void savePlan(AstarNode target, Envio envio, List<PlanViaje> listaPlanes){
         try{
             AstarNode n = target;
             if(n==null)
@@ -386,7 +410,7 @@ public class MainController {
         }
     }
 
-    List<VueloUtil> flightsForTodayAndTomorrow(Prm param){
+    public static List<VueloUtil> flightsForTodayAndTomorrow(Prm param){
         List<VueloUtil> result = null;
         try{
             if(!PacketsoftApplication.firstRun && PacketsoftApplication.listaAeropuertos.size()>0){
@@ -488,7 +512,7 @@ public class MainController {
         }
     }
 
-    void setDepartureAndArrivalDates(List<VueloUtil> flightsForTheDay,Calendar day){
+    public static void setDepartureAndArrivalDates(List<VueloUtil> flightsForTheDay,Calendar day){
         try{
             Calendar calLlegada = Calendar.getInstance();
             Calendar calSalida = Calendar.getInstance();
@@ -524,7 +548,7 @@ public class MainController {
         }
     }
 
-    void setAttributesVueloUtil(List<VueloUtil>firstDay, List<Vuelo>flights, int offset){
+    public static void setAttributesVueloUtil(List<VueloUtil>firstDay, List<Vuelo>flights, int offset){
         try{
             for (Vuelo vuelo : flights) {
                 VueloUtil nuevo = new VueloUtil();
